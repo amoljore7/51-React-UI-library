@@ -9,7 +9,7 @@ describe('card test cases', () => {
     const props = {
       image:
         'https://media-exp1.licdn.com/dms/image/C560BAQEp7H79CM1XSg/company-logo_200_200/0/1621376300395?e=2159024400&v=beta&t=blE1LaLSAeEh_YoAvPfXeYElBDwYZQDWw6q1ZkE0YKs',
-      title: 'Britive',
+      title: 'React',
       clickHandler: jest.fn(),
     };
     const { getByText } = render(<Card {...props} />);
@@ -19,7 +19,7 @@ describe('card test cases', () => {
     const props = {
       image:
         'https://media-exp1.licdn.com/dms/image/C560BAQEp7H79CM1XSg/company-logo_200_200/0/1621376300395?e=2159024400&v=beta&t=blE1LaLSAeEh_YoAvPfXeYElBDwYZQDWw6q1ZkE0YKs',
-      title: 'Britive',
+      title: 'React',
       clickHandler: jest.fn(),
     };
     const { getByRole } = render(<Card {...props} />);
@@ -29,7 +29,7 @@ describe('card test cases', () => {
     const props = {
       image:
         'https://media-exp1.licdn.com/dms/image/C560BAQEp7H79CM1XSg/company-logo_200_200/0/1621376300395?e=2159024400&v=beta&t=blE1LaLSAeEh_YoAvPfXeYElBDwYZQDWw6q1ZkE0YKs',
-      title: 'Britive',
+      title: 'React',
       clickHandler: jest.fn(),
     };
     const { getByTestId } = render(<Card {...props} />);

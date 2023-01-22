@@ -4,10 +4,10 @@ import * as IoIcons from 'react-icons/io';
 
 export const sidebarData = [
   {
-    GroupHeader: 'Britive Vault',
+    GroupHeader: 'My Vault',
     items: [
       {
-        title: 'Britive Vault',
+        title: 'My Vault',
         route: '/',
         icon: <AiIcons.AiFillHome />,
       },
@@ -37,8 +37,8 @@ export const sidebarData = [
         icon: <IoIcons.IoMdPeople />,
       },
       {
-        title: 'Britive Vault Details',
-        route: '/britive-vault-details',
+        title: 'My Vault Details',
+        route: '/my-vault-details',
         icon: <FaIcons.FaEnvelopeOpenText />,
       },
       {

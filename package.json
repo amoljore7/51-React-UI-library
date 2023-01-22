@@ -1,9 +1,11 @@
 {
-  "name": "storybook-v6",
+  "name": "react-ui-library",
   "version": "0.1.0",
   "private": true,
   "homepage": "https://amoljore7.github.io/56-React-UI-Library/",
   "dependencies": {
+    "@storybook/addon-a11y": "^6.5.15",
+    "@storybook/addon-storysource": "^6.5.15",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

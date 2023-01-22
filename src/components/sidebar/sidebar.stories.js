@@ -62,7 +62,7 @@ export const App = () => {
             title={'SM'}
           />
           <Switch>
-            <Route path="/" exact component={BritiveVault} />
+            <Route path="/" exact component={MyVault} />
             <Route path="/approvals" component={Approvals} />
             <Route path="/secret-governance" component={SecretGovernance} />
           </Switch>
@@ -72,10 +72,10 @@ export const App = () => {
   );
 };
 
-const BritiveVault = () => {
+const MyVault = () => {
   return (
-    <div className="BritiveVault" style={styleContainer}>
-      <h5>Britive Vault</h5>
+    <div className="MyVault" style={styleContainer}>
+      <h5>My Vault</h5>
     </div>
   );
 };

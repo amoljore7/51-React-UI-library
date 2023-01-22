@@ -7,14 +7,14 @@ import { render, fireEvent, getAllByTestId } from '@testing-library/react';
 describe('pill test cases', () => {
   it('label appears on the screen', () => {
     const props = {
-      label: 'Britive',
+      label: 'React',
     };
     const { getByText } = render(<Pill {...props} />);
     expect(getByText(props.label)).toBeInTheDocument();
   });
   it('onDelete is called on clicking Icon', () => {
     const props = {
-      label: 'Britive',
+      label: 'React',
       onDelete: jest.fn(),
     };
     const { getByTestId } = render(<Pill {...props} />);
@@ -25,7 +25,7 @@ describe('pill test cases', () => {
   it('disabled Pill will have no iteractions', () => {
     const props = {
       disabled: true,
-      label: 'Britive',
+      label: 'React',
       onDelete: jest.fn(),
     };
     const { getByTestId } = render(<Pill {...props} />);
@@ -36,7 +36,7 @@ describe('pill test cases', () => {
   it('readOnly Pill has no close Icon', () => {
     const props = {
       readOnly: true,
-      label: 'Britive',
+      label: 'React',
     };
     const { queryByTestId } = render(<Pill {...props} />);
     const closeIcon = queryByTestId('pill-close-icon');

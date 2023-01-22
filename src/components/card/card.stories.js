@@ -1,6 +1,6 @@
 import React from 'react';
 import Card from './card';
-import britiveLogo from '../../story-assets/images/britive-logo.jpg';
+import logo from '../../story-assets/images/britive-logo.jpg';
 import details from '../../story-assets/images/details.svg';
 
 export default {
@@ -24,7 +24,7 @@ CardWithImageAndTitle.args.clickHandler = function (event) {
 export const CardWithDisabled = CardTemplate.bind({});
 CardWithDisabled.args = {
   title: 'Secret Governance',
-  image: britiveLogo,
+  image: logo,
   disabled: true,
 };
 

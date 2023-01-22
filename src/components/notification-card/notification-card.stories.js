@@ -82,7 +82,7 @@ export const WithTextOverflow = () => {
 
   const notificationMessage = (
     <span>
-      Your Request for Edit Access for secret /Britive_2021/Britive/Apps/Dev/MySQL_DB is approved by
+      Your Request for Edit Access for secret Apps/Dev/MySQL_DB is approved by
       Robert.
     </span>
   );
