@@ -1,0 +1,43 @@
+@import '../../global-style/index.scss';
+
+.accordion-container {
+  .header {
+    margin-top: getRem(32px);
+    padding-bottom: getRem(8px);
+    border-bottom: 1px solid #a8a8a8;
+    cursor: pointer;
+    display: flex;
+    user-select: none;
+
+
+    img {
+      display: inline;
+      margin-right: getRem(5px);
+    }
+  
+    .margin-top-32 {
+      margin-top: getRem(32px);
+    }
+  
+    .margin-top-8 {
+      margin-top: getRem(8px);
+    }
+  }
+
+  .content {
+    overflow: hidden;
+    
+    &-expanded {
+      padding-top: getRem(24px);
+      padding-bottom: getRem(24px);
+      transition: 0.2s ease-out;
+    }
+
+    &-closed {
+      padding: 0;
+      visibility: hidden;
+      transition: 0.2s ease-in;
+      height: 0;
+    }
+  }
+}

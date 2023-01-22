@@ -1,0 +1,63 @@
+@import '../../global-style/index.scss';
+
+$checkbox-container-height: getRem(20px);
+$checkbox-icon-width: getRem(20px);
+$checkbox-icon-height: getRem(20px);
+$checkbox-icon-opacity: 1;
+$checkbox-icon-margin-right: getRem(8px);
+$checkbox-btn-opacity: 0;
+$checkbox-btn-width: 100%;
+$checkbox-btn-height: 100%;
+$checkbox-btn-margin: getRem(0px);
+$checkbox-btn-top: 0;
+$checkbox-btn-left: 0;
+$checkbox-btn-z-index: 1;
+$checkbox-icon-img-top: 0;
+$checkbox-icon-img-left: 0;
+$label-container-height: getRem(19px);
+$label-container-font-size: getRem(14px);
+$label-container-letter-spacing: getRem(0.32px);
+$label-container-opacity: 1;
+
+.checkbox-container {
+  display: flex;
+  height: $checkbox-container-height;
+
+  .checkbox-icon {
+    position: relative;
+    width: $checkbox-icon-width;
+    height: $checkbox-icon-height;
+    opacity: $checkbox-icon-opacity;
+    vertical-align: middle;
+    margin-right: $checkbox-icon-margin-right;
+    display: inline-block;
+
+    .checkbox-btn {
+      opacity: $checkbox-btn-opacity;
+      position: absolute;
+      width: $checkbox-btn-width;
+      height: $checkbox-btn-height;
+      margin: $checkbox-btn-margin;
+      top: $checkbox-btn-top;
+      left: $checkbox-btn-left;
+      z-index: $checkbox-btn-z-index;
+    }
+
+    img {
+      position: absolute;
+      top: $checkbox-icon-img-top;
+      left: $checkbox-icon-img-left;
+    }
+  }
+
+  .label-container {
+    height: $label-container-height;
+    font-size: $label-container-font-size;
+    letter-spacing: $label-container-letter-spacing;
+    color: $secondary-txt-color;
+    opacity: $label-container-opacity;
+    font-family: $font-type-01;
+    text-align: left;
+    vertical-align: middle;
+  }
+}

@@ -4,7 +4,7 @@ import { within, userEvent } from '@storybook/testing-library';
 import { Page } from './page';
 
 export default {
-  title: 'Example/Page',
+  title: 'design-components/Page',
   component: Page,
   parameters: {
     // More on Story layout: https://storybook.js.org/docs/react/configure/story-layout

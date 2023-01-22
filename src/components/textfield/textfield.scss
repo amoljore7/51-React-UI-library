@@ -1,0 +1,231 @@
+@import '../../global-style/index.scss';
+
+$font-size: getRem(14px);
+$font-size-helper-text: getRem(12px);
+$label-font-weight: 600;
+$label-font-color: $gray-80;
+$label-letter-spacing: getRem(0.32px);
+
+$icon-width: getRem(24px);
+$icon-height: getRem(24px);
+$height-error-msg-text: getRem(17px);
+$height-input-box: getRem(19px);
+$input-box-width: 100%;
+
+$padding-bottom-label: getRem(8px);
+$padding-bottom-helper-text: getRem(4px);
+$padding-top-input-box: getRem(10px);
+$padding-bottom-input-box: getRem(11px);
+$padding-left-input-box: getRem(16px);
+$padding-right-input-box: getRem(16px);
+$padding-top-icon: getRem(8px);
+$padding-bottom-icon: getRem(8px);
+$padding-right-icon: getRem(16px);
+$padding-top-input-with-icon: getRem(8px);
+$padding-bottom-input-with-icon: getRem(8px);
+$padding-top-input-with-icon-focus: getRem(7px);
+$padding-bottom-input-with-icon-focus: getRem(7px);
+$padding-right-input-with-icon-focus: getRem(15px);
+$padding-top-inline-input-with-icon-focus: getRem(6px);
+$padding-bottom-inline-input-with-icon-focus: getRem(7px);
+$padding-right-inline-input-with-icon-focus: getRem(14px);
+$padding-top-inline-focus: getRem(8px);
+$padding-bottom-inline-focus: getRem(10px);
+$padding-left-inline-focus: getRem(14px);
+$padding-top-naked-input-with-icon-focus: getRem(6px);
+$padding-bottom-naked-input-with-icon-focus: getRem(6px);
+$padding-right-naked-input-with-icon-focus: getRem(14px);
+$padding-top-naked-focus: getRem(8px);
+$padding-bottom-naked-focus: getRem(9px);
+$padding-left-naked-focus: getRem(14px);
+$padding-top-error-border-input-with-icon-focus: getRem(8px);
+$padding-bottom-error-border-input-with-icon-focus: getRem(8px);
+$padding-left-error-border-input-with-icon-focus: getRem(16px);
+$padding-right-error-border-input-with-icon-focus: getRem(16px);
+$padding-top-error-border-focus: getRem(10px);
+$padding-left-error-border-focus: getRem(16px);
+$padding-bottom-error-border-focus: getRem(11px);
+$padding-top-on-focus: getRem(9px);
+$padding-left-on-focus: getRem(15px);
+$padding-bottom-on-focus: getRem(10px);
+
+$border-bottom-inline: getRem(1px);
+$border-input-container: getRem(1px);
+$border-radius-input-container: getRem(2px);
+$border-input-error: getRem(2px);
+$border-input-focus: getRem(2px);
+
+$line-height-input-box: getRem(19px);
+
+.bds-textfield-container {
+  font-family: $font-type-01;
+  background-color: $white;
+
+  .bds-label {
+    text-align: left;
+    font-size: $font-size;
+    padding-bottom: $padding-bottom-label;
+    color: $label-font-color;
+    font-weight: $label-font-weight;
+    letter-spacing: $label-letter-spacing;
+  }
+  .bds-label-disabled {
+    color: $ui-disabled-01;
+  }
+  .bds-helper-text {
+    text-align: left;
+    color: $tertiary-txt-color;
+    font-size: $font-size-helper-text;
+    padding-bottom: $padding-bottom-helper-text;
+  }
+
+  .bds-helper-text-disabled {
+    color: $ui-disabled-01;
+  }
+
+  .bds-input-container {
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    padding-top: $padding-top-input-box;
+    padding-bottom: $padding-bottom-input-box;
+    padding-left: $padding-left-input-box;
+    padding-right: $padding-right-input-box;
+    border-radius: $border-radius-input-container;
+    border: $border-input-container solid $card-border;
+  }
+
+  .bds-input-container-disabled {
+    border: $border-input-container solid $ui-disabled-01;
+  }
+
+  .bds-input-container-error-border {
+    border: $border-input-error solid $error-txt-color;
+  }
+  .bds-input-container-focus:focus-within {
+    border: $border-input-focus solid $info-color;
+  }
+
+  .bds-input-container > input {
+    padding: 0;
+  }
+  .bds-input-container.bds-input-with-icon {
+    padding-top: $padding-top-input-with-icon;
+    padding-bottom: $padding-bottom-input-with-icon;
+  }
+  .bds-input-container.bds-input-with-icon > .bds-input-box {
+    transform: translateY(+2px);
+  }
+  .bds-input-container-focus {
+    &:focus-within {
+      border: $border-input-focus solid $info-color;
+      padding-top: $padding-top-on-focus;
+      padding-left: $padding-left-on-focus;
+      padding-bottom: $padding-bottom-on-focus;
+    }
+  }
+  .bds-input-container-focus.bds-input-with-icon {
+    &:focus-within {
+      border: $border-input-focus solid $info-color;
+      padding-top: $padding-top-input-with-icon-focus;
+      padding-bottom: $padding-bottom-input-with-icon-focus;
+      padding-right: $padding-right-input-with-icon-focus;
+    }
+  }
+  .bds-input-container-focus.bds-input-with-icon.bds-inline {
+    &:focus-within {
+      border: $border-input-focus solid $info-color;
+      padding-top: $padding-top-inline-input-with-icon-focus;
+      padding-bottom: $padding-bottom-inline-input-with-icon-focus;
+      padding-right: $padding-right-inline-input-with-icon-focus;
+    }
+  }
+  .bds-input-container-focus.bds-inline {
+    &:focus-within {
+      border: $border-input-focus solid $info-color;
+      padding-top: $padding-top-inline-focus;
+      padding-left: $padding-left-inline-focus;
+      padding-bottom: $padding-bottom-inline-focus;
+    }
+  }
+  .bds-input-container-focus.bds-input-with-icon.bds-naked {
+    &:focus-within {
+      border: $border-input-focus solid $info-color;
+      padding-top: $padding-top-naked-input-with-icon-focus;
+      padding-bottom: $padding-bottom-naked-input-with-icon-focus;
+      padding-right: $padding-right-naked-input-with-icon-focus;
+    }
+  }
+  .bds-input-container-focus.bds-naked {
+    &:focus-within {
+      border: $border-input-focus solid $info-color;
+      padding-top: $padding-top-naked-focus;
+      padding-left: $padding-left-naked-focus;
+      padding-bottom: $padding-bottom-naked-focus;
+    }
+  }
+  .bds-input-container-error-border:focus-within {
+    padding-top: $padding-top-error-border-focus;
+    padding-left: $padding-left-error-border-focus;
+    padding-bottom: $padding-bottom-error-border-focus;
+  }
+  .bds-input-container-error-border.bds-input-with-icon {
+    &:focus-within {
+      border: $border-input-focus solid $info-color;
+      padding-top: $padding-top-error-border-input-with-icon-focus;
+      padding-bottom: $padding-bottom-error-border-input-with-icon-focus;
+      padding-left: $padding-left-error-border-input-with-icon-focus;
+      padding-right: $padding-right-error-border-input-with-icon-focus;
+    }
+  }
+
+  .bds-input-box {
+    font-family: $font-type-01;
+    width: $input-box-width;
+    font-size: $font-size;
+    background: transparent;
+    vertical-align: middle;
+    line-height: $line-height-input-box;
+    height: $height-input-box;
+    color: $secondary-txt-color;
+    outline: none;
+    border: none;
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+  }
+  .bds-input-box-disabled {
+    color: $ui-disabled-01;
+  }
+
+  .bds-input-box-read-only {
+    color: $secondary-read-only-textarea-color;
+  }
+  .bds-icon-box {
+    vertical-align: middle;
+    width: $icon-width;
+    height: $icon-height;
+    cursor: pointer;
+    align-items: center;
+    margin-left: $padding-right-icon;
+  }
+  .bds-error-msg-text {
+    text-align: left;
+    font-size: $font-size-helper-text;
+    color: $error-txt-color;
+    height: $height-error-msg-text;
+  }
+
+  .bds-inline {
+    border: 0;
+    outline: 0;
+    border-radius: initial;
+    border-bottom: $border-bottom-inline solid;
+  }
+  .bds-naked {
+    border: 0;
+    outline: 0;
+  }
+}

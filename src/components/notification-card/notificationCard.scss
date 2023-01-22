@@ -1,0 +1,66 @@
+@import '../../global-style/index.scss';
+
+$notification-card-height: getRem(159px);
+$card-content-margin: getRem(24px);
+$card-message-margin-top: getRem(8px);
+$card-message-margin-bottom: getRem(16px);
+$secondary-button-spacing-margin-right: getRem(16px);
+
+.bds-notification-card {
+  display: flex;
+  background-color: #ffffff;
+  height: $notification-card-height;
+  flex-grow: 2;
+
+  &:hover {
+    background-color: $gray-10;
+  }
+
+  .bds-card-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 2;
+    margin: $card-content-margin;
+
+    .bds-card-header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .bds-card-title {
+        color: $gray-60;
+      }
+
+      .bds-card-time {
+        color: $gray-60;
+      }
+    }
+
+    .bds-card-message {
+      display: flex;
+      flex-grow: 2;
+      color: $gray-80;
+      margin-top: $card-message-margin-top;
+      margin-bottom: $card-message-margin-bottom;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -ms-text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .bds-card-action-footer {
+      display: flex;
+      flex-direction: row-reverse;
+
+      .secondary-button-spacing {
+        margin-right: $secondary-button-spacing-margin-right;
+      }
+    }
+  }
+}
+
+.bds-notification-card-with-spinner-overlay {
+  position: relative;
+}

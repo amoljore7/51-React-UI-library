@@ -1,0 +1,70 @@
+@import '../../global-style/index.scss';
+
+$font-size-title: getRem(14px);
+$font-size-error-list: getRem(12px);
+$font-weight-title: 700;
+
+$icon-width: getRem(24px);
+$icon-height: getRem(24px);
+
+$margin-bottom-error-item: getRem(4px);
+$margin-bottom-error-item-last: getRem(0px);
+$margin-bottom-image-title: getRem(8px);
+$margin-top-image-title: getRem(16px);
+$margin-right-icon: getRem(8px);
+$margin-left-icon: getRem(16px);
+$margin-left-error-container: getRem(48px);
+$margin-bottom-error-container: getRem(16px);
+
+$width-snackbar: 100%;
+$border-width-snackbar: getRem(1px);
+
+.snackbar-container {
+  font-family: $font-type-01;
+}
+
+.snackbar {
+  box-sizing: border-box;
+  opacity: 1;
+  background-color: transparent;
+  border: $border-width-snackbar solid $form-error-color;
+  color: $form-error-color;
+  width: $width-snackbar;
+}
+
+.snackbar:hover {
+  cursor: pointer;
+}
+
+.snackbar-title {
+  display: inline-block;
+  font-size: $font-size-title;
+  font-weight: $font-weight-title;
+}
+
+.snackbar-error-list {
+  font-size: $font-size-error-list;
+  margin-bottom: $margin-bottom-error-item;
+}
+.snackbar-error-list:last-child {
+  margin-bottom: $margin-bottom-error-item-last;
+}
+
+.snackbar-image-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: $margin-bottom-image-title;
+  margin-top: $margin-top-image-title;
+}
+
+.snackbar-image-title img {
+  display: inline-block;
+  width: $icon-width;
+  height: $icon-height;
+  margin-left: $margin-right-icon;
+  margin-right: $margin-left-icon;
+}
+.error-list-container {
+  margin-left: $margin-left-error-container;
+  margin-bottom: $margin-bottom-error-container;
+}

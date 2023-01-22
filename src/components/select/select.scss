@@ -1,0 +1,271 @@
+@import '../../global-style/index.scss';
+
+$select-container-height: getRem(40px);
+$select-container-border-width: getRem(1px);
+$select-container-border-color: $gray-40;
+$select-container-border-radius: getRem(2px);
+$select-container-padding-top-bottom: getRem(7px);
+$select-container-padding-left-right: getRem(15px);
+$select-container-border-disabled-color: $gray-30;
+$select-container-focus-padding-top: getRem(6px);
+$select-container-focus-padding-left: getRem(14px);
+$select-container-error-padding-top-bottom: getRem(6px);
+$select-container-error-padding-left-right: getRem(14px);
+$option-padding-left: getRem(16px);
+$option-padding-top: getRem(8px);
+$option-padding-bottom: getRem(8px);
+$options-container-border-width: getRem(1px);
+$options-container-border-color: $blue-70;
+$options-container-max-height: getRem(320px);
+$select-label-height: getRem(19px);
+$select-label-color: $gray-80;
+$select-label-color-disabled: $gray-30;
+$select-helper-text-disabled-color: $gray-30;
+$select-label-letter-spacing: getRem(0.32px);
+$select-label-font-size: getRem(14px);
+$select-label-margin-bottom: getRem(8px);
+$select-label-font-weight: 600;
+$select-helper-text-height: getRem(17px);
+$select-helper-text-color: $gray-60;
+$select-helper-text-letter-spacing: getRem(0.32px);
+$select-helper-text-font-size: getRem(12px);
+$select-helper-text-margin-bottom: getRem(4px);
+$actions-container-margin-bottom: getRem(20px);
+$actions-container-margin-left: getRem(16px);
+$select-focus-border-width: getRem(2px);
+$select-focus-border-color: $blue-70;
+$select-height: getRem(19px);
+$select-input-padding: getRem(0px);
+$option-hover-color: $subtle-border;
+$select-container-error-border-width: getRem(2px);
+$select-container-error-border-color: $error-color;
+$select-container-error-text-color: $error-color;
+$select-error-margin-top: getRem(1px);
+$select-error-letter-spacing: getRem(1px);
+$select-container-read-only-height: 19px;
+$select-value-leter-spacing: getRem(0.32px);
+$select-value-color: $gray-80;
+$select-value-disabled-color: $gray-30;
+$select-value-placeholder-color: $gray-50;
+$select-value-placeholder-color-disabled: $gray-30;
+$select-value-font-size: getRem(14px);
+$select-value-read-only-color: $unselected-tab-txt-color;
+$select-value-read-only-font-size: getRem(14px);
+$select-label-read-only-margin-bottom: getRem(8px);
+$select-option-label-height: getRem(19px);
+$select-option-label-letter-spacing: getRem(0.32px);
+$select-option-label-color: $gray-80;
+$select-option-label-font-size: getRem(14px);
+$select-option-height: getRem(40px);
+$select-small-container-height: getRem(32px);
+$select-small-container-border-color: $unselected-tab-border-color;
+$select-small-container-padding-top: getRem(5px);
+$select-small-container-padding-right: getRem(7px);
+$select-small-container-padding-bottom: getRem(6px);
+$select-small-container-padding-left: getRem(7px);
+$select-small-container-focus-padding-top: getRem(4px);
+$select-small-container-focus-padding-right: getRem(6px);
+$select-small-container-focus-padding-bottom: getRem(5px);
+$select-small-container-focus-padding-left: getRem(6px);
+$select-small-value-wrapper-height: getRem(19px);
+$select-actions-small-container-item-margin-left: getRem(8px);
+$select-icon-color: $gray-60;
+$select-icon-disabled-color: $gray-30;
+
+.bds-select-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: $select-container-height;
+  border: $select-container-border-width solid $select-container-border-color;
+  border-radius: $select-container-border-radius;
+  padding: $select-container-padding-top-bottom $select-container-padding-left-right;
+  box-sizing: border-box;
+  background-color: $white;
+}
+
+.bds-select-container-focus {
+  &:focus-within {
+    border: $select-focus-border-width solid $select-focus-border-color;
+    padding: $select-container-focus-padding-top $select-container-focus-padding-left;
+  }
+}
+
+.bds-select-small-container {
+  height: $select-small-container-height;
+  border: $select-container-border-width solid $select-small-container-border-color;
+  padding: $select-small-container-padding-top $select-small-container-padding-right
+    $select-small-container-padding-bottom $select-small-container-padding-left;
+  box-sizing: border-box;
+}
+
+.bds-select-small-container-focus {
+  &:focus-within {
+    border: $select-focus-border-width solid $select-focus-border-color;
+    padding: $select-small-container-focus-padding-top $select-small-container-focus-padding-right
+      $select-small-container-focus-padding-bottom $select-small-container-focus-padding-left;
+  }
+}
+
+.bds-select-small-value-wrapper {
+  display: flex;
+  height: $select-small-value-wrapper-height;
+  align-items: center;
+}
+
+.bds-select-small-actions-container {
+  display: flex;
+  align-items: center;
+}
+
+.bds-select-container-inline {
+  border: none;
+}
+
+.bds-select-container-disabled {
+  border: $select-container-border-width solid $select-container-border-disabled-color;
+  .bds-select-placeholder {
+    color: $select-value-placeholder-color-disabled;
+  }
+}
+
+.bds-select-container-error {
+  border: $select-container-error-border-width solid $select-container-error-border-color;
+  padding: $select-container-padding-top-bottom $select-container-padding-left-right;
+}
+
+.bds-select-container-read-only {
+  border: none;
+  padding: 0;
+  height: $select-container-read-only-height;
+}
+
+.bds-select-container-disabled-inline {
+  border: none;
+}
+
+.bds-select-error-message {
+  text-align: left;
+  font-size: 12px;
+  font-family: $font-type-01;
+  letter-spacing: $select-error-letter-spacing;
+  margin-top: $select-error-margin-top;
+  color: $select-container-error-text-color;
+}
+
+.bds-select-actions-container {
+  display: flex;
+}
+
+.bds-select-actions-container-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: $actions-container-margin-left;
+}
+
+.bds-select-actions-small-container-item {
+  display: flex;
+  align-items: center;
+  margin-left: $select-actions-small-container-item-margin-left;
+}
+
+.bds-select-label {
+  height: $select-label-height;
+  font-family: $font-type-01;
+  letter-spacing: $select-label-letter-spacing;
+  color: $select-label-color;
+  font-size: $select-label-font-size;
+  margin-bottom: $select-label-margin-bottom;
+  font-weight: $select-label-font-weight;
+}
+
+.bds-select-label-read-only {
+  margin-bottom: $select-label-read-only-margin-bottom;
+}
+
+.bds-select-label-disabled {
+  color: $select-label-color-disabled;
+}
+
+.bds-select-helper-text {
+  height: $select-helper-text-height;
+  font-family: $font-type-01;
+  letter-spacing: $select-helper-text-letter-spacing;
+  color: $select-helper-text-color;
+  font-size: $select-helper-text-font-size;
+  margin-bottom: $select-helper-text-margin-bottom;
+}
+
+.bds-select-helper-text-disabled {
+  color: $select-helper-text-disabled-color;
+}
+
+.bds-select-value {
+  width: 100%;
+  height: $select-height;
+  text-align: left;
+  font-size: $select-value-font-size;
+  font-family: $font-type-01;
+  letter-spacing: $select-value-leter-spacing;
+  color: $select-value-color;
+  margin-bottom: 1px;
+  overflow: hidden;
+}
+
+.bds-select-value-disabled {
+  color: $select-value-disabled-color;
+}
+
+.bds-select-value-read-only {
+  text-align: left;
+  font-size: $select-value-read-only-font-size;
+  font-family: $font-type-01;
+  letter-spacing: $select-value-leter-spacing;
+  color: $select-value-read-only-color;
+}
+
+.bds-select-placeholder {
+  color: $select-value-placeholder-color;
+}
+
+.bds-select-options-container {
+  max-height: $options-container-max-height;
+  border: $options-container-border-width solid $options-container-border-color;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.bds-select-option {
+  display: flex;
+  align-items: center;
+  padding-left: $option-padding-left;
+  padding-top: $option-padding-top;
+  padding-bottom: $option-padding-bottom;
+  box-sizing: border-box;
+  height: $select-option-height;
+  cursor: pointer;
+  &:hover {
+    background: $option-hover-color;
+  }
+}
+
+.bds-select-option-label {
+  display: flex;
+  align-items: center;
+  height: $select-option-label-height;
+  font-family: $font-type-01;
+  letter-spacing: $select-option-label-letter-spacing;
+  color: $select-option-label-color;
+  font-size: $select-option-label-font-size;
+}
+
+.bds-select-icon {
+  color: $select-icon-color;
+}
+
+.bds-select-icon-disabled {
+  color: $select-icon-disabled-color;
+}

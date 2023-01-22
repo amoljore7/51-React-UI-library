@@ -1,0 +1,152 @@
+@import '../../global-style/index.scss';
+
+$font-size: getRem(14px);
+$font-size-helper-text: getRem(12px);
+$label-font-weight: 600;
+$label-font-color: $gray-80;
+$label-letter-spacing: getRem(0.32px);
+
+$height-error-msg-text: getRem(17px);
+$width-scrollbar: getRem(8px);
+
+$padding-bottom-label: getRem(8px);
+$padding-bottom-helper-text: getRem(4px);
+$padding-top-textarea-box: getRem(10px);
+$padding-bottom-textarea-box: getRem(11px);
+$padding-left-textarea-box: getRem(16px);
+$padding-right-textarea-box: getRem(16px);
+$padding-top-textarea-container-focus: getRem(9px);
+$padding-left-textarea-container-focus: getRem(15px);
+$padding-top-error-border-focus: getRem(10px);
+$padding-left-error-border-focus: getRem(16px);
+
+$padding-top-textarea-box-focus: getRem(9px);
+$padding-bottom-textarea-box-focus: getRem(10px);
+$padding-left-textarea-box-focus: getRem(15px);
+$padding-right-textarea-box-focus: getRem(15px);
+
+$border-textarea-container: getRem(1px);
+$border-radius-textarea-container: getRem(2px);
+$border-textarea-error: getRem(2px);
+$border-textarea-focus: getRem(2px);
+$border-radius-scrollbar: getRem(5px);
+
+$line-height-textarea-box: getRem(16px);
+
+.bds-textarea-main-container {
+  font-family: $font-type-01;
+
+  .bds-textarea-label {
+    text-align: left;
+    font-size: $font-size;
+    padding-bottom: $padding-bottom-label;
+    color: $label-font-color;
+    font-weight: $label-font-weight;
+    letter-spacing: $label-letter-spacing;
+  }
+
+  .bds-textarea-label-disabled {
+    color: $ui-disabled-01;
+  }
+
+  .bds-textarea-helper-text {
+    text-align: left;
+    font-size: $font-size-helper-text;
+    padding-bottom: $padding-bottom-helper-text;
+    color: $tertiary-txt-color;
+  }
+
+  .bds-textarea-helper-text-disabled {
+    color: $ui-disabled-01;
+  }
+
+  .bds-textarea-container {
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    border-radius: $border-radius-textarea-container;
+    border: $border-textarea-container solid $card-border;
+  }
+
+  .bds-textarea-container-disabled {
+    border: $border-textarea-container solid $ui-disabled-01;
+  }
+  .bds-textarea-container-error-border {
+    border: $border-textarea-error solid $error-txt-color;
+  }
+
+  .bds-textarea-box {
+    font-family: $font-type-01;
+    font-weight: 400;
+    width: 100%;
+    padding-top: $padding-top-textarea-box;
+    padding-bottom: $padding-bottom-textarea-box;
+    padding-left: $padding-left-textarea-box;
+    padding-right: $padding-right-textarea-box;
+    font-size: $font-size;
+    line-height: $line-height-textarea-box;
+    resize: none;
+    background: transparent;
+    vertical-align: middle;
+    outline: none;
+    border: none;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow-y: auto;
+    color: $secondary-txt-color;
+  }
+
+  .bds-textarea-box-disabled {
+    color: $ui-disabled-01;
+  }
+
+  .bds-textarea-box-read-only {
+    color: $secondary-read-only-textarea-color;
+  }
+
+  .bds-textarea-container-focus {
+    &:focus-within {
+      border: $border-textarea-focus solid $info-color;
+      .bds-textarea-box {
+        padding-top: $padding-top-textarea-box-focus;
+        padding-bottom: $padding-bottom-textarea-box-focus;
+        padding-left: $padding-left-textarea-box-focus;
+        padding-right: $padding-right-textarea-box-focus;
+      }
+    }
+  }
+
+  .bds-textarea-container-error-border:focus-within {
+    .bds-textarea-box {
+      padding-top: $padding-top-error-border-focus;
+      padding-left: $padding-left-error-border-focus;
+    }
+  }
+
+  .bds-error-msg-text {
+    text-align: left;
+    font-size: $font-size-helper-text;
+    color: $error-txt-color;
+    height: $height-error-msg-text;
+  }
+
+  .bds-naked {
+    border: 0;
+    outline: 0;
+    padding: 0;
+  }
+
+  .bds-textarea-box::-webkit-scrollbar-track {
+    border-radius: $border-radius-scrollbar;
+  }
+
+  .bds-textarea-box::-webkit-scrollbar {
+    width: $width-scrollbar;
+  }
+
+  .bds-textarea-box::-webkit-scrollbar-thumb {
+    border-radius: $border-radius-scrollbar;
+    background-color: $scroll-bar-color;
+  }
+}

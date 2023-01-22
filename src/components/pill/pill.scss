@@ -1,0 +1,113 @@
+@import '../../global-style/index.scss';
+
+$pill-container-width: getRem(117px);
+$pill-container-height: getRem(32px);
+$pill-container-read-only-width: getRem(93px);
+$pill-container-border-color: $gray-50;
+$pill-container-error-border-color: $error-color;
+$pill-container-disabled-border-color: $gray-30;
+$pill-container-readOnly-border-color: $unselected-tab-txt-color;
+$pill-container-border-width: getRem(1px);
+$pill-container-error-border-width: getRem(2px);
+$pill-container-border-radius: getRem(16px);
+$pill-label-width: getRem(61px);
+$pill-label-height: getRem(19px);
+$pill-icon-width: getRem(16px);
+$pill-icon-height: getRem(16px);
+$pill-label-margin-top: getRem(5px);
+$pill-label-margin-right: getRem(8px);
+$pill-label-read-only-margin-right: getRem(15px);
+$pill-label-margin-bottom: getRem(6px);
+$pill-label-margin-left: getRem(15px);
+$pill-icon-margin-right: getRem(7px);
+$pill-icon-margin-left: getRem(0px);
+$pill-icon-margin-top-bottom: getRem(3px);
+$pill-label-font-size: getRem(14px);
+$pill-label-letter-spacing: getRem(0.32px);
+$pill-hover-background-color: $gray-20;
+$pill-background-color: $default-page-bg;
+$pill-label-text-color: $gray-80;
+$pill-label-disabled-color: $gray-30;
+$pill-label-read-only-color: $unselected-tab-txt-color;
+$pill-label-max-width: getRem(384px);
+
+.bds-pill-container {
+  width: fit-content;
+  height: $pill-container-height;
+  display: flex;
+  align-items: center;
+  border-radius: $pill-container-border-radius;
+  border: $pill-container-border-width solid $pill-container-border-color;
+  background: $pill-background-color;
+  box-sizing: border-box;
+  &:hover {
+    background: $pill-hover-background-color;
+  }
+}
+
+.bds-error-pill {
+  border: $pill-container-error-border-width solid $pill-container-error-border-color;
+}
+
+.bds-disabled-pill {
+  border: $pill-container-border-width solid $pill-container-disabled-border-color;
+  &:hover {
+    background: $pill-background-color;
+  }
+}
+
+.bds-read-only-pill {
+  border: $pill-container-border-width solid $pill-container-readOnly-border-color;
+  justify-content: center;
+  &:hover {
+    background: $pill-background-color;
+  }
+}
+
+.bds-pill-label {
+  height: $pill-label-height;
+  margin: $pill-label-margin-top $pill-label-margin-right $pill-label-margin-bottom
+    $pill-label-margin-left;
+  display: inline;
+  font-size: $pill-label-font-size;
+  font-family: $font-type-01;
+  letter-spacing: $pill-label-letter-spacing;
+  color: $pill-label-text-color;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: $pill-label-max-width;
+}
+
+.bds-pill-label-disabled {
+  color: $pill-label-disabled-color;
+}
+
+.bds-pill-label-read-only {
+  margin-right: $pill-label-read-only-margin-right;
+  color: $pill-label-read-only-color;
+}
+
+.bds-pill-icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bds-pill-icon {
+  width: $pill-icon-width;
+  height: $pill-icon-height;
+  margin: $pill-icon-margin-top-bottom $pill-icon-margin-right $pill-icon-margin-top-bottom
+    $pill-icon-margin-left;
+  color: $gray-60;
+  &:hover {
+    color: $focus-border;
+  }
+}
+
+.bds-pill-icon-disabled {
+  color: $gray-30;
+  &:hover {
+    color: $gray-30;
+  }
+}

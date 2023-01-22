@@ -1,0 +1,19 @@
+{
+    "env": {
+      "browser": true,
+      "es6": true,
+      "node": true
+    },
+    "extends": "eslint:recommended", 
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "jsx": true // Enable JSX since we're using React
+      }
+    },
+    "rules": {
+      "no-unused-vars": "off",
+      "no-extra-boolean-cast": "off"
+    }
+  }

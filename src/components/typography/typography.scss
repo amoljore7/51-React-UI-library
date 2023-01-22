@@ -1,0 +1,136 @@
+@import '../../global-style/index.scss';
+@import './typographyTokens.scss';
+
+.typography-code-01 {
+  font-family: $font-type-02;
+  font-size: $code-01-size;
+  line-height: $code-01-line-height;
+  font-weight: $weight-400;
+  letter-spacing: $letter-spacing-0-32;
+}
+.typography-button-label {
+  font-family: $font-type-01;
+  font-size: $button-label-size;
+  line-height: $button-label-line-height;
+  font-weight: $weight-400;
+  letter-spacing: $letter-spacing-0;
+}
+.typography-label-01 {
+  font-family: $font-type-01;
+  font-size: $label-01-size;
+  line-height: $label-01-line-height;
+  font-weight: $weight-400;
+  letter-spacing: $letter-spacing-0-32;
+}
+.typography-label-02 {
+  font-family: $font-type-01;
+  font-size: $label-02-size;
+  line-height: $label-02-line-height;
+  font-weight: $weight-600;
+  letter-spacing: $letter-spacing-0-32;
+}
+.typography-caption-01 {
+  font-family: $font-type-01;
+  font-size: $caption-01-size;
+  line-height: $caption-01-line-height;
+  font-weight: $weight-400;
+  letter-spacing: $letter-spacing-0-32;
+}
+.typography-helper-text-01 {
+  font-family: $font-type-01;
+  font-size: $helper-text-01-size;
+  line-height: $helper-text-01-line-height;
+  font-weight: $weight-400;
+  letter-spacing: $letter-spacing-0-32;
+}
+.typography-page-title {
+  font-family: $font-type-01;
+  font-size: $page-title-size;
+  line-height: $page-title-line-height;
+  font-weight: $weight-400;
+  letter-spacing: $letter-spacing-0;
+}
+.typography-page-section-header {
+  font-family: $font-type-01;
+  font-size: $page-section-header-size;
+  line-height: $page-section-header-line-height;
+  font-weight: $weight-400;
+  $letter-spacing-0-1: $letter-spacing-0-1;
+}
+.typography-body-text {
+  font-family: $font-type-01;
+  font-size: $body-text-size;
+  line-height: $body-text-line-height;
+  font-weight: $weight-400;
+  letter-spacing: $letter-spacing-0;
+}
+.typography-heading-07 {
+  font-family: $font-type-01;
+  font-size: $heading-01-size;
+  line-height: $heading-01-line-height;
+  font-weight: $weight-600;
+  letter-spacing: $letter-spacing-0-16;
+}
+.typography-heading-06 {
+  font-family: $font-type-01;
+  font-size: $heading-02-size;
+  line-height: $heading-02-line-height;
+  font-weight: $weight-600;
+  letter-spacing: $letter-spacing-0;
+}
+.typography-heading-05 {
+  font-family: $font-type-01;
+  font-size: $heading-03-size;
+  line-height: $heading-03-line-height;
+  font-weight: $weight-400;
+  letter-spacing: $letter-spacing-0;
+}
+.typography-heading-04 {
+  font-family: $font-type-01;
+  font-size: $heading-04-size;
+  line-height: $heading-04-line-height;
+  font-weight: $weight-400;
+  letter-spacing: $letter-spacing-0;
+}
+.typography-heading-03 {
+  font-family: $font-type-01;
+  font-size: $heading-05-size;
+  line-height: $heading-05-line-height;
+  font-weight: $weight-400;
+  letter-spacing: $letter-spacing-0;
+}
+.typography-heading-02 {
+  font-family: $font-type-01;
+  font-size: $heading-06-size;
+  line-height: $heading-06-line-height;
+  font-weight: $weight-400;
+  letter-spacing: $letter-spacing-0;
+}
+.typography-heading-01 {
+  font-family: $font-type-01;
+  font-size: $heading-07-size;
+  line-height: $heading-07-line-height;
+  font-weight: $weight-400;
+  letter-spacing: $letter-spacing-0;
+}
+
+.typography-button-label,
+.typography-caption-01,
+.typography-helper-text-01,
+.typography-label-01,
+.typography-label-02 {
+  display: block;
+}
+
+.typography-heading-01,
+.typography-heading-02,
+.typography-heading-03,
+.typography-heading-04,
+.typography-heading-05,
+.typography-heading-06,
+.typography-heading-07,
+.typography-page-title,
+.typography-page-section-header,
+.typography-body-text {
+  margin: 0;
+}

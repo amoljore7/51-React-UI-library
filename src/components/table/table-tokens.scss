@@ -1,0 +1,82 @@
+@import '../../global-style/index.scss';
+
+$table-search-input-border-color: $gray-40;
+
+$table-cell-custom-height: getRem(48px);
+$table-min-width: getRem(424px);
+$pagination-padding-right: getRem(16px);
+$table-search-padding-right: getRem(16px);
+$table-search-padding-top-bottom: getRem(8px);
+$pagination-border-color: $gray-40;
+$pagination-item-border-color: $gray-40;
+$pagination-size-border-color: $gray-40;
+$pagination-size-text-color: $gray-60;
+$pagination-item-hover-background: $gray-20;
+$pagination-label-color: $gray-60;
+
+$pagination-border-width: getRem(0.5px);
+$pagination-item-height: getRem(32px);
+$pagination-item-border-radius: getRem(2px);
+$pagination-item-border-width: getRem(1px);
+$pagination-prev-right-margin: getRem(8px);
+$pagination-next-left-margin: getRem(8px);
+$pagination-size-height: getRem(32px);
+$pagination-size-padding: getRem(8px);
+
+$pagination-size-border-width: getRem(1px);
+$pagination-size-def-left-margin: getRem(16px);
+$pagination-size-font-size: getRem(14px);
+$pagination-container-top-bottom-padding: getRem(12px);
+
+$page-range-margin: getRem(32px);
+$page-range-font-size: getRem(16px);
+$page-range-line-height: getRem(22px);
+$page-range-font-weight: 600;
+$page-range-color: $gray-60;
+
+$pagination-root-z-index: 10000;
+$pagination-label-font-size: getRem(14px);
+$pagination-label-color: $gray-60;
+
+$pagination-icon-size: getRem(24px);
+$table-search-container-left-padding: getRem(8px);
+$table-pagination-height: getRem(56px);
+$table-border-color: $gray-40;
+$table-border-width: getRem(1px);
+$table-header-border-color: $gray-30;
+$table-header-background-color: $blue-60;
+$table-header-padding-top: getRem(15.5px);
+$table-header-padding-bottom: getRem(16.5px);
+$table-header-letter-spacing: getRem(0.16px);
+$table-header-border-width: getRem(0.5px);
+$table-header-font-weight: 600;
+$table-header-font-size: getRem(14px);
+$table-header-max-height: getRem(56px);
+
+$table-cell-border-color: $gray-30;
+$table-cell-text-color: $gray-80;
+$table-cell-background-color: $gray-20;
+$table-cell-border-width: getRem(0.5px);
+$table-cell-padding-left-right: getRem(16px);
+$table-cell-font-size: getRem(14px);
+$table-row-hover-background: $gray-20;
+$table-cell-line-height: getRem(19px);
+$table-cell-letter-spacing: getRem(0.32px);
+$table-cell-padding-top: getRem(13.5px);
+$table-cell-padding-bottom: getRem(14.5px);
+$table-cell-height: getRem(48px);
+
+$page-nav-regular-color: $gray-60;
+$page-nav-hover-color: $gray-80;
+$page-nav-disabled-color: $gray-30;
+$overflow-menu-border-radius: getRem(3px);
+$overflow-menu-padding: getRem(8px);
+$overflow-menu-font-size: getRem(14px);
+$overflow-menu-item-letter-spacing: getRem(0.32px);
+$overflow-menu-border-color: $gray-80;
+$overflow-menu-item-hover-background: $gray-20;
+$overflow-menu-border-size: getRem(1px);
+$resizer-hover-color: $blue-60-hover;
+$resize-width: getRem(4px);
+$resize-height: getRem(56px);
+$table-header-min-width: getRem(88px);

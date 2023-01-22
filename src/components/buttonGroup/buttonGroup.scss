@@ -1,0 +1,19 @@
+@import '../../global-style/index.scss';
+
+$border-radius: getRem(3px);
+
+.bds-btn-group {
+    display: flex;
+
+    & > button:not(:last-child):not(:first-child) {
+        border-radius: 0;
+    }
+
+    & > button:first-child {
+        border-radius: $border-radius 0 0 $border-radius;
+    }
+
+    & > button:last-child {
+        border-radius: 0 $border-radius $border-radius 0;
+    }
+}

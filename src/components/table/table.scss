@@ -1,0 +1,334 @@
+@import '../../global-style/index.scss';
+@import './table-tokens.scss';
+
+.bds-table-container {
+  width: 100%;
+  height: 100%;
+  min-width: $table-min-width;
+
+  .bds-table-sort-icon-resize-container {
+    display: flex;
+  }
+
+  .bds-table {
+    border: $table-border-width solid $table-border-color;
+    width: 100%;
+    height: 100%;
+    display: table;
+  }
+
+  .bds-table-pagination {
+    box-sizing: border-box;
+    min-height: $table-pagination-height;
+    border: $pagination-border-width solid $pagination-border-color;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding-right: $pagination-padding-right;
+    background: $white;
+    max-width: 100%;
+    min-width: $table-min-width;
+  }
+
+  .bds-table-search-container {
+    display: flex;
+    padding-left: $table-search-container-left-padding;
+    padding-top: $table-search-padding-top-bottom;
+    padding-bottom: $table-search-padding-top-bottom;
+    .search-container {
+      border-color: $table-search-input-border-color;
+    }
+  }
+
+  .bds-pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: $table-search-padding-right;
+  }
+
+  .bds-pagination-container {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    padding-top: $pagination-container-top-bottom-padding;
+    padding-bottom: $pagination-container-top-bottom-padding;
+  }
+
+  .bds-pagination-label {
+    font-family: $font-type-01;
+    color: $pagination-label-color;
+    font-size: $pagination-label-font-size;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+  }
+  .bds-pagination-default {
+    box-sizing: border-box;
+    width: fit-content;
+    height: $pagination-size-height;
+    padding: $pagination-size-padding;
+    border: $pagination-size-border-width solid $pagination-size-border-color;
+    border-radius: $pagination-item-border-radius;
+    display: flex;
+    align-items: center;
+    margin-left: $pagination-size-def-left-margin;
+    cursor: pointer;
+  }
+
+  .bds-pagination-options-active {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .bds-pagination-default > svg {
+    margin-left: $pagination-size-def-left-margin;
+  }
+
+  .bds-pagination-default-text {
+    font-family: $font-type-01;
+    color: $pagination-size-text-color;
+    font-size: $pagination-size-font-size;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bds-pagination-default-icon span {
+    padding: 0;
+    margin: 0;
+  }
+  .bds-pagination-navigation {
+    display: flex;
+    align-items: center;
+  }
+
+  .bds-pagination-navigation-prev {
+    display: flex;
+    margin-right: $pagination-prev-right-margin;
+    color: $page-nav-regular-color;
+    width: $pagination-icon-size;
+    height: $pagination-icon-size;
+    cursor: pointer;
+  }
+  .bds-pagination-navigation-next {
+    display: flex;
+    margin-left: $pagination-next-left-margin;
+    color: $page-nav-regular-color;
+    width: $pagination-icon-size;
+    height: $pagination-icon-size;
+    cursor: pointer;
+  }
+  .bds-pagination-navigation-hover {
+    color: $page-nav-hover-color;
+    background-color: $pagination-item-hover-background;
+  }
+
+  .bds-pagination-navigation-disabled {
+    color: $page-nav-disabled-color;
+    &:hover {
+      background: none;
+    }
+  }
+
+  .bds-pagination-range {
+    display: flex;
+    width: fit-content;
+    margin-left: $page-range-margin;
+    margin-right: $page-range-margin;
+    font-size: $page-range-font-size;
+    font-family: $font-type-01;
+    line-height: $page-range-line-height;
+    color: $page-range-color;
+    font-weight: $page-range-font-weight;
+  }
+
+  @mixin def-table-cell {
+    box-sizing: border-box;
+    padding-left: $table-cell-padding-left-right;
+    padding-right: $table-cell-padding-left-right;
+    color: $table-cell-text-color;
+  }
+  table.bds-table thead th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    min-width: $table-header-min-width;
+  }
+
+  .bds-table-header-cell {
+    @include def-table-cell;
+    color: $white;
+    background: $table-header-background-color;
+    border: $table-header-border-width solid $table-header-border-color;
+    border-top: none;
+    border-left: none;
+    padding-right: 0;
+    font-size: $table-header-font-size;
+    min-width: $table-header-min-width;
+    height: $table-header-max-height;
+  }
+  .bds-table-header-cell:first-child {
+    border-left: none;
+  }
+  .bds-table-header-cell:last-child {
+    border-right: none;
+  }
+
+  .bds-table-header-text-icon {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 0;
+    overflow: hidden;
+    height: 100%;
+  }
+  .bds-table-resizer {
+    display: flex;
+    background: none;
+    width: $resize-width;
+    height: $resize-height;
+    min-width: 0;
+    cursor: col-resize;
+  }
+  .bds-table-resizer-hover {
+    background: $table-border-color;
+  }
+
+  .bds-table-header-text {
+    font-weight: $table-header-font-weight;
+    font-family: $font-type-01;
+    letter-spacing: $table-header-letter-spacing;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    min-width: 0;
+    white-space: nowrap;
+  }
+  .bds-table-header-icon {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .bds-table-cell {
+    @include def-table-cell;
+    font-size: $table-cell-font-size;
+    font-family: $font-type-01;
+    line-height: $table-cell-line-height;
+    letter-spacing: $table-cell-letter-spacing;
+    padding-top: $table-cell-padding-top;
+    padding-bottom: $table-cell-padding-bottom;
+    border: $table-cell-border-width solid $table-cell-border-color;
+    border-top: none;
+    border-left: none;
+    max-width: 0;
+  }
+
+  .bds-table-cell-render {
+    @include def-table-cell;
+    font-size: $table-cell-font-size;
+    font-family: $font-type-01;
+    line-height: $table-cell-line-height;
+    letter-spacing: $table-cell-letter-spacing;
+    border: $table-cell-border-width solid $table-cell-border-color;
+    border-top: none;
+    border-left: none;
+    max-width: 0;
+  }
+
+  .bds-table-row > .bds-table-cell-render:last-child {
+    border-right: none;
+  }
+  .bds-table-row:last-child > .bds-table-cell-render {
+    border-bottom: none;
+  }
+
+  .bds-table-cell-custom {
+    box-sizing: border-box;
+    width: 100%;
+    border-left: none;
+    overflow: hidden;
+  }
+  .bds-table-row:last-child .bds-table-cell,
+  .bds-table-row:last-child .bds-table-cell-custom {
+    border-bottom: none;
+  }
+
+  .bds-table-row td:last-child .bds-table-cell-custom {
+    border-right: none;
+  }
+  .bds-table-row td.bds-table-cell:last-child {
+    border-right: none;
+  }
+
+  .bds-table-row:hover {
+    background-color: $table-row-hover-background;
+  }
+  .bds-table-row:hover .bds-table-cell,
+  .bds-table-cell-render {
+    border-right-color: $table-row-hover-background;
+    border-left-color: $table-row-hover-background;
+  }
+  .bds-overflow-menu-item {
+    font-size: $overflow-menu-font-size;
+    font-family: $font-type-01;
+  }
+  .bds-overflow-menu-item:hover {
+    background-color: $overflow-menu-item-hover-background;
+    letter-spacing: $overflow-menu-item-letter-spacing;
+  }
+  table,
+  tbody,
+  thead,
+  tr,
+  th,
+  td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: middle;
+    background: transparent;
+    border-collapse: unset;
+    text-indent: initial;
+    border-spacing: 0;
+  }
+
+  td.bds-table-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    height: $table-cell-height;
+    white-space: nowrap;
+  }
+  table.bds-table {
+    table-layout: fixed;
+  }
+}
+
+#bds-pagination-root {
+  box-sizing: border-box;
+  position: absolute;
+  z-index: $pagination-root-z-index;
+  margin: 0;
+  top: 0;
+  left: 0;
+  background-color: $white;
+  .bds-pagination-rest {
+    height: $pagination-size-height;
+    padding: $pagination-size-padding;
+    box-sizing: border-box;
+    border: $pagination-item-border-width solid $pagination-item-border-color;
+    border-top: none;
+    font-family: $font-type-01;
+    color: $pagination-size-text-color;
+    font-size: $pagination-size-font-size;
+    &:hover {
+      background-color: $pagination-item-hover-background;
+    }
+  }
+}

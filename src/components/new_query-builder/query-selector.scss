@@ -1,0 +1,49 @@
+@import "../../global-style/index.scss";
+
+$bds-progress-bar-value-left-margin: getRem(8px);
+$pill-container-border-width: getRem(1px);
+$pill-container-error-border-width: getRem(1px);
+$pill-container-border-color: $gray-50;
+$pill-container-error-border-color: $error-color;
+$font-size-helper-text: getRem(16px);
+
+.bds-new-query-selector-parent-container {
+  display: flex;
+  padding: 4px 0;
+
+  .bds-new-query-selector-level-one-container {
+    width: max-content;
+    border: $pill-container-border-width solid $pill-container-border-color;
+    border-radius: 25px;
+    padding: 5px 15px;
+    background-color: $gray-10;
+
+    .bds-new-query-selector-level-one-fields {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .bds-new-query-selector-cancel-icon {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .bds-new-query-selector-pipe {
+      border-left: solid $gray-80;
+      margin: 10px 0;
+    }
+  }
+
+  .bds-new-query-selector-error-pill {
+    border: $pill-container-error-border-width solid
+      $pill-container-error-border-color;
+  }
+
+  .bds-new-query-selector-error-msg-text {
+    font-size: $font-size-helper-text;
+    color: $error-txt-color;
+    padding-top: 2px;
+  }
+}

@@ -1,0 +1,55 @@
+@import '../../global-style/index.scss';
+
+$search-menu-container-border-width: getRem(1px);
+$search-menu-container-border-color: $gray-30;
+$search-menu-container-padding: getRem(10px);
+$search-menu-clear-label: $link-label;
+$search-menu-clear-label-margin-top: getRem(16px);
+$search-menu-item-height: getRem(222px);
+$search-menu-options-container-gap: getRem(8px);
+$search-menu-options-container-height: getRem(24px);
+$search-menu-options-container-margin-top: getRem(16px);
+$search-menu-options-container-title-width: getRem(160px);
+$options-container-border-radius: getRem(3px);
+
+.bds-overflow-menu-search-container {
+  border: $search-menu-container-border-width solid $search-menu-container-border-color;
+  padding: $search-menu-container-padding;
+  box-sizing: border-box;
+  overflow: auto;
+  border-radius: $options-container-border-radius;
+
+  .bds-overflow-menu-search-searchWrapper {
+    width: fit-content;
+    margin: auto;
+  }
+  .bds-overflow-menu-search-clear-label {
+    color: $search-menu-clear-label;
+    cursor: pointer;
+    margin-top: $search-menu-clear-label-margin-top;
+  }
+  .bds-overflow-menu-search-clear-label-blur {
+    opacity: 30%;
+    cursor: auto;
+  }
+
+  .bds-overflow-menu-search-menuItem {
+    max-height: $search-menu-item-height;
+    overflow: auto;
+    .bds-overflow-menu-search-options-container {
+      display: flex;
+      gap: $search-menu-options-container-gap;
+      height: $search-menu-options-container-height;
+      margin-bottom: $search-menu-options-container-margin-top;
+    }
+    .bds-overflow-menu-search-options-container:first-child {
+      margin-top: $search-menu-options-container-margin-top;
+    }
+    .bds-overflow-menu-search-title-ellipsis {
+      white-space: nowrap;
+      width: $search-menu-options-container-title-width;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}

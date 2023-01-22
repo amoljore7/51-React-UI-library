@@ -1,0 +1,119 @@
+@import '../../global-style/index.scss';
+
+$font-size: getRem(14px);
+$font-size-menu-title: getRem(20px);
+
+$drawer-width: getRem(304px);
+$drawer-height: 100vh;
+
+$icon-width: getRem(24px);
+$icon-height: getRem(24px);
+$height-nav-list: getRem(24px);
+$height-group-header: getRem(48px);
+$width-scrollbar: getRem(10px);
+$height-menu-title: getRem(70px);
+
+$padding-top-nav-list: getRem(20px);
+$padding-bottom-nav-list: getRem(20px);
+$padding-top-menu-title: getRem(26px);
+$padding-left-items: getRem(32px);
+
+$border-bottom-menu-title: getRem(3px);
+$border-radius-scrollbar: getRem(5px);
+$border-right-drawer: getRem(2px);
+
+@mixin nav-list {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  list-style: none;
+  font-size: $font-size;
+  height: $height-nav-list;
+  padding-top: $padding-top-nav-list;
+  padding-bottom: $padding-bottom-nav-list;
+}
+
+.drawer {
+  font-family: $font-type-01;
+  background-color: $primary-container-bg;
+  width: $drawer-width;
+  border-right: $border-right-drawer solid $med-contrast-border;
+  position: relative;
+  top: 0;
+  left: -100%;
+  transition: 850ms;
+  z-index: 9999;
+}
+
+.drawer.active {
+  left: 0;
+  transition: 350ms;
+}
+.drawer-items {
+  width: 100%;
+  height: calc(#{$drawer-height} - #{$height-menu-title});
+  overflow-y: hidden;
+}
+.drawer-items:hover {
+  overflow-y: auto;
+}
+
+.nav-list {
+  @include nav-list();
+  color: $secondary-txt-color;
+}
+.nav-list:hover {
+  background-color: $ui-selected-color;
+  cursor: pointer;
+}
+.nav-list-focus {
+  @include nav-list();
+  background-color: $focus-border;
+  cursor: pointer;
+  color: $interactive-txt-color;
+}
+
+.group-header {
+  text-decoration: none;
+  color: $secondary-icn-color;
+  font-size: $font-size;
+  display: flex;
+  align-items: center;
+  padding-left: $padding-left-items;
+  height: $height-group-header;
+}
+
+.menu-title {
+  text-decoration: none;
+  padding-top: $padding-top-nav-list;
+  padding-bottom: $padding-bottom-nav-list;
+  color: $secondary-txt-color;
+  font-size: $font-size-menu-title;
+  display: flex;
+  align-items: center;
+  padding-left: $padding-left-items;
+  border-bottom: $border-bottom-menu-title solid $med-contrast-border;
+}
+
+.nav-list-items {
+  display: flex;
+  padding-left: $padding-left-items;
+}
+
+.nav-icon {
+  width: $icon-width;
+  height: $icon-height;
+}
+
+.drawer-items::-webkit-scrollbar-track {
+  border-radius: $border-radius-scrollbar;
+}
+
+.drawer-items::-webkit-scrollbar {
+  width: $width-scrollbar;
+}
+
+.drawer-items::-webkit-scrollbar-thumb {
+  border-radius: $border-radius-scrollbar;
+  background-color: $scroll-bar-color;
+}

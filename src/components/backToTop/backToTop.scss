@@ -1,0 +1,39 @@
+@import '../../global-style/index.scss';
+
+$back-to-top-border-radius: 50%;
+$back-to-top-height: getRem(56px);
+$back-to-top-width: getRem(56px);
+$back-to-top-arrow-fill-color: white;
+
+.bds-back-to-top-container {
+  position: absolute;
+
+  box-sizing: border-box;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: $back-to-top-height;
+  width: $back-to-top-width;
+  border-radius: $back-to-top-border-radius;
+
+  background-color: $blue-60;
+
+  &:hover {
+    background-color: $blue-60-hover;
+  }
+}
+
+.bds-back-to-top-arrow {
+  color: $back-to-top-arrow-fill-color;
+  display: flex;
+}
+
+[id^='bds-back-to-top-modal'] {
+  position: fixed;
+  width: fit-content;
+  height: fit-content;
+  min-height: 0;
+  z-index: 90;
+}

@@ -1,0 +1,138 @@
+@import '../../global-style/index.scss';
+
+$gray-30: #c6c6c6;
+$gray-60: #6f6f6f;
+$gray-80: #393939;
+
+$dialog-container-border: getRem(1px);
+$dialog-container-opacity: 1;
+$dialog-container-min-width: getRem(464px);
+$dialog-container-min-height: getRem(278px);
+$dialog-container-background-color: #ffffff;
+$popup-strap-height: getRem(8px);
+$popup-strap-min-width: getRem(462px);
+$title-container-margin-left: getRem(32px);
+$title-container-margin-top: getRem(32px);
+$title-container-margin-bottom: getRem(16px);
+$icon-container-margin-right: getRem(32px);
+$icon-container-margin-top: getRem(39px);
+$icon-container-margin-bottom: getRem(24px);
+$icon-container-height: getRem(24px);
+$message-container-margin-top: getRem(0px);
+$message-container-margin-right: getRem(32px);
+$message-container-margin-bottom: getRem(32px);
+$message-container-margin-left: getRem(32px);
+$button-container-margin-right: getRem(32px);
+$button-container-margin-bottom: getRem(32px);
+$button-wrapper-margin-left: getRem(16px);
+$overlay-container-background-color: #161616;
+$overlay-container-opacity: 0.3;
+$scrollbar-width: getRem(8px);
+$scrollbar-border-radius: getRem(8px);
+$scrollbar-margin-top: getRem(2px);
+$margin-dialog-children-wrapper: getRem(32px);
+
+h2.typography-heading-04 {
+  margin: 0;
+}
+
+p.typography-body-text {
+  margin: 0;
+}
+
+.dialog-container {
+  display: flex;
+  flex-direction: column;
+  border: $dialog-container-border solid $gray-60;
+  box-sizing: border-box;
+  opacity: $dialog-container-opacity;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: $dialog-container-min-width;
+  min-height: $dialog-container-min-height;
+  background-color: $dialog-container-background-color;
+  z-index: 40;
+
+  .popup-strap {
+    min-height: $popup-strap-height;
+    min-width: $popup-strap-min-width;
+  }
+
+  .heading-container {
+    display: flex;
+    justify-content: space-between;
+
+    .title-container {
+      margin-left: $title-container-margin-left;
+      margin-top: $title-container-margin-top;
+      margin-bottom: $title-container-margin-bottom;
+      color: $gray-80;
+    }
+
+    .icon-container {
+      margin-right: $icon-container-margin-right;
+      margin-top: $icon-container-margin-top;
+      margin-bottom: $icon-container-margin-bottom;
+      height: $icon-container-height;
+    }
+  }
+
+  .message-container {
+    display: flex;
+    margin: $message-container-margin-top $message-container-margin-right
+      $message-container-margin-bottom $message-container-margin-left;
+    color: $gray-80;
+    overflow-y: hidden;
+    flex-grow: 2;
+  }
+
+  .message-container:hover {
+    overflow-y: auto;
+  }
+
+  .message-container::-webkit-scrollbar {
+    width: $scrollbar-width;
+  }
+
+  .message-container::-webkit-scrollbar-track {
+    border-radius: $scrollbar-border-radius;
+    margin-top: $scrollbar-margin-top;
+  }
+
+  .message-container::-webkit-scrollbar-thumb {
+    border-radius: $scrollbar-border-radius;
+    background-color: $gray-30;
+  }
+
+  .message-container::-webkit-scrollbar-thumb:hover {
+    background-color: $gray-60;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: $button-container-margin-right;
+    margin-bottom: $button-container-margin-bottom;
+
+    .button-wrapper:last-child:not(:first-of-type) {
+      margin-left: $button-wrapper-margin-left;
+    }
+  }
+  .dialog-children-wrapper {
+    margin: 0 $margin-dialog-children-wrapper $margin-dialog-children-wrapper
+      $margin-dialog-children-wrapper;
+  }
+}
+
+.overlay-container {
+  position: fixed;
+  background-color: $overlay-container-background-color;
+  opacity: $overlay-container-opacity;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+}

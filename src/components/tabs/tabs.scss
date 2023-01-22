@@ -1,0 +1,113 @@
+@import '../../global-style/index.scss';
+
+$font-size-title: getRem(16px);
+$font-weight-title: 600;
+
+$variant-fixed-width: 100%;
+$variant-auto-width-left-aligned: 100%;
+$horizontal-tab-title-width: getRem(128px);
+$scrollbar-height: getRem(8px);
+
+$margin-right-title: getRem(4px);
+$margin-left-title: getRem(4px);
+$margin-right-icon-boxt: getRem(4px);
+$margin-left-icon-box: getRem(4px);
+
+$margin-right-tab-list-container: getRem(32px);
+$margin-left-tab-list-container: getRem(32px);
+$margin-top-tab-list-container: getRem(16px);
+$margin-bottom-tab-list-container: getRem(16px);
+$margin-bottom-tab-selected: getRem(14px);
+
+$border-bottom-unselected-tab: getRem(2px);
+$border-bottom-selected-tab: getRem(4px);
+$border-radius-scrollbar: getRem(8px);
+
+.bds-horizontal-tabs-ul-list {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow: auto;
+}
+.bds-variant-auto::after {
+  content: '';
+  width: $variant-auto-width-left-aligned;
+  border-bottom: $border-bottom-unselected-tab solid $unselected-tab-border-color;
+}
+.bds-horizontal-tabs-li-list {
+  display: flex;
+  justify-content: center;
+  white-space: nowrap;
+  cursor: pointer;
+  border-bottom: $border-bottom-unselected-tab solid $unselected-tab-border-color;
+}
+.bds-horizontal-tabs-li-list.bds-selected {
+  .bds-horizontal-tab-container {
+    margin-bottom: $margin-bottom-tab-selected;
+  }
+  .bds-horizontal-tab-title {
+    color: $selected-tab-txt-color;
+  }
+  border-bottom: $border-bottom-selected-tab solid $selected-tab-border-color;
+}
+
+.bds-variant-fixed {
+  width: $variant-fixed-width;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bds-horizontal-tab-container {
+  font-family: $font-type-01;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-top: $margin-top-tab-list-container;
+  margin-bottom: $margin-bottom-tab-list-container;
+  margin-right: $margin-right-tab-list-container;
+  margin-left: $margin-left-tab-list-container;
+}
+.bds-horizontal-tab-title {
+  font-family: $font-type-01;
+  display: flex;
+  vertical-align: middle;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-title;
+  font-weight: $font-weight-title;
+  color: $unselected-tab-txt-color;
+  margin-right: $margin-right-title;
+  margin-left: $margin-left-title;
+}
+.bds-horizontal-tab-icon-box {
+  display: flex;
+  vertical-align: middle;
+  cursor: pointer;
+  align-items: center;
+  margin-right: $margin-right-icon-boxt;
+  margin-left: $margin-left-icon-box;
+  justify-content: center;
+  color: $interactive-active-02;
+}
+
+.bds-horizontal-tabs-ul-list::-webkit-scrollbar {
+  height: $scrollbar-height;
+}
+
+.bds-horizontal-tabs-ul-list::-webkit-scrollbar-track {
+  border-radius: $border-radius-scrollbar;
+}
+
+.bds-horizontal-tabs-ul-list::-webkit-scrollbar-thumb {
+  border-radius: $border-radius-scrollbar;
+  background-color: $scroll-bar-color;
+}
+
+.bds-horizontal-tabs-ul-list::-webkit-scrollbar-thumb:hover {
+  background-color: $scroll-bar-hover-color;
+}

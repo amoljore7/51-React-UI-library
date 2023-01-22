@@ -1,0 +1,90 @@
+@import '../../global-style/index.scss';
+
+$tree-container-left-border-color: $gray-40;
+$tree-container-right-border-width: getRem(2px);
+$tree-container-right-hover-border: $blue-70;
+$tree-resize-line-margin-left: getRem(1px);
+$tree-scroll-width: getRem(8px);
+$tree-scroll-background: $gray-30;
+$tree-scroll-background-hover: $gray-60;
+$tree-scroll-border-radius: getRem(10px);
+$tree-width: getRem(304px);
+
+.tree-bounding-container {
+  position: relative;
+  height: 100%;
+}
+.tree-container {
+  display: inline-block;
+  width: $tree-width;
+  height: 100%;
+  overflow: hidden;
+  &:hover {
+    overflow: overlay;
+  }
+}
+@-moz-document url-prefix() {
+  .tree-container:hover {
+    overflow: auto;
+    scrollbar-color: $tree-scroll-background;
+  }
+
+  .tree-container::-webkit-scrollbar {
+    width: $tree-scroll-width;
+    border-radius: $tree-scroll-border-radius;
+  }
+
+  .tree-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .tree-container::-webkit-scrollbar-thumb {
+    background: $tree-scroll-background;
+    border-radius: $tree-scroll-border-radius;
+  }
+
+  .tree-container::-webkit-scrollbar-thumb:hover {
+    background: $tree-scroll-background-hover;
+    border-radius: $tree-scroll-border-radius;
+  }
+}
+
+.tree-container::-webkit-scrollbar {
+  width: $tree-scroll-width;
+  border-radius: $tree-scroll-border-radius;
+}
+
+.tree-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tree-container::-webkit-scrollbar-thumb {
+  background: $tree-scroll-background;
+  border-radius: $tree-scroll-border-radius;
+}
+
+.tree-container::-webkit-scrollbar-thumb:hover {
+  background: $tree-scroll-background-hover;
+  border-radius: $tree-scroll-border-radius;
+}
+
+.tree-resize-line {
+  display: inline-block;
+  position: absolute;
+  height: 100%;
+  width: $tree-container-right-border-width;
+  cursor: col-resize;
+  pointer-events: auto;
+  background-color: $tree-container-left-border-color;
+  margin-left: $tree-resize-line-margin-left;
+}
+.tree-resize-line:hover {
+  background-color: $blue-70;
+  cursor: col-resize;
+  pointer-events: auto;
+}
+.tree-resize-line:active {
+  background-color: $blue-70;
+  cursor: col-resize;
+  pointer-events: auto;
+}

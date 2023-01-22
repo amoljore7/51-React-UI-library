@@ -1,0 +1,112 @@
+@import '../../global-style/index.scss';
+
+$z-index-notif: 9999;
+
+$font-size: getRem(14px);
+
+$line-height-title: getRem(19px);
+$margin-top-title: getRem(7px);
+$margin-bottom-title: getRem(8px);
+
+$icon-width: getRem(24px);
+$icon-height: getRem(24px);
+$margin-left-icon: getRem(16px);
+$margin-right-icon: getRem(8px);
+$margin-top-icon: getRem(8px);
+$margin-bottom-icon: getRem(8px);
+$margin-left-icon-close: getRem(8px);
+$margin-right-icon-close: getRem(16px);
+$in-place-notification-padding: getRem(16px);
+$in-place-notification-border-radius: getRem(6px);
+
+.bds-notification-container {
+  font-family: $font-type-01;
+  box-sizing: border-box;
+  z-index: $z-index-notif;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  &.bds-notification-container-in-place {
+    z-index: 0;
+  }
+}
+
+.bds-notification-container-in-place > .bds-notification {
+  border-radius: $in-place-notification-border-radius;
+}
+
+.bds-notification {
+  background-color: $info-color;
+  padding-right: $margin-right-icon-close;
+  display: flex;
+  align-items: center;
+}
+
+.bds-notification:hover {
+  cursor: pointer;
+}
+
+.bds-notification-title {
+  vertical-align: middle;
+  display: flex;
+  font-size: $font-size;
+  margin-top: $margin-top-title;
+  line-height: $line-height-title;
+  margin-bottom: $margin-bottom-title;
+}
+.bds-notification-title a {
+  color: inherit;
+}
+
+.bds-notification-image {
+  display: flex;
+  margin-left: $margin-left-icon;
+  margin-right: $margin-right-icon;
+  .bds-notification-icon {
+    vertical-align: middle;
+    width: $icon-width;
+    height: $icon-height;
+    margin-top: $margin-top-icon;
+    margin-bottom: $margin-bottom-icon;
+  }
+}
+
+.bds-notification-error-icon-color {
+  color: $default-page-bg;
+}
+
+.bds-notification-warning-icon-color {
+  color: $high-contrast-bg;
+}
+
+.bds-notification-close-button {
+  vertical-align: middle;
+  display: inline-block;
+  cursor: pointer;
+  margin-left: $margin-left-icon-close;
+  margin-top: $margin-top-icon;
+  margin-bottom: $margin-bottom-icon;
+  width: $icon-width;
+  height: $icon-height;
+}
+
+.bds-notification-success {
+  background-color: $success-color;
+  color: $interactive-txt-color;
+}
+
+.bds-notification-error {
+  background-color: $error-bg-color;
+  color: $interactive-txt-color;
+}
+
+.bds-notification-general {
+  background-color: $info-color;
+  color: $interactive-txt-color;
+}
+
+.bds-notification-warning {
+  background-color: $warning-color;
+  color: $primary-txt-color;
+}

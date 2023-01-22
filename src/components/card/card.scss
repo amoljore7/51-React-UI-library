@@ -1,0 +1,70 @@
+@import '../../global-style/index.scss';
+
+$card-width: getRem(130px);
+$card-height: getRem(130px);
+$image-container-height-width: getRem(40px);
+$card-title-width: getRem(114px);
+$card-title-height: getRem(49px);
+$card-border-width: getRem(0.5px);
+$card-border-radius: getRem(3px);
+$card-title-letter-spacing: getRem(0.32px);
+$card-title-text-color: $gray-80;
+
+$image-margin-top: getRem(16px);
+$image-margin-bottom: getRem(10px);
+$image-margin-left-right: getRem(45px);
+$card-title-margin: getRem(8px);
+$title-font-size: getRem(12px);
+$title-line-height: getRem(16px);
+$image-height-width: 100%;
+$box-shadow-disabled: getRem(3px);
+$box-shadow-container: getRem(5px);
+$box-shadow-hover: getRem(10px);
+
+.card-container {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: $card-width;
+  height: $card-height;
+  box-shadow: 0px 0px $box-shadow-container $box-shadow-unselected;
+  opacity: 1;
+  border-radius: $card-border-radius;
+  cursor: pointer;
+  &:hover {
+    box-shadow: 0px 0px $box-shadow-hover $box-shadow-hover-color;
+    opacity: 1;
+  }
+}
+
+.card-img-container {
+  width: $image-container-height-width;
+  height: $image-container-height-width;
+  margin: $image-margin-top $image-margin-left-right $image-margin-bottom;
+}
+
+.img-style {
+  width: $image-height-width;
+  height: $image-height-width;
+}
+
+.card-title-style {
+  width: $card-title-width;
+  margin: 0 $card-title-margin;
+  text-align: center;
+  color: $card-title-text-color;
+  letter-spacing: $card-title-letter-spacing;
+  font-family: $font-type-01;
+  font-size: $title-font-size;
+}
+
+.container-disabled {
+  cursor: default;
+  box-shadow: 0px 0px $box-shadow-disabled $ui-disabled-01;
+  &:hover {
+    box-shadow: 0px 0px $box-shadow-disabled $ui-disabled-01;
+  }
+  .card-title-style {
+    color: $ui-disabled-01;
+  }
+}

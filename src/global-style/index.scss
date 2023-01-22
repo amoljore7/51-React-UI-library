@@ -1,0 +1,7 @@
+@import './color.scss';
+@import './font-family.scss';
+
+@function getRem($value) {
+  $remUnit: ($value/16px) + rem;
+  @return $remUnit;
+}

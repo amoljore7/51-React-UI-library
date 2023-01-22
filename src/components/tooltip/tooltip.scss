@@ -1,0 +1,19 @@
+@import '../../global-style/index.scss';
+
+$tooltip-border-radius: getRem(2px);
+$tooltip-padding-left-right: getRem(8px);
+$tooltip-padding-top: getRem(4px);
+$tooltip-padding-bottom: getRem(6px);
+
+.bds-tooltip-container {
+  border-radius: $tooltip-border-radius;
+  width: fit-content;
+  height: fit-content;
+  padding-top: $tooltip-padding-top;
+  padding-bottom: $tooltip-padding-bottom;
+  padding-right: $tooltip-padding-left-right;
+  padding-left: $tooltip-padding-left-right;
+  color: $gray-20;
+  background: $gray-80;
+  box-sizing: border-box;
+}

@@ -4,7 +4,7 @@ import { ButtonCustom } from './button-custom';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Example/ButtonCustom',
+  title: 'design-components/ButtonCustom',
   component: ButtonCustom,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {

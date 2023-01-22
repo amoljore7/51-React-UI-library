@@ -1,0 +1,57 @@
+@import '../../global-style/index.scss';
+
+$font-size: getRem(14px);
+$font-weight: 400;
+$letter-spacing: getRem(0.45px);
+$separator-left-right-margin: getRem(16px);
+$margin-0: 0;
+
+.bds-breadcrumb-container {
+  list-style-type: none;
+  text-align: left;
+  margin: 0;
+  padding: 0;
+}
+.bds-breadcrumb-item {
+  display: inline-block;
+  font-size: $font-size;
+  font-family: $font-type-01;
+  letter-spacing: $letter-spacing;
+  font-weight: $font-weight;
+  cursor: pointer;
+}
+
+.bds-breadcrumb-item,
+.bds-breadcrumb-item a,
+.bds-breadcrumb-item a:visited,
+.bds-breadcrumb-item a:focus,
+.bds-breadcrumb-item a:hover {
+  text-decoration: none;
+  color: $info-color;
+}
+
+.bds-breadcrumb-item a:hover,
+.bds-breadcrumb-item span:hover {
+  text-decoration: underline;
+}
+
+.bds-breadcrumb-item-separator,
+.bds-breadcrumb-item-last a,
+.bds-breadcrumb-item-last a:visited,
+.bds-breadcrumb-item-last a:focus,
+.bds-breadcrumb-item-last a:hover {
+  text-decoration: none;
+  color: $primary-txt-color;
+}
+
+.bds-breadcrumb-item-separator {
+  margin: $margin-0 $separator-left-right-margin;
+}
+
+.bds-breadcrumb-item span:nth-child(2):hover {
+  text-decoration: none;
+}
+
+.bds-breadcrumb-overflow-item {
+  color: $info-color;
+}

@@ -1,0 +1,129 @@
+@import '../../global-style/index.scss';
+
+$option-large-height: getRem(56px);
+$option-small-height: getRem(40px);
+$option-padding-left: getRem(16px);
+$option-padding-top: getRem(8px);
+$option-padding-bottom: getRem(8px);
+$option-icon-margin-right: getRem(16px);
+$option-option-hover-color: getRem(8px);
+$options-container-border-width: getRem(1px);
+$options-container-border-color: #067fdb;
+$options-container-max-height: getRem(320px);
+$option-label-height: getRem(19px);
+$option-label-letter-spacing: getRem(0.32px);
+$option-label-color: #393939;
+$option-label-font-size: getRem(14px);
+$option-label-margin-bottom: getRem(4px);
+$option-sublabel-height: getRem(17px);
+$option-sublabel-letter-spacing: getRem(0.32px);
+$option-sublabel-color: #6f6f6f;
+$option-sublabel-font-size: getRem(12px);
+$option-large-icon-width: getRem(40px);
+$option-large-icon-height: getRem(40px);
+$option-small-icon-width: getRem(24px);
+$option-small-icon-height: getRem(24px);
+$option-label-alone-margin-top: getRem(10px);
+$option-label-alone-margin-bottom: getRem(11px);
+$option-hover-color: #e0e0e0;
+$options-separator-margin-top-bottom: getRem(4px);
+$options-container-padding-top-bottom: getRem(4px);
+$selected-option-background-color: #d0e2ff;
+$options-container-border-radius: getRem(3px);
+
+.options-container {
+  max-height: $options-container-max-height;
+  border: $options-container-border-width solid $options-container-border-color;
+  padding-top: $options-container-padding-top-bottom;
+  padding-bottom: $options-container-padding-top-bottom;
+  box-sizing: border-box;
+  overflow: auto;
+  border-radius: $options-container-border-radius;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  padding-left: $option-padding-left;
+  padding-top: $option-padding-top;
+  padding-bottom: $option-padding-bottom;
+  box-sizing: border-box;
+  cursor: pointer;
+  &:hover {
+    background: $option-hover-color;
+  }
+}
+
+.selected-option {
+  background-color: $selected-option-background-color;
+}
+
+.option-with-label-sublabel {
+  height: $option-large-height;
+}
+
+.option-with-label {
+  height: $option-small-height;
+}
+
+.option-icon {
+  display: flex;
+  align-items: center;
+  margin-right: $option-icon-margin-right;
+}
+
+.option-icon-large {
+  width: $option-large-icon-width;
+  height: $option-large-icon-height;
+}
+
+.option-icon-small {
+  width: $option-small-icon-width;
+  height: $option-small-icon-height;
+}
+
+.option-label {
+  display: block;
+  height: $option-label-height;
+  font-family: $font-type-01;
+  letter-spacing: $option-label-letter-spacing;
+  color: $option-label-color;
+  font-size: $option-label-font-size;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.disabled-option-label {
+  color: $gray-30;
+}
+
+.option-label-with-sublabel {
+  margin-bottom: $option-label-margin-bottom;
+}
+
+.option-label-alone {
+  margin-top: $option-label-alone-margin-top;
+  margin-bottom: $option-label-alone-margin-bottom;
+}
+
+.option-sublabel {
+  display: flex;
+  align-items: center;
+  height: $option-sublabel-height;
+  font-family: $font-type-01;
+  letter-spacing: $option-sublabel-letter-spacing;
+  color: $option-sublabel-color;
+  font-size: $option-sublabel-font-size;
+}
+
+.option-label-sublabel-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.separator {
+  margin-top: $options-separator-margin-top-bottom;
+  margin-bottom: $options-separator-margin-top-bottom;
+}

@@ -1,0 +1,136 @@
+@import '../../global-style/index.scss';
+
+$gray-20: #e0e0e0;
+$gray-40: #a8a8a8;
+$gray-60: #6f6f6f;
+$gray-70: #525252;
+$gray-80: #393939;
+$blue-20: #d0e2ff;
+$blue-70: #067fdb;
+
+$vertical-tab-title-font-size: getRem(16px);
+$vertical-tab-title-font-weight: 600;
+$scrollbar-height: getRem(8px);
+$selected-vertical-tab-text-color: $gray-80;
+$vertical-tab-icon-padding-right: getRem(8px);
+$vertical-tab-text-color: $gray-70;
+$selected-vertical-li-with-icon-padding-left: getRem(14px);
+$vertical-li-with-icon-padding-top-bottom: getRem(15px);
+$vertical-li-with-icon-padding-left: getRem(16px);
+$selected-li-background-color: $blue-20;
+$vertical-selected-li-padding-left: getRem(22px);
+$selected-vertical-tab-border-color: $blue-70;
+$vertical-li-hover-background-color: $gray-20;
+$vertical-li-padding-top-bottom: getRem(16px);
+$vertical-li-padding-left: getRem(24px);
+$vertical-li-padding-right: getRem(16px);
+$vertical-tab-border-right: getRem(2px);
+$vertical-tab-border-color: $gray-40;
+$selected-tab-border-bottom: getRem(2px);
+$verticalTabIconColor: $gray-60;
+$scrollbar-border-radius: getRem(8px);
+
+.bds-vertical-tabs-ul-list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  border-right: $vertical-tab-border-right solid $vertical-tab-border-color;
+  &:hover {
+    overflow-y: auto;
+  }
+}
+
+.bds-vertical-li {
+  display: flex;
+  cursor: pointer;
+  padding-top: $vertical-li-padding-top-bottom;
+  padding-bottom: $vertical-li-padding-top-bottom;
+  padding-left: $vertical-li-padding-left;
+  padding-right: $vertical-li-padding-right;
+  &:hover {
+    background-color: $vertical-li-hover-background-color;
+  }
+}
+
+.bds-selected-vertical-li {
+  padding-left: $vertical-selected-li-padding-left;
+  background-color: $selected-li-background-color;
+  border-left: $selected-tab-border-bottom solid $selected-vertical-tab-border-color;
+}
+
+.bds-vertical-li-with-icon {
+  display: flex;
+  cursor: pointer;
+  &:hover {
+    background-color: $vertical-li-hover-background-color;
+  }
+  padding-top: $vertical-li-with-icon-padding-top-bottom;
+  padding-bottom: $vertical-li-with-icon-padding-top-bottom;
+  padding-left: $vertical-li-with-icon-padding-left;
+  padding-right: $vertical-li-padding-right;
+}
+
+.bds-selected-vertical-li-with-icon {
+  padding-left: $selected-vertical-li-with-icon-padding-left;
+  background-color: $selected-li-background-color;
+  border-left: $selected-tab-border-bottom solid $selected-vertical-tab-border-color;
+}
+
+.bds-vertical-tab-container {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.bds-vertical-tab-title {
+  font-family: $font-type-01;
+  font-size: $vertical-tab-title-font-size;
+  font-weight: $vertical-tab-title-font-weight;
+  color: $vertical-tab-text-color;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.bds-selected-vertical-tab-title {
+  color: $selected-vertical-tab-text-color;
+}
+
+.bds-vertical-tab-icon-container {
+  display: flex;
+  align-items: center;
+  padding-right: $vertical-tab-icon-padding-right;
+  justify-content: center;
+  color: $verticalTabIconColor;
+}
+
+.bds-vertical-tabs-ul-list::-webkit-scrollbar {
+  width: $scrollbar-height;
+}
+
+.bds-vertical-tabs-ul-list::-webkit-scrollbar-track {
+  border-radius: $scrollbar-border-radius;
+}
+
+.bds-vertical-tabs-ul-list::-webkit-scrollbar-thumb {
+  border-radius: $scrollbar-border-radius;
+  background-color: $scroll-bar-color;
+}
+
+.bds-vertical-tabs-ul-list::-webkit-scrollbar-thumb:hover {
+  background-color: $scroll-bar-hover-color;
+}
+
+.bds-vertical-tabs-ul-list::-webkit-scrollbar-track-piece:start {
+  background: transparent;
+}
+
+.bds-vertical-tabs-ul-list::-webkit-scrollbar-track-piece:end {
+  background: transparent;
+}
