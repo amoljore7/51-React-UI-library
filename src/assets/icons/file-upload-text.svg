@@ -1,0 +1,7 @@
+<svg width="82" height="102" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M51 1H11C8.34784 1 5.8043 2.05357 3.92893 3.92893C2.05357 5.8043 1 8.34784 1 11V91C1 93.6522 2.05357 96.1957 3.92893 98.0711C5.8043 99.9464 8.34784 101 11 101H71C73.6522 101 76.1957 99.9464 78.0711 98.0711C79.9464 96.1957 81 93.6522 81 91V31L51 1Z" stroke="#393939" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M51 1V31H81" stroke="#393939" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M61 56H21" stroke="#393939" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M61 76H21" stroke="#393939" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M31 36H26H21" stroke="#393939" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
