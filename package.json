@@ -2,7 +2,7 @@
   "name": "react-ui-library",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://amoljore7.github.io/56-React-UI-Library/",
+  "homepage": "https://amoljore7.github.io/51-React-UI-library/",
   "dependencies": {
     "@storybook/addon-a11y": "^6.5.15",
     "@storybook/addon-storysource": "^6.5.15",
@@ -71,6 +71,7 @@
     "@storybook/node-logger": "^6.5.15",
     "@storybook/preset-create-react-app": "^4.1.2",
     "@storybook/react": "^6.5.15",
+    "@storybook/storybook-deployer": "^2.8.16",
     "@storybook/testing-library": "^0.0.13",
     "babel-plugin-named-exports-order": "^0.0.2",
     "eslint-plugin-storybook": "^0.6.10",
