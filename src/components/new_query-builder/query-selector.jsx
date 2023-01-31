@@ -45,10 +45,10 @@ const QuerySelector = (props) => {
 
   const commonUtils = (data) => {
     const { attribute, operator, value } = data;
-    const key = Object.keys(props.attributeOptions[0])[0];
+    const key = props?.attributeOptionsLabel || 'attribute';
     let attributeValueObject = {};
     attributeValueObject[key] = attribute;
-    setAttributeValue(attributeValueObject || { attribute: attribute });
+    setAttributeValue(attributeValueObject);
     setOperatorValue({ operator: operator });
     setValue(value);
     setIsActive(false);
@@ -162,7 +162,7 @@ const QuerySelector = (props) => {
           {isError && (
             <div className={querySelectorClasses.errorMsgText}>
               <Typography variant='label1'>
-                {'Select all the fields...'}
+                {'Please specify values for all fields'}
               </Typography>
             </div>
           )}

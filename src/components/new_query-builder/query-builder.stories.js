@@ -21,6 +21,7 @@ export const QueryBuilderDemo = () => {
     attributeGetOptionLabel: function (option) {
       return option.attribute;
     },
+    attributeOptionsLabel: 'attribute',
     savedQuery: (value) => console.log(value),
     isAllQuerySaved: (value) => setIsDisabled(!value),
   };
