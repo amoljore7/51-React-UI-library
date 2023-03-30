@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { nanoid } from 'nanoid';
-import QuerySelector from './query-selector';
+import QuerySelector from '../query-selector';
 import Button from '../button';
 import Typography from '../typography';
 import Pill from '../pill';
-import Select from '../select';
-import PropTypes from 'prop-types';
 import { queryBuilderClasses } from './constants';
 import { isEmpty } from 'lodash';
 import { FiPlus } from 'react-icons/fi';
@@ -14,52 +12,69 @@ import './query-builder.scss';
 
 const QueryBuilder = (props) => {
   const [selectorList, setSelectorList] = useState([]);
-  const [combinator, setCombinator] = useState(props.combinator || 'AND');
+  const [query, setQuery] = useState([]);
+  const combinator = props?.combinator || 'AND';
+
+
+  const handleAddQueryPills = (newQuery) => {
+    const index = query.findIndex((e) => e.queryId === newQuery.queryId);
+    if (index === -1) {
+      setQuery((oldQuery) => [...oldQuery, newQuery]);
+    } else {
+      query[index] = newQuery;
+      setQuery(query);
+    }
+    massageData(query);
+  };
+
+  useEffect(() => {
+    massageData(query);
+  }, [query, props?.isEditMode]);
+
+  const massageData = (data) => {
+    const result = data?.map(({ isActive, queryId, ...rest }) => ({ ...rest }));
+    props.savedQuery(result);
+  };
+
+  useEffect(()=>{
+    if(!isEmpty(props?.existingSavedQueries)) {
+      let massagedQueries = props.existingSavedQueries.map((element) => {
+        const newId = nanoid();
+        return {
+          attribute: props?.attributeGetOptionLabel(element),
+          operator: element?.operator,
+          value: element?.value,
+          isActive: false,
+          queryId: newId
+        }
+      })
+      setQuery(massagedQueries)
+    }
+  },[props?.existingSavedQueries])
 
   useEffect(() => {
     setSelectorList([]);
-    if (props?.isEditMode && !isEmpty(props.queryPills.rules)) {
-      props.queryPills.rules.map((element) => {
+    if (props?.isEditMode && !isEmpty(query)) {
+      query.map((element) => {
         if (undefined != element) {
           fillAllFields(element);
         }
       });
     }
-  }, [props.isEditMode]);
+  }, [props?.isEditMode]);
 
-  const fillAllFields = (ele) => {
-    props.combinatorHandle(combinator);
-    const newId = nanoid();
+  const fillAllFields = (obj) => {
     setSelectorList((selectorList) => [
       ...selectorList,
-      <QuerySelector
-        key={newId}
-        id={newId}
-        deleteHandleClick={() => {
-          props.handleRemoveQueryPills(newId), deleteHandleClick(newId);
-        }}
-        currentElement={ele}
-        index={selectorList.length}
-        {...props}
-      />,
+      <span key={obj?.queryId} object={obj}></span>,
     ]);
-    props.flushInitialQuerys();
   };
 
   const onAddBtnClick = () => {
-    props.combinatorHandle(combinator);
     const newId = nanoid();
     setSelectorList((selectorList) => [
       ...selectorList,
-      <QuerySelector
-        key={newId}
-        id={newId}
-        deleteHandleClick={() => {
-          props.handleRemoveQueryPills(newId), deleteHandleClick(newId);
-        }}
-        index={selectorList.length}
-        {...props}
-      />,
+      <span key={newId}></span>,
     ]);
   };
 
@@ -68,49 +83,45 @@ const QueryBuilder = (props) => {
       selectorList.filter((ele) => ele.key !== removeId)
     );
 
-  const combinatorHandler = (value) => {
-    setCombinator(value);
-    props.combinatorHandle(value);
+  const handleRemoveQueryPills = (id) => {
+    setQuery((query) => query.filter((ele) => ele.queryId !== id));
   };
 
   useEffect(() => {
-    if (isEmpty(props?.queryPills?.rules)) return props.isAllQuerySaved(false);
+    if(!isEmpty(props?.existingSavedQueries) && props?.isEditMode) {
+      if (isEmpty(selectorList) &&  isEmpty(query)) return props?.saveQueryFlag(true);
+    }
+    if (isEmpty(query)) return props.saveQueryFlag(false);
     if (!isEmpty(selectorList)) {
-      if (selectorList?.length === props?.queryPills?.rules.length) {
-        return props.isAllQuerySaved(true);
+      if (selectorList?.length === query.length) {
+        return props.saveQueryFlag(true);
       } else {
-        return props.isAllQuerySaved(false);
+        return props.saveQueryFlag(false);
       }
     }
-  }, [props?.queryPills?.rules, selectorList]);
-
-  const combinatorProps = {
-    width: '65px',
-    size: 'small',
-    options: ['AND', 'OR', 'NOT'],
-    value: combinator,
-    inline: true,
-    onChange: (event, value) => combinatorHandler(value),
-    getOptionLabel: function (option) {
-      return option;
-    },
-  };
+  }, [query, selectorList, props?.isEditMode]);
 
   return (
     <div>
       {!props.isEditMode && (
         <div className={queryBuilderClasses.pillsContainer}>
-          {props.queryPills.rules &&
-            props.queryPills.rules.map((value, index) => {
+          {query &&
+            query.map((value, index) => {
               return (
-                <>
+                <Fragment key={value.queryId}>
                   {index !== 0 && (
-                    <div style={{ padding: '0 15px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: '0 10px',
+                      }}
+                    >
                       <Typography variant='label1'>{combinator}</Typography>
                     </div>
                   )}
                   <div
-                    key={value.attribute}
+                    data-testid="query-pill-wrapper"
                     className={queryBuilderClasses.pillsContainer}
                   >
                     <Pill
@@ -124,7 +135,7 @@ const QueryBuilder = (props) => {
                       }
                     />
                   </div>
-                </>
+                </Fragment>
               );
             })}
         </div>
@@ -132,30 +143,43 @@ const QueryBuilder = (props) => {
 
       {props.isEditMode && (
         <>
-          <Button variant='textOnly' size='small' onClick={onAddBtnClick}>
+          <Button variant='textOnly' size='medium' onClick={onAddBtnClick}>
             <FiPlus size='20' color='#067fdb' style={{ marginRight: 5 }} />
             Add Criteria
           </Button>
-          <div style={{ padding: '10px 0' }}>
-            {selectorList.length > 0 && <Select {...combinatorProps} />}
-          </div>
+          <div className={queryBuilderClasses.pillsContainer}>
+            {selectorList.map((ele, index) => {
+              return (
+                <span key={ele.key} style={{ display: 'flex' }} >
+                  <QuerySelector
+                    queryId={ele.key}
+                    deleteHandleClick={() => {
+                      handleRemoveQueryPills(ele.key),
+                        deleteHandleClick(ele.key);
+                    }}
+                    index={selectorList.length}
+                    handleAddQueryPills={handleAddQueryPills}
+                    currentElement={ele?.props?.object}
+                    query={query}
+                    {...props}
+                  />
 
-          {selectorList}
+                  {index !== selectorList.length - 1 && (
+                    <div
+                      className={queryBuilderClasses.pillsContainer}
+                      style={{ padding: '0 8px', margin: 'auto' }}
+                    >
+                      <Typography variant='label1'>{combinator}</Typography>
+                    </div>
+                  )}
+                </span>
+              );
+            })}
+          </div>
         </>
       )}
     </div>
   );
-};
-
-QueryBuilder.propTypes = {
-  isEditMode: PropTypes.bool,
-  attributeOptions: PropTypes.array.isRequired,
-  attributeGetOptionLabel: PropTypes.func.isRequired,
-  handleAddQueryPills: PropTypes.func.isRequired,
-  handleRemoveQueryPills: PropTypes.func.isRequired,
-  flushInitialQuerys: PropTypes.func.isRequired,
-  combinatorHandle: PropTypes.func,
-  isAllQuerySaved: PropTypes.func,
 };
 
 export default QueryBuilder;

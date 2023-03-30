@@ -1,42 +1,20 @@
-import React, { useState, useEffect } from 'react'
-import QueryBuilder from './query-builder'
-import Button from '../button'
+import React, { useState } from 'react';
+import QueryBuilder from './query-builder';
+import Button from '../button';
 
 export default {
   title: 'design-components/QueryBuilder',
   component: QueryBuilder,
-}
+};
 
+let existingSavedQueries = [
+  { attribute: 'skills-1', operator: 'is', value: 'A' },
+  { attribute: 'skills-2', operator: 'is', value: 'B' },
+]
 
 export const QueryBuilderDemo = () => {
-  const [query, setQuery] = useState([])
-  const [combinator, setCombinator] = useState('AND');
-  const [isEditMode, setIsEditMode] = useState(true)
-
-  const finalObject = {
-    combinator: combinator,
-    rules: query
-  }
-
-  const handleAddQueryPills = (newQuery) => {
-    setQuery(current => [...current, newQuery]);
-  }
-  const handleRemoveQueryPills = (id) => {
-    setQuery((query) =>
-      query.filter((ele) => ele.id !== id)
-    );
-  }
-  const combinatorHandle = (combinator) => {
-    setCombinator(combinator)
-  }
-  const flushInitialQuerys = () => {
-    setQuery([])
-  }
-
-  useEffect(() => {
-    finalObject.combinator = combinator;
-    finalObject.rules = query;
-  }, [query, combinator])
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isDisabled, setIsDisabled] = useState();
 
   const props = {
     isEditMode: isEditMode,
@@ -48,31 +26,45 @@ export const QueryBuilderDemo = () => {
     attributeGetOptionLabel: function (option) {
       return option.attribute;
     },
-    handleAddQueryPills: handleAddQueryPills,
-    handleRemoveQueryPills: handleRemoveQueryPills,
-    flushInitialQuerys: flushInitialQuerys,
-    combinatorHandle: combinatorHandle,
-    isAllQuerySaved: (value) => console.log(value),
-    combinator: combinator,
-    queryPills: finalObject,
+    attributeOptionsLabel: 'attribute',
+    savedQuery: (value) => console.log(value),
+    saveQueryFlag: (value) => setIsDisabled(!value),
+    existingSavedQueries,
   };
-  console.log('>>finalObject>>', finalObject)
 
   return (
     <div>
-      <div style={{ padding: '15px' }}>
-        <Button
-          variant='primary'
-          size='small'
-          onClick={() => setIsEditMode(!isEditMode)}
-        >
-          {'Toggle'}
-        </Button>
-        <hr></hr>
+      <div style={{ padding: '15px 15px 15px 0px' }}>
+        {isEditMode ? (
+          <span style={{ display: 'flex', gap: '10px' }}>
+            <Button
+              variant='primary'
+              size='medium'
+              disabled={isDisabled}
+              onClick={() => setIsEditMode(!isEditMode)}
+            >
+              {'Save'}
+            </Button>
+            <Button
+              variant='secondary'
+              size='medium'
+              onClick={() => window.location.reload()}
+            >
+              {'Cancel'}
+            </Button>
+          </span>
+        ) : (
+          <Button
+            variant='primary'
+            size='medium'
+            onClick={() => setIsEditMode(!isEditMode)}
+          >
+            {'Edit'}
+          </Button>
+        )}
       </div>
 
       <QueryBuilder {...props} />
     </div>
-
   );
 };

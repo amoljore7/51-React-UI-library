@@ -9,7 +9,7 @@ $font-size-helper-text: getRem(16px);
 
 .bds-query-selector-parent-container {
   display: flex;
-  padding: 15px 0;
+  padding: 4px 0;
 
   .bds-query-selector-level-one-container {
     width: max-content;
@@ -21,7 +21,7 @@ $font-size-helper-text: getRem(16px);
     .bds-query-selector-level-one-fields {
       display: flex;
       justify-content: space-between;
-      gap: 20px;
+      gap: 8px;
     }
 
     .bds-query-selector-cancel-icon {
@@ -29,15 +29,21 @@ $font-size-helper-text: getRem(16px);
       align-items: center;
       cursor: pointer;
     }
+
+    .bds-query-selector-pipe {
+      border-left: solid $gray-50;
+      margin: 10px 0;
+    }
   }
 
   .bds-query-selector-error-pill {
-    border: $pill-container-error-border-width solid $pill-container-error-border-color;
+    border: $pill-container-error-border-width solid
+      $pill-container-error-border-color;
   }
 
   .bds-query-selector-error-msg-text {
     font-size: $font-size-helper-text;
     color: $error-txt-color;
-    padding-top: 10px;
+    padding-top: 2px;
   }
 }

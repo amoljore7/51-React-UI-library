@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
 import { FiSlash, FiCheck, FiX } from 'react-icons/fi';
 import Select from '../select';
 import Textfield from '../textfield';
+import Typography from '../typography';
 import { querySelectorClasses } from './constants';
 import { isEmpty } from 'lodash';
 
@@ -14,18 +14,11 @@ const QuerySelector = (props) => {
   const [operatorValue, setOperatorValue] = useState(null);
   const [value, setValue] = useState('');
   const [isError, setIsError] = useState(false);
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
-    if (props?.currentElement) {
-      const { attribute, operator, value, isActive } = props.currentElement;
-      const key = Object.keys(props.attributeOptions[0])[0];
-      let attributeValueObject = {};
-      attributeValueObject[key] = attribute;
-      setAttributeValue(attributeValueObject || { attribute: attribute });
-      setOperatorValue({ operator: operator });
-      setValue(value);
-      setIsActive(!isActive);
+    if (!isEmpty(props?.currentElement)) {
+      commonUtils(props?.currentElement);
     }
   }, [props?.currentElement]);
 
@@ -37,29 +30,43 @@ const QuerySelector = (props) => {
     }
   };
 
-  const valueOnChange = (e) => {
-    const { value } = e.target;
-    setValue(value);
+  const resetHandleClick = (id) => {
+    const value = props?.query?.findIndex((e) => e.queryId === id);
+    if (value === -1) {
+      setValue('');
+      setAttributeValue(null);
+      setOperatorValue(null);
+      setIsActive(false);
+    } else {
+      commonUtils(props?.query[value]);
+    }
+    setIsError(false);
   };
 
-  const cancelHandleClick = () => {
-    setValue('');
-    setAttributeValue(null);
-    setOperatorValue(null);
+  const commonUtils = (data) => {
+    const { attribute, operator, value } = data;
+    const key = props?.attributeOptionsLabel || 'attribute';
+    let attributeValueObject = {};
+    attributeValueObject[key] = attribute;
+    setAttributeValue(attributeValueObject);
+    setOperatorValue({ operator: operator });
+    setValue(value.trim());
+    setIsActive(false);
   };
 
-  const checkHandleClick = (id) => {
+  const checkHandleClick = (queryId) => {
     setIsError(isQueryEmpty());
+    setValue(value.trim())
     if (!isQueryEmpty()) {
       const toBeInserted = {
         attribute: props?.attributeGetOptionLabel(attributeValue),
         operator: operatorValue?.operator,
         value,
         isActive: false,
-        id,
+        queryId,
       };
       setIsActive(false);
-      props.handleAddQueryPills(toBeInserted);
+      props?.handleAddQueryPills(toBeInserted);
     }
   };
 
@@ -69,66 +76,65 @@ const QuerySelector = (props) => {
   };
 
   const attributeProps = {
-    options: props.attributeOptions,
-    onChange: (event, value) => setAttributeValue(value),
+    options: props?.attributeOptions,
+    onChange: (event, value) => {
+      setAttributeValue(value), setIsActive(true);
+    },
     value: attributeValue,
-    getOptionLabel: props.attributeGetOptionLabel,
+    getOptionLabel: props?.attributeGetOptionLabel,
     placeholder: 'Attribute',
     width: '200px',
-    disabled: !isActive,
   };
 
   const operatorProps = {
     options: [
       { operator: 'is' },
-      { operator: 'in' },
       { operator: 'contains' },
-      { operator: 'equal' },
-      { operator: 'not_equal' },
-      { operator: 'not_in' },
-      { operator: 'is_null' },
-      { operator: 'is_not_null' },
-      { operator: 'is_empty' },
     ],
     getOptionLabel: function (option) {
       return option.operator;
     },
-    onChange: (event, value) => setOperatorValue(value),
+    onChange: (event, value) => {
+      setOperatorValue(value), setIsActive(true);
+    },
     value: operatorValue,
     placeholder: 'Operator',
     width: '150px',
-    disabled: !isActive,
   };
-
+  
   const valueProps = {
     value: value,
-    onChange: valueOnChange,
+    onChange: (e) => {
+      setValue(e.target.value.trimStart()), setIsActive(true);
+    },
     type: 'text',
     placeholder: 'value',
     width: '200px',
-    disabled: !isActive,
   };
 
   return (
     <>
-      <div className={querySelectorClasses.parentContainer}>
+      <div className={querySelectorClasses.parentContainer} data-testid="pill-wrapper">
         <div>
           <div className={classNames({ ...pillContainerClasses })}>
             <div className={querySelectorClasses.levelOneFields}>
               <Select {...attributeProps} />
+              <span className={querySelectorClasses.pipe} />
               <Select {...operatorProps} />
+              <span className={querySelectorClasses.pipe} />
               <Textfield {...valueProps} />
+              <span className={querySelectorClasses.pipe} />
               {isActive && (
                 <>
                   <div
                     className={querySelectorClasses.cancelIconBox}
-                    onClick={cancelHandleClick}
+                    onClick={() => resetHandleClick(props?.queryId)}
                   >
                     <FiSlash size='24' />
                   </div>
                   <div
                     className={querySelectorClasses.cancelIconBox}
-                    onClick={() => checkHandleClick(props.id)}
+                    onClick={() => checkHandleClick(props?.queryId)}
                   >
                     <FiCheck
                       size='24'
@@ -140,7 +146,7 @@ const QuerySelector = (props) => {
               {
                 <div
                   className={querySelectorClasses.cancelIconBox}
-                  onClick={props.deleteHandleClick}
+                  onClick={props?.deleteHandleClick}
                 >
                   <FiX size='24' />
                 </div>
@@ -149,19 +155,15 @@ const QuerySelector = (props) => {
           </div>
           {isError && (
             <div className={querySelectorClasses.errorMsgText}>
-              {'Select all the fields...'}
+              <Typography variant='label1'>
+                {'Please specify values for all fields'}
+              </Typography>
             </div>
           )}
         </div>
       </div>
     </>
   );
-};
-
-QuerySelector.propTypes = {
-  attributeOptions: PropTypes.array.isRequired,
-  attributeGetOptionLabel: PropTypes.func.isRequired,
-  handleAddQueryPills: PropTypes.func.isRequired,
 };
 
 export default QuerySelector;
