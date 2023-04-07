@@ -275,7 +275,7 @@ const Tooltip = ({ title, children, position }) => {
     if (childRef && childRef.current && isHover) {
       changeTooltipPos(tooltipElement, childRef.current, position);
     }
-  }, [isHover]);
+  }, [isHover,title]);
 
   return (
     <>
@@ -288,7 +288,7 @@ const Tooltip = ({ title, children, position }) => {
           setIsHover(false);
         },
       })}
-      {(isHover || isNear) &&
+      {(isHover || isNear)&& title &&
         createPortal(
           <div
             className={classes.tooltipContainer}

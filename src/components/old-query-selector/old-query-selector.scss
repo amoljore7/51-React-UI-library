@@ -3,51 +3,47 @@
 $bds-progress-bar-value-left-margin: getRem(8px);
 $pill-container-border-width: getRem(1px);
 $pill-container-error-border-width: getRem(1px);
+$pill-container-border-color: $gray-50;
 $pill-container-error-border-color: $error-color;
 $font-size-helper-text: getRem(16px);
 
-.bds-query-selector-parent-container {
+.bds-old-query-selector-parent-container {
   display: flex;
   padding: 4px 0;
 
-  .bds-query-selector-level-one-container {
+  .bds-old-query-selector-level-one-container {
     width: max-content;
-    border: $pill-container-border-width solid $gray-20;
+    border: $pill-container-border-width solid $pill-container-border-color;
     border-radius: 25px;
     padding: 5px 15px;
     background-color: $gray-10;
 
-    .bds-query-selector-level-one-fields {
+    .bds-old-query-selector-level-one-fields {
       display: flex;
       justify-content: space-between;
       gap: 8px;
     }
 
-    .bds-query-selector-cancel-icon {
+    .bds-old-query-selector-cancel-icon {
       display: flex;
       align-items: center;
       cursor: pointer;
     }
 
-    .bds-query-selector-pipe {
-      border-left: 1px solid $gray-40;
+    .bds-old-query-selector-pipe {
+      border-left: solid $gray-50;
       margin: 10px 0;
     }
   }
 
-  .bds-query-selector-error-pill {
+  .bds-old-query-selector-error-pill {
     border: $pill-container-error-border-width solid
       $pill-container-error-border-color;
   }
 
-  .bds-query-selector-error-msg-text {
+  .bds-old-query-selector-error-msg-text {
     font-size: $font-size-helper-text;
     color: $error-txt-color;
-    padding-top: 10px;
-  }
-  .bds-query-selector-max-value-msg {
-    font-size: $font-size-helper-text;
-    color: $gray-50;
     padding-top: 2px;
   }
 }

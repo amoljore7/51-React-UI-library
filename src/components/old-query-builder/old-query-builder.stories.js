@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import QueryBuilder from './query-builder';
+import OldQueryBuilder from './old-query-builder';
 import Button from '../button';
 
 export default {
-  title: 'design-components/QueryBuilder',
-  component: QueryBuilder,
+  title: 'design-components/OldQueryBuilder',
+  component: OldQueryBuilder,
 };
 
 let existingSavedQueries = [
-  { attribute: 'skills-1', operator: 'is', value: 'ABC,XYZ' }
+  { attribute: 'skills-1', operator: 'is', value: 'A' },
+  { attribute: 'skills-2', operator: 'is', value: 'B' },
 ]
 
-export const QueryBuilderDemo = () => {
+export const OldQueryBuilderDemo = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDisabled, setIsDisabled] = useState();
 
@@ -63,7 +64,7 @@ export const QueryBuilderDemo = () => {
         )}
       </div>
 
-      <QueryBuilder {...props} />
+      <OldQueryBuilder {...props} />
     </div>
   );
 };

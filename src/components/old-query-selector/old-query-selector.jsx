@@ -2,20 +2,19 @@ import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import { FiSlash, FiCheck, FiX } from 'react-icons/fi';
 import Select from '../select';
-import MultiTextfield from '../multi-textfield';
+import Textfield from '../textfield';
 import Typography from '../typography';
 import { querySelectorClasses } from './constants';
 import { isEmpty } from 'lodash';
 
-import './query-selector.scss';
+import './old-query-selector.scss';
 
-const QuerySelector = (props) => {
+const OldQuerySelector = (props) => {
   const [attributeValue, setAttributeValue] = useState(null);
   const [operatorValue, setOperatorValue] = useState(null);
   const [value, setValue] = useState('');
   const [isError, setIsError] = useState(false);
   const [isActive, setIsActive] = useState(false);
-  const [isAllFieldSaved, setIsAllFieldSaved] = useState();
 
   useEffect(() => {
     if (!isEmpty(props?.currentElement)) {
@@ -24,7 +23,7 @@ const QuerySelector = (props) => {
   }, [props?.currentElement]);
 
   const isQueryEmpty = () => {
-    if (isEmpty(attributeValue) || isEmpty(operatorValue) || !isAllFieldSaved) {
+    if (isEmpty(attributeValue) || isEmpty(operatorValue) || isEmpty(value)) {
       return true;
     } else {
       return false;
@@ -41,7 +40,6 @@ const QuerySelector = (props) => {
     } else {
       commonUtils(props?.query[value]);
     }
-    setIsActive(false)
     setIsError(false);
   };
 
@@ -105,26 +103,13 @@ const QuerySelector = (props) => {
   };
   
   const valueProps = {
-    valueString: value,
-    tooltip: true,
-    addBtnTooltipText: 'Add Additional value with "Or" condition',
-    finalValue: (value) => {
-      setValue(
-        value
-          .split(',')
-          .map((e) => e.trim())
-          .filter((e) => e)
-          .join(',')
-      );
-      if (value === props?.currentElement?.value) {
-        setIsActive(false);
-      } else if(!isEmpty(value)) {
-          setIsActive(true);
-      } else {
-        setIsActive(false);
-      }
+    value: value,
+    onChange: (e) => {
+      setValue(e.target.value.trimStart()), setIsActive(true);
     },
-    isAllFieldSaved: (flag) => setIsAllFieldSaved(flag),
+    type: 'text',
+    placeholder: 'value',
+    width: '200px',
   };
 
   return (
@@ -137,10 +122,16 @@ const QuerySelector = (props) => {
               <span className={querySelectorClasses.pipe} />
               <Select {...operatorProps} />
               <span className={querySelectorClasses.pipe} />
-              <MultiTextfield {...valueProps} />
+              <Textfield {...valueProps} />
               <span className={querySelectorClasses.pipe} />
               {isActive && (
                 <>
+                  <div
+                    className={querySelectorClasses.cancelIconBox}
+                    onClick={() => resetHandleClick(props?.queryId)}
+                  >
+                    <FiSlash size='24' />
+                  </div>
                   <div
                     className={querySelectorClasses.cancelIconBox}
                     onClick={() => checkHandleClick(props?.queryId)}
@@ -149,12 +140,6 @@ const QuerySelector = (props) => {
                       size='24'
                       color={isQueryEmpty() ? '#c6c6c6' : '#24a148'}
                     />
-                  </div>
-                  <div
-                    className={querySelectorClasses.cancelIconBox}
-                    onClick={() => resetHandleClick(props?.queryId)}
-                  >
-                    <FiSlash size='24' />
                   </div>
                 </>
               )}
@@ -181,4 +166,4 @@ const QuerySelector = (props) => {
   );
 };
 
-export default QuerySelector;
+export default OldQuerySelector;

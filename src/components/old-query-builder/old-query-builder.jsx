@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { nanoid } from 'nanoid';
-import QuerySelector from '../query-selector';
+import OldQuerySelector from '../old-query-selector';
 import Button from '../button';
 import Typography from '../typography';
 import Pill from '../pill';
@@ -8,13 +8,12 @@ import { queryBuilderClasses } from './constants';
 import { isEmpty } from 'lodash';
 import { FiPlus } from 'react-icons/fi';
 
-import './query-builder.scss';
+import './old-query-builder.scss';
 
-const QueryBuilder = (props) => {
+const OldQueryBuilder = (props) => {
   const [selectorList, setSelectorList] = useState([]);
   const [query, setQuery] = useState([]);
   const combinator = props?.combinator || 'AND';
-  const [isDisabled, setIsDisabled] = useState();
 
 
   const handleAddQueryPills = (newQuery) => {
@@ -90,40 +89,17 @@ const QueryBuilder = (props) => {
 
   useEffect(() => {
     if(!isEmpty(props?.existingSavedQueries) && props?.isEditMode) {
-      if (isEmpty(selectorList) &&  isEmpty(query)){
-        setIsDisabled(true)
-        return props?.saveQueryFlag(true);
-      } 
+      if (isEmpty(selectorList) &&  isEmpty(query)) return props?.saveQueryFlag(true);
     }
-    if (isEmpty(query)){
-      setIsDisabled(false)
-      return props.saveQueryFlag(false);
-    }
+    if (isEmpty(query)) return props.saveQueryFlag(false);
     if (!isEmpty(selectorList)) {
       if (selectorList?.length === query.length) {
-        setIsDisabled(true)
         return props.saveQueryFlag(true);
       } else {
-        setIsDisabled(false)
         return props.saveQueryFlag(false);
       }
     }
   }, [query, selectorList, props?.isEditMode]);
-
-  const renderValue = (value) => {
-    let regex = /,/g;
-    let str = value
-      .split(',')
-      .map((e) => e.trim())
-      .filter((e) => e)
-      .join(',');
-    let text = str
-      .split(',')
-      .map((e) => '"' + e.trim() + '"')
-      .join(',')
-      .replace(regex, ' or ');
-    return text;
-  };
 
   return (
     <div>
@@ -155,7 +131,7 @@ const QueryBuilder = (props) => {
                         ' ' +
                         value.operator +
                         ' ' +
-                        renderValue(value.value)
+                        value.value
                       }
                     />
                   </div>
@@ -167,7 +143,7 @@ const QueryBuilder = (props) => {
 
       {props.isEditMode && (
         <>
-          <Button variant='textOnly' size='medium' onClick={onAddBtnClick} disabled={!isDisabled}>
+          <Button variant='textOnly' size='medium' onClick={onAddBtnClick}>
             <FiPlus size='20' color='#067fdb' style={{ marginRight: 5 }} />
             Add Criteria
           </Button>
@@ -175,7 +151,7 @@ const QueryBuilder = (props) => {
             {selectorList.map((ele, index) => {
               return (
                 <span key={ele.key} style={{ display: 'flex' }} >
-                  <QuerySelector
+                  <OldQuerySelector
                     queryId={ele.key}
                     deleteHandleClick={() => {
                       handleRemoveQueryPills(ele.key),
@@ -206,4 +182,4 @@ const QueryBuilder = (props) => {
   );
 };
 
-export default QueryBuilder;
+export default OldQueryBuilder;

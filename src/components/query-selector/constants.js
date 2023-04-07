@@ -6,4 +6,5 @@ export const querySelectorClasses = {
   errorMsgText: 'bds-query-selector-error-msg-text',
   cancelIconBox: 'bds-query-selector-cancel-icon',
   pipe: 'bds-query-selector-pipe',
+  maxValueMsg: 'bds-query-selector-max-value-msg',
 };
