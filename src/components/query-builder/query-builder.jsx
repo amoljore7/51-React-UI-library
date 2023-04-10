@@ -110,6 +110,13 @@ const QueryBuilder = (props) => {
     }
   }, [query, selectorList, props?.isEditMode]);
 
+  const checkAddCriteriaBtnFlag =()=>{
+    if (isEmpty(props?.existingSavedQueries) && isEmpty(selectorList) && isEmpty(query)) {
+      return false;
+    }
+    return !isDisabled
+  }
+
   const renderValue = (value) => {
     let regex = /,/g;
     let str = value
@@ -167,7 +174,7 @@ const QueryBuilder = (props) => {
 
       {props.isEditMode && (
         <>
-          <Button variant='textOnly' size='medium' onClick={onAddBtnClick} disabled={!isDisabled}>
+          <Button variant='textOnly' size='medium' onClick={onAddBtnClick} disabled={checkAddCriteriaBtnFlag()}>
             <FiPlus size='20' color='#067fdb' style={{ marginRight: 5 }} />
             Add Criteria
           </Button>
