@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { classes, defaultIconSize, smallIconSize, defaultTabIndex } from './constants';
 import './select.scss';
 import MenuOptions from '../../utils/common-portal/menu-options-container';
+import Tooltip from '../tooltip';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { IoChevronDown, IoChevronUp } from 'react-icons/io5';
@@ -23,16 +24,33 @@ const Select = ({
   size = 'large',
   onBlur,
   disablePortal = false,
+  showTooltip = true,
+  height,
 }) => {
   let optionSelected = Boolean(value) ? value : null;
   const [selectedValue, setSelectedValue] = useState(optionSelected);
   const [showOptions, setShowOptions] = useState(false);
   const [containerDimension, setContainerDimension] = useState();
+  const [enableTooltip, setEnableTooltip] = useState(false);
   const selectRef = useRef();
+  const selectedValueRef = useRef(null);
 
   useEffect(() => {
     setSelectedValue(optionSelected);
   }, [value]);
+
+  useEffect(() => {
+    handleTooltipVisibility()
+  }, [selectedValue])
+
+  const handleTooltipVisibility = () => {
+    const element = selectedValueRef.current;
+    if (showTooltip && selectedValue && element) {
+      setEnableTooltip(element.scrollWidth > element.clientWidth)
+    } else {
+      setEnableTooltip(false)
+    }
+  }
 
   const getContainerDimension = () => {
     let rect = selectRef.current.getBoundingClientRect();
@@ -111,9 +129,21 @@ const Select = ({
     [classes.selectActionsSmallContainerItem]: size === 'small',
   };
 
+  const renderSelectedValue = () => (
+    <div
+      data-testid="select-value"
+      className={classNames({ ...selectValueClasses })}
+      onClick={selectedValueClickHandler}
+      onKeyDown={selectedValueKeyDownHandler}
+      tabIndex={defaultTabIndex}
+      ref={selectedValueRef}
+    >
+      {selectedValue ? getOptionLabel(selectedValue) : readOnly ? 'None' : placeholder}
+    </div>
+  )
+
   return (
     <>
-      <div className={classes.wrapper}>
         {label && <div className={classNames({ ...labelClasses })}>{label}</div>}
         {!readOnly && helperText && (
           <div className={classNames({ ...helperTextClasses })}>{helperText}</div>
@@ -121,19 +151,18 @@ const Select = ({
         <div
           ref={selectRef}
           className={classNames({ ...containerClasses })}
-          style={{ width: width }}
+          style={{ width: width, height: height }}
           tabIndex={defaultTabIndex}
           onBlur={blurHandler}
         >
-          <div
-            data-testid="select-value"
-            className={classNames({ ...selectValueClasses })}
-            onClick={selectedValueClickHandler}
-            onKeyDown={selectedValueKeyDownHandler}
-            tabIndex={defaultTabIndex}
-          >
-            {selectedValue ? getOptionLabel(selectedValue) : readOnly ? 'None' : placeholder}
-          </div>
+          {
+            enableTooltip && showTooltip ? (
+              <Tooltip title={getOptionLabel(selectedValue)} position="top" className="select-value-tooltip">
+                {renderSelectedValue()}
+              </Tooltip>
+            ) :
+            renderSelectedValue()
+          }
           {!readOnly && (
             <div className={classes.actionsContainer}>
               <div
@@ -157,24 +186,22 @@ const Select = ({
             </div>
           )}
         </div>
+        {showOptions && (
+          <MenuOptions
+            portalContainerId={'dropdown-components'}
+            containerDimension={containerDimension}
+            width={width}
+            options={options}
+            onChange={selectOption}
+            getOptionLabel={getOptionLabel}
+            disablePortal={disablePortal}
+          />
+        )}
         {error ? (
           <div className={classes.selectErrorMessage} style={{ width: width }}>
             {errorMessage}
           </div>
         ) : null}
-      </div>
-
-      {showOptions && (
-        <MenuOptions
-          portalContainerId={'dropdown-components'}
-          containerDimension={containerDimension}
-          width={width}
-          options={options}
-          onChange={selectOption}
-          getOptionLabel={getOptionLabel}
-          disablePortal={disablePortal}
-        />
-      )}
     </>
   );
 };
@@ -194,6 +221,7 @@ Select.propTypes = {
   error: PropTypes.bool,
   errorMessage: PropTypes.string,
   onBlur: PropTypes.func,
+  height: PropTypes.string,
 };
 
 export default Select;

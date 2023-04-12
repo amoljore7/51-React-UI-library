@@ -11,4 +11,4 @@ Then add a NPM script like this for github page:
   }
 }
 
-Then you can run npm run deploy-storybook to deploy the Storybook.
+Then you can run => npm run deploy-storybook to deploy the Storybook.

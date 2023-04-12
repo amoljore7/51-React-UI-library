@@ -8,13 +8,13 @@ $font-size-helper-text: getRem(16px);
 
 .bds-query-selector-parent-container {
   display: flex;
-  padding: 4px 0;
+  padding: 10px 0;
 
   .bds-query-selector-level-one-container {
     width: max-content;
     border: $pill-container-border-width solid $gray-20;
     border-radius: 25px;
-    padding: 5px 15px;
+    padding: 5px 10px;
     background-color: $gray-10;
 
     .bds-query-selector-level-one-fields {
@@ -31,7 +31,7 @@ $font-size-helper-text: getRem(16px);
 
     .bds-query-selector-pipe {
       border-left: 1px solid $gray-40;
-      margin: 10px 0;
+      margin: 5px 0;
     }
   }
 

@@ -1,22 +1,18 @@
 @import "../../global-style/index.scss";
 
 .bds-multi-textfield-container {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-
+  .wrapper {
+    display: flex;
+  }
   .bds-multi-textfield-addBtn {
     cursor: pointer;
-    margin: 10px 0;
   }
   .bds-multi-textfield-wrapper {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
     gap: 5px;
   }
-  .bds-multi-textfield-btnWrapper {
+  .bds-multi-textfield-cross-btn-wrapper {
     display: flex;
-    justify-content: center;
-    align-items: center;
   }
 }

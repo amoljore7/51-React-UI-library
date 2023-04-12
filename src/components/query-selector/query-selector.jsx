@@ -85,7 +85,8 @@ const QuerySelector = (props) => {
     value: attributeValue,
     getOptionLabel: props?.attributeGetOptionLabel,
     placeholder: 'Attribute',
-    width: '200px',
+    width: '140px',
+    height: '26px'
   };
 
   const operatorProps = {
@@ -101,7 +102,8 @@ const QuerySelector = (props) => {
     },
     value: operatorValue,
     placeholder: 'Operator',
-    width: '150px',
+    width: '140px',
+    height: '26px'
   };
   
   const valueProps = {
@@ -125,6 +127,8 @@ const QuerySelector = (props) => {
       }
     },
     isAllFieldSaved: (flag) => setIsAllFieldSaved(flag),
+    width: '100px',
+    height: '26px',
   };
 
   return (

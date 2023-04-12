@@ -28,18 +28,6 @@ export const WithData = () => {
   return <MultiTextfield {...props} />;
 };
 
-export const MaxField = () => {
-
-  const props = {
-    valueString: 'AB,XY,ZM,CD,WE,QR',
-    maxField: 3,
-    finalValue: (value) => console.log(value),
-    finalObject: (obj) => console.log(obj),
-    isAllFieldSaved: (flag) => console.log(flag),
-  };
-  return <MultiTextfield {...props} />;
-};
-
 export const WithTooltip = () => {
 
   const props = {
@@ -51,14 +39,28 @@ export const WithTooltip = () => {
     isAllFieldSaved: (flag) => console.log(flag),
   };
   return (
-    <div
-      style={{
-        height: '200px',
-        display: 'flex',
-      }}
-    >
+    <div style={{ marginTop: '10%' }}>
       <MultiTextfield {...props} />
     </div>
-  ) 
+  )
+};
+
+export const withHeightWidth = () => {
+
+  const props = {
+    valueString: 'ABC,XYZ',
+    tooltip: true,
+    addBtnTooltipText: 'Add Additional value with "Or" condition',
+    finalValue: (value) => console.log(value),
+    finalObject: (obj) => console.log(obj),
+    isAllFieldSaved: (flag) => console.log(flag),
+    width: '100px',
+    height: '26px',
+  };
+  return (
+    <div style={{ marginTop: '10%' }}>
+      <MultiTextfield {...props} />
+    </div>
+  )
 };
 

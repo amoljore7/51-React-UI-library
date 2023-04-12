@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Textfield from './textfield';
-import { FiEye, FiEyeOff, FiSquare } from 'react-icons/fi';
+import { FiEye, FiEyeOff, FiSquare, FiX } from 'react-icons/fi';
 
 export default {
   title: 'design-components/Textfield',
@@ -273,4 +273,25 @@ export const OnBlur = () => {
       <label>{blurLable && blurLable}</label>
     </>
   );
+};
+
+export const height = () => {
+  const [value, setValue] = useState('');
+
+  const onChangeHandler = (e) => {
+    const { value } = e.target.value;
+    setValue(value);
+  };
+  const props = {
+    label: 'Label',
+    helperText: 'Sub Label',
+    type: 'text',
+    value: value,
+    placeholder: 'Placeholder...',
+    width: '140px',
+    height: '26px',
+    icon: <FiX size="16" />,
+    onChange: onChangeHandler,
+  };
+  return <Textfield {...props} />;
 };

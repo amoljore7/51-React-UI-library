@@ -30,6 +30,7 @@ const Textfield = ({
   width,
   readOnly = false,
   name,
+  height,
 }) => {
   const labelClass = {
     [classes.label]: true,
@@ -58,7 +59,7 @@ const Textfield = ({
     <div className={classes.container}>
       {label && <div className={classNames({ ...labelClass })}>{label}</div>}
       {helperText && <div className={classNames({ ...helperTextClass })}>{helperText}</div>}
-      <div className={classNames({ ...inputClass })} style={{ width: `${width}` }}>
+      <div className={classNames({ ...inputClass })} style={{ width: width, height: height }}>
         <input
           className={classNames({ ...inputBox })}
           onBlur={onBlur}
@@ -104,6 +105,7 @@ Textfield.propTypes = {
   name: PropTypes.string,
   onBlur: PropTypes.func,
   onFocus: PropTypes.func,
+  height: PropTypes.string,
 };
 
 export default Textfield;

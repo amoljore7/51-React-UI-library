@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { FiX, FiPlus } from 'react-icons/fi';
+import { FiPlus } from 'react-icons/fi';
+import {AiOutlineClose} from 'react-icons/ai';
 import { isEmpty } from 'lodash';
 import { classes } from './constants';
 import Textfield from '../textfield';
@@ -14,19 +15,17 @@ const MultiTextfield = ({
   finalValue = () => {},
   finalObject = () => {},
   isAllFieldSaved,
-  maxField = 0,
   tooltip = false,
   addBtnTooltipText,
+  width,
+  height
 }) => {
   const [inputList, setInputList] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
 
   useEffect(() => {
-    let result = inputList.map((obj) => {
-      if (isEmpty(obj.value)) return true
-      return false
-    })
-    setIsDisabled(result.includes(true))
+    let flag = inputList?.some((obj) => isEmpty(obj?.value))
+    setIsDisabled(flag)
   });
 
   useEffect(() => {
@@ -45,7 +44,7 @@ const MultiTextfield = ({
 
       let arr = str.split(/\s*,\s*/);
 
-      arr?.map((value, i) => fillAllFields(value, i));
+      arr?.forEach((value, i) => fillAllFields(value, i));
     }
   }, [valueString]);
 
@@ -57,18 +56,8 @@ const MultiTextfield = ({
 
 
   const fillAllFields = (value, i) => {
-    if (maxField && maxField > i) {
       setInputList((inputList) => [...inputList, { value: value }]);
-      setIsDisabled(true)
-    }
-    if (!maxField) {
-      setInputList((inputList) => [...inputList, { value: value }]);
-    }
   };
-
-  useEffect(() => {
-    if (maxField && inputList.length >= maxField) setIsDisabled(true)
-  }, [inputList]);
 
   // handle click event of the Add button
   const handleAddClick = () => {
@@ -93,13 +82,15 @@ const MultiTextfield = ({
 
   useEffect(() => {
     const value = inputList?.map((x) => x?.value).join(',');
-    if (!isEmpty(value)) finalValue(value);
+    if (!isEmpty(value)) {
+      finalValue(value);
+    }
     finalObject(inputList);
 
     let text = value
       .split(',')
       .map((e) => e.trim())
-      .filter((e) => e)
+      .filter((e) => (e))
       .join(',');
 
     if (isEmpty(text) || text.split(',').length !== inputList.length) {
@@ -111,68 +102,68 @@ const MultiTextfield = ({
 
   const renderFields = () => {
     return (
-      <>
+      <div className={classes.wrapper}>
         <div className={classes.inputWrapper}>
           {!isEmpty(inputList) &&
             inputList.map((ele, index) => {
               return (
-                <Fragment key={index}>
+                <div key={index} className={classes.crossBtnWrapper}>
                   <Textfield
                     name='value'
                     value={ele.value}
                     onChange={(e) => handleInputChange(e, index)}
                     type='text'
                     placeholder='value'
-                    width='120px'
+                    width={width}
+                    height={height}
                     icon={
-                      inputList?.length !== 1 && <FiX size='24' color='#8d8d8d' />
+                      inputList?.length !== 1 && <AiOutlineClose size='18' color='#8d8d8d' />
                     }
                     onIconClick={() => handleRemoveClick(index)}
                   />
                   {index !== inputList.length - 1 && (
-                    <span style={{ margin: 'auto' }}>
+                    <span style={{ marginLeft: '5px', display: 'flex', alignItems: 'center' }}>
                       <Typography variant="heading6">{'or'}</Typography>
                     </span>
                   )}
-                </Fragment>
+                </div>
               );
             })}
         </div>
-        <div className={classes.btnWrapper}>
           <FiPlus
             className={classes.addBtn}
             onClick={isDisabled ? () => {} : handleAddClick}
             size='24'
             color={isDisabled ? '#8d8d8d' : ''}
           />
-        </div>
-      </>
+      </div>
     )
   }
 
   const renderFieldsWithTooltip = () => {
     return (
-      <>
+      <div className={classes.wrapper}>
         <div className={classes.inputWrapper}>
           {!isEmpty(inputList) &&
             inputList.map((ele, index) => {
               return (
                 <Tooltip title={ele?.value} position="top" zIndex={2000}>
-                  <div key={index} className={classes.btnWrapper}>
+                  <div key={index} className={classes.crossBtnWrapper}>
                     <Textfield
                       name='value'
                       value={ele?.value}
                       onChange={(e) => handleInputChange(e, index)}
                       type='text'
                       placeholder='value'
-                      width='120px'
+                      width={width}
+                      height={height}
                       icon={
-                        inputList?.length !== 1 && <FiX size='24' color='#8d8d8d' />
+                        inputList?.length !== 1 && <AiOutlineClose size='18' color='#8d8d8d' />
                       }
                       onIconClick={() => handleRemoveClick(index)}
                     />
                     {index !== inputList.length - 1 && (
-                      <span style={{ marginLeft: '5px' }}>
+                      <span style={{ marginLeft: '5px', display: 'flex', alignItems: 'center' }}>
                         <Typography variant="heading6">{'or'}</Typography>
                       </span>
                     )}
@@ -182,16 +173,16 @@ const MultiTextfield = ({
             })}
         </div>
         <Tooltip title={addBtnTooltipText} position="top" zIndex={2000}>
-          <div className={classes.btnWrapper}>
-            <FiPlus
-              className={classes.addBtn}
-              onClick={isDisabled ? () => {} : handleAddClick}
-              size='24'
-              color={isDisabled ? '#8d8d8d' : ''}
-            />
+          <div className={classes.wrapper}>
+              <FiPlus
+                className={classes.addBtn}
+                onClick={isDisabled ? () => {} : handleAddClick}
+                size='24'
+                color={isDisabled ? '#8d8d8d' : ''}
+              />
           </div>
         </Tooltip>
-      </>
+      </div>
     )
   }
 
@@ -206,6 +197,11 @@ MultiTextfield.propTypes = {
   valueString: PropTypes.string,
   finalValue: PropTypes.func.isRequired,
   finalObject: PropTypes.func,
+  isAllFieldSaved: PropTypes.func,
+  tooltip: PropTypes.bool,
+  addBtnTooltipText: PropTypes.string,
+  height: PropTypes.string,
+  width: PropTypes.string,
 };
 
 export default MultiTextfield;

@@ -217,3 +217,67 @@ export const DropdownWithoutPortal = () => {
     </div>
   );
 };
+
+export const TooltipForLongValues = () => {
+  const props = {
+    options: [
+      { title: 'secret-create-secret-create-secret-create-secret-create' },
+      { title: 'secret-delete' },
+      { title: 'secret-update' },
+      { title: 'vault-create' },
+      { title: 'vault-update' },
+      { title: 'vault-delete' },
+    ],
+    placeholder: 'Choose an option',
+    width: '300px',
+    onChange: (event, value) => console.log(value),
+    getOptionLabel: function (option) {
+      return option.title;
+    },
+  };
+  return <Select {...props} />;
+};
+
+export const HideTooltipForLongValues = () => {
+  const props = {
+    options: [
+      { title: 'secret-create-secret-create-secret-create-secret-create' },
+      { title: 'secret-delete' },
+      { title: 'secret-update' },
+      { title: 'vault-create' },
+      { title: 'vault-update' },
+      { title: 'vault-delete' },
+    ],
+    placeholder: 'Choose an option',
+    width: '300px',
+    showTooltip: false,
+    onChange: (event, value) => console.log(value),
+    getOptionLabel: function (option) {
+      return option.title;
+    },
+  };
+  return <Select {...props} />;
+};
+
+export const Height = () => {
+  const props = {
+    options: [
+      { title: 'secret-create' },
+      { title: 'secret-delete' },
+      { title: 'secret-update' },
+      { title: 'vault-create' },
+      { title: 'vault-update' },
+      { title: 'vault-delete' },
+    ],
+    placeholder: 'Choose an option',
+    width: '140px',
+    label: 'Actions',
+    helperText: 'Choose actions for Permission',
+    onChange: (event, value) => console.log(value),
+    getOptionLabel: function (option) {
+      return option.title;
+    },
+    height: '26px'
+  };
+  return <Select {...props} />;
+};

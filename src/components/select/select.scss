@@ -1,6 +1,6 @@
-@import '../../global-style/index.scss';
+@import "../../global-style/index.scss";
 
-$select-container-height: getRem(42px);
+$select-container-height: getRem(40px);
 $select-container-border-width: getRem(1px);
 $select-container-border-color: $gray-40;
 $select-container-border-radius: getRem(2px);
@@ -79,7 +79,8 @@ $select-icon-disabled-color: $gray-30;
   height: $select-container-height;
   border: $select-container-border-width solid $select-container-border-color;
   border-radius: $select-container-border-radius;
-  padding: $select-container-padding-top-bottom $select-container-padding-left-right;
+  padding: $select-container-padding-top-bottom
+    $select-container-padding-left-right;
   box-sizing: border-box;
   background-color: $white;
 }
@@ -87,23 +88,28 @@ $select-icon-disabled-color: $gray-30;
 .bds-select-container-focus {
   &:focus-within {
     border: $select-focus-border-width solid $select-focus-border-color;
-    padding: $select-container-focus-padding-top $select-container-focus-padding-left;
+    padding: $select-container-focus-padding-top
+      $select-container-focus-padding-left;
   }
 }
 
 .bds-select-small-container {
   height: $select-small-container-height;
-  border: $select-container-border-width solid $select-small-container-border-color;
-  padding: $select-small-container-padding-top $select-small-container-padding-right
-    $select-small-container-padding-bottom $select-small-container-padding-left;
+  border: $select-container-border-width solid
+    $select-small-container-border-color;
+  padding: $select-small-container-padding-top
+    $select-small-container-padding-right $select-small-container-padding-bottom
+    $select-small-container-padding-left;
   box-sizing: border-box;
 }
 
 .bds-select-small-container-focus {
   &:focus-within {
     border: $select-focus-border-width solid $select-focus-border-color;
-    padding: $select-small-container-focus-padding-top $select-small-container-focus-padding-right
-      $select-small-container-focus-padding-bottom $select-small-container-focus-padding-left;
+    padding: $select-small-container-focus-padding-top
+      $select-small-container-focus-padding-right
+      $select-small-container-focus-padding-bottom
+      $select-small-container-focus-padding-left;
   }
 }
 
@@ -123,15 +129,18 @@ $select-icon-disabled-color: $gray-30;
 }
 
 .bds-select-container-disabled {
-  border: $select-container-border-width solid $select-container-border-disabled-color;
+  border: $select-container-border-width solid
+    $select-container-border-disabled-color;
   .bds-select-placeholder {
     color: $select-value-placeholder-color-disabled;
   }
 }
 
 .bds-select-container-error {
-  border: $select-container-error-border-width solid $select-container-error-border-color;
-  padding: $select-container-padding-top-bottom $select-container-padding-left-right;
+  border: $select-container-error-border-width solid
+    $select-container-error-border-color;
+  padding: $select-container-padding-top-bottom
+    $select-container-padding-left-right;
 }
 
 .bds-select-container-read-only {
@@ -213,6 +222,8 @@ $select-icon-disabled-color: $gray-30;
   color: $select-value-color;
   margin-bottom: 1px;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .bds-select-value-disabled {
