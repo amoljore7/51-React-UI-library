@@ -15,6 +15,7 @@ const QueryBuilder = (props) => {
   const [query, setQuery] = useState([]);
   const combinator = props?.combinator || 'AND';
   const [isDisabled, setIsDisabled] = useState();
+  const [checkIsAnyPillActive, setCheckIsAnyPillActive] = useState();
 
 
   const handleAddQueryPills = (newQuery) => {
@@ -26,14 +27,24 @@ const QueryBuilder = (props) => {
       setQuery(query);
     }
     massageData(query);
+    isAnyPillActive();
   };
+
+  const updateActiveIndex = (queryId, flag) => {
+    const index = query.findIndex((e) => e?.queryId === queryId);
+    if (index !== -1) {
+      query[index].isActiveIndex = flag;
+      setQuery(query);
+    }
+    isAnyPillActive();
+  }
 
   useEffect(() => {
     massageData(query);
   }, [query, props?.isEditMode]);
 
   const massageData = (data) => {
-    const result = data?.map(({ isActive, queryId, ...rest }) => ({ ...rest }));
+    const result = data?.map(({ queryId, ...rest }) => ({ ...rest }));
     props.savedQuery(result);
   };
 
@@ -45,7 +56,7 @@ const QueryBuilder = (props) => {
           attribute: props?.attributeGetOptionLabel(element),
           operator: element?.operator,
           value: element?.value,
-          isActive: false,
+          isActiveIndex: false,
           queryId: newId
         }
       })
@@ -79,16 +90,29 @@ const QueryBuilder = (props) => {
     ]);
   };
 
-  const deleteHandleClick = (removeId) =>
+  const deleteHandleClick = (removeId) => {
     setSelectorList((selectorList) =>
       selectorList.filter((ele) => ele.key !== removeId)
     );
+    isAnyPillActive();
+  }
 
   const handleRemoveQueryPills = (id) => {
+    const index = query.findIndex((e) => e?.queryId === id);
+    if (index !== -1) {
+      query[index].isActiveIndex = false;
+    }
     setQuery((query) => query.filter((ele) => ele.queryId !== id));
   };
 
   useEffect(() => {
+    if (isAnyPillActive()) {
+      return props.saveQueryFlag(false);
+    } else if (!isEmpty(props?.existingSavedQueries) && isEmpty(selectorList) && isEmpty(query)) {
+      return props.saveQueryFlag(true);
+    } else if (isEmpty(props?.existingSavedQueries) && isEmpty(selectorList) && isEmpty(query)) {
+      return props.saveQueryFlag(false);
+    }
     if(!isEmpty(props?.existingSavedQueries) && props?.isEditMode) {
       if (isEmpty(selectorList) &&  isEmpty(query)){
         setIsDisabled(true)
@@ -108,7 +132,7 @@ const QueryBuilder = (props) => {
         return props.saveQueryFlag(false);
       }
     }
-  }, [query, selectorList, props?.isEditMode]);
+  }, [query, selectorList, props?.isEditMode, checkIsAnyPillActive]);
 
   const checkAddCriteriaBtnFlag =()=>{
     if (isEmpty(props?.existingSavedQueries) && isEmpty(selectorList) && isEmpty(query)) {
@@ -117,6 +141,12 @@ const QueryBuilder = (props) => {
     return !isDisabled
   }
 
+  const isAnyPillActive =()=>{
+    let flag = query?.some((obj) => obj?.isActiveIndex === true)
+    setCheckIsAnyPillActive(flag)
+    return flag;
+  }
+  
   const renderValue = (value) => {
     let regex = /,/g;
     let str = value
@@ -174,7 +204,7 @@ const QueryBuilder = (props) => {
 
       {props.isEditMode && (
         <>
-          <Button variant='textOnly' size='medium' onClick={onAddBtnClick} disabled={checkAddCriteriaBtnFlag()}>
+          <Button variant='textOnly' size='medium' onClick={onAddBtnClick} disabled={ checkIsAnyPillActive || checkAddCriteriaBtnFlag()}>
             <FiPlus size='20' color='#067fdb' style={{ marginRight: 5 }} />
             Add Criteria
           </Button>
@@ -188,17 +218,19 @@ const QueryBuilder = (props) => {
                       handleRemoveQueryPills(ele.key),
                         deleteHandleClick(ele.key);
                     }}
-                    index={selectorList.length}
+                    index={index}
                     handleAddQueryPills={handleAddQueryPills}
+                    updateActiveIndex={updateActiveIndex}
                     currentElement={ele?.props?.object}
                     query={query}
+                    selectorList={selectorList}
                     {...props}
                   />
 
                   {index !== selectorList.length - 1 && (
                     <div
                       className={queryBuilderClasses.pillsContainer}
-                      style={{ padding: '0 8px', margin: 'auto' }}
+                      style={{ padding: '0 8px', margin: 'auto', width: 'max-content' }}
                     >
                       <Typography variant='label1'>{combinator}</Typography>
                     </div>

@@ -4,7 +4,7 @@ import { FiSlash, FiCheck, FiX } from 'react-icons/fi';
 import Select from '../select';
 import MultiTextfield from '../multi-textfield';
 import Typography from '../typography';
-import { querySelectorClasses } from './constants';
+import { classes } from './constants';
 import { isEmpty } from 'lodash';
 
 import './query-selector.scss';
@@ -31,6 +31,10 @@ const QuerySelector = (props) => {
     }
   };
 
+  useEffect(() => {
+    if (!isQueryEmpty()) setIsError(false)
+  },[attributeValue, operatorValue, value])
+
   const resetHandleClick = (id) => {
     const value = props?.query?.findIndex((e) => e.queryId === id);
     if (value === -1) {
@@ -43,6 +47,7 @@ const QuerySelector = (props) => {
     }
     setIsActive(false)
     setIsError(false);
+    props?.updateActiveIndex(props?.queryId, false)
   };
 
   const commonUtils = (data) => {
@@ -64,22 +69,47 @@ const QuerySelector = (props) => {
         attribute: props?.attributeGetOptionLabel(attributeValue),
         operator: operatorValue?.operator,
         value,
-        isActive: false,
+        isActiveIndex: false,
         queryId,
       };
       setIsActive(false);
+      props?.updateActiveIndex(queryId, false)
       props?.handleAddQueryPills(toBeInserted);
     }
   };
 
+  const checkIsAnyPillActive =()=>{
+    let flag = props?.query?.some((obj) => obj?.isActiveIndex === true)
+    return flag
+  }
+
+  const disabledOtherPills =(obj)=>{
+    if (props?.currentElement?.isActiveIndex) {
+      return false
+    } else if(!props?.currentElement?.isActiveIndex){
+      return true
+    }
+    return false
+  }
+
+  const checkIsAnyPillEmpty =()=>{
+      if (props?.index === props?.selectorList?.length -1) return false
+      return true
+  }
+
   const pillContainerClasses = {
-    [querySelectorClasses.levelOneContainer]: true,
-    [querySelectorClasses.errorPill]: isError,
+    [classes.levelOneContainer]: true,
+    [classes.errorPill]: isError,
+  };
+  const queryClass = {
+    [classes.disabledPill]:
+      props?.selectorList?.length !== props?.query?.length ? checkIsAnyPillEmpty() : checkIsAnyPillActive() ? disabledOtherPills() : false,
   };
 
   const attributeProps = {
     options: props?.attributeOptions,
     onChange: (event, value) => {
+      props?.updateActiveIndex(props?.queryId, true)
       setAttributeValue(value), setIsActive(true);
     },
     value: attributeValue,
@@ -98,6 +128,7 @@ const QuerySelector = (props) => {
       return option.operator;
     },
     onChange: (event, value) => {
+      props?.updateActiveIndex(props?.queryId, true)
       setOperatorValue(value), setIsActive(true);
     },
     value: operatorValue,
@@ -105,26 +136,15 @@ const QuerySelector = (props) => {
     width: '140px',
     height: '26px'
   };
-  
+
   const valueProps = {
     valueString: value,
     tooltip: true,
     addBtnTooltipText: 'Add Additional value with "Or" condition',
     finalValue: (value) => {
-      setValue(
-        value
-          .split(',')
-          .map((e) => e.trim())
-          .filter((e) => e)
-          .join(',')
-      );
-      if (value === props?.currentElement?.value) {
-        setIsActive(false);
-      } else if(!isEmpty(value)) {
-          setIsActive(true);
-      } else {
-        setIsActive(false);
-      }
+      setValue(value)
+      props?.updateActiveIndex(props?.queryId, true)
+      setIsActive(true);
     },
     isAllFieldSaved: (flag) => setIsAllFieldSaved(flag),
     width: '100px',
@@ -132,21 +152,21 @@ const QuerySelector = (props) => {
   };
 
   return (
-    <>
-      <div className={querySelectorClasses.parentContainer} data-testid="pill-wrapper">
+    <div className={classNames({ ...queryClass })}>
+      <div className={classes.parentContainer} data-testid="pill-wrapper">
         <div>
           <div className={classNames({ ...pillContainerClasses })}>
-            <div className={querySelectorClasses.levelOneFields}>
+            <div className={classes.levelOneFields}>
               <Select {...attributeProps} />
-              <span className={querySelectorClasses.pipe} />
+              <span className={classes.pipe} />
               <Select {...operatorProps} />
-              <span className={querySelectorClasses.pipe} />
+              <span className={classes.pipe} />
               <MultiTextfield {...valueProps} />
-              <span className={querySelectorClasses.pipe} />
+              <span className={classes.pipe} />
               {isActive && (
                 <>
                   <div
-                    className={querySelectorClasses.cancelIconBox}
+                    className={classes.cancelIconBox}
                     onClick={() => checkHandleClick(props?.queryId)}
                   >
                     <FiCheck
@@ -155,7 +175,7 @@ const QuerySelector = (props) => {
                     />
                   </div>
                   <div
-                    className={querySelectorClasses.cancelIconBox}
+                    className={classes.cancelIconBox}
                     onClick={() => resetHandleClick(props?.queryId)}
                   >
                     <FiSlash size='24' />
@@ -164,7 +184,7 @@ const QuerySelector = (props) => {
               )}
               {
                 <div
-                  className={querySelectorClasses.cancelIconBox}
+                  className={classes.cancelIconBox}
                   onClick={props?.deleteHandleClick}
                 >
                   <FiX size='24' />
@@ -173,7 +193,7 @@ const QuerySelector = (props) => {
             </div>
           </div>
           {isError && (
-            <div className={querySelectorClasses.errorMsgText}>
+            <div className={classes.errorMsgText}>
               <Typography variant='label1'>
                 {'Please specify values for all fields'}
               </Typography>
@@ -181,7 +201,7 @@ const QuerySelector = (props) => {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { FiPlus } from 'react-icons/fi';
-import {AiOutlineClose} from 'react-icons/ai';
+import { FiPlus, FiX } from 'react-icons/fi';
 import { isEmpty } from 'lodash';
 import { classes } from './constants';
 import Textfield from '../textfield';
@@ -36,14 +35,7 @@ const MultiTextfield = ({
   useEffect(() => {
     if (!isEmpty(valueString)) {
       setInputList([]);
-      let str = valueString
-        .split(',')
-        .map((e) => e.trim())
-        .filter((e) => e)
-        .join(',');
-
-      let arr = str.split(/\s*,\s*/);
-
+      let arr = valueString.split(/\s*,\s*/);
       arr?.forEach((value, i) => fillAllFields(value, i));
     }
   }, [valueString]);
@@ -82,7 +74,7 @@ const MultiTextfield = ({
 
   useEffect(() => {
     const value = inputList?.map((x) => x?.value).join(',');
-    if (!isEmpty(value)) {
+    if (!isEmpty(value) && value !== valueString) {
       finalValue(value);
     }
     finalObject(inputList);
@@ -117,7 +109,7 @@ const MultiTextfield = ({
                     width={width}
                     height={height}
                     icon={
-                      inputList?.length !== 1 && <AiOutlineClose size='18' color='#8d8d8d' />
+                      inputList?.length !== 1 && <FiX size='16' color='#8d8d8d' />
                     }
                     onIconClick={() => handleRemoveClick(index)}
                   />
@@ -158,7 +150,7 @@ const MultiTextfield = ({
                       width={width}
                       height={height}
                       icon={
-                        inputList?.length !== 1 && <AiOutlineClose size='18' color='#8d8d8d' />
+                        inputList?.length !== 1 && <FiX size='16' color='#8d8d8d' />
                       }
                       onIconClick={() => handleRemoveClick(index)}
                     />

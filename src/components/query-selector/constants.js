@@ -1,4 +1,4 @@
-export const querySelectorClasses = {
+export const classes = {
   parentContainer: 'bds-query-selector-parent-container',
   levelOneContainer: 'bds-query-selector-level-one-container',
   levelOneFields: 'bds-query-selector-level-one-fields',
@@ -7,4 +7,5 @@ export const querySelectorClasses = {
   cancelIconBox: 'bds-query-selector-cancel-icon',
   pipe: 'bds-query-selector-pipe',
   maxValueMsg: 'bds-query-selector-max-value-msg',
+  disabledPill: 'bds-query-selector-disabled-pill',
 };
