@@ -16,4 +16,16 @@ $border-radius: getRem(3px);
     & > button:last-child {
         border-radius: 0 $border-radius $border-radius 0;
     }
+
+    & > div:not(:last-child):not(:first-child) > button {
+        border-radius: 0;
+    }
+
+    & > div:first-child > button {
+        border-radius: $border-radius 0 0 $border-radius;
+    }
+
+    & > div:last-child > button {
+        border-radius: 0 $border-radius $border-radius 0;
+    }
 }

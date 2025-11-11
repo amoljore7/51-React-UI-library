@@ -35,15 +35,21 @@ const Autocomplete = ({
   onBlur,
   error,
   disablePortal = false,
+  allowClearing = true,
+  height,
+  filterCurrentValueFromOptions = false,
+  groupPropertyName,
+  showOptionsOnBlur = false
 }) => {
   let selectedValues;
   let filteredOptions;
 
   useEffect(() => {
-    const inputValue = !multiple && Boolean(value) ? getOptionLabel(selectedValues[0]) : '';
-    setInputValue(inputValue);
+    const inputValue =
+      !multiple && Boolean(value) ? getOptionLabel(selectedValues[0]) : '';
+    setInputValue(inputValue || '');
     setSelectedOptions(selectedValues);
-  }, [value]);
+  }, [JSON.stringify(value)]);
 
   const filterSelectedOptionsFromOptions = (allOptions, selectedOptions) => {
     let optionsAfterFilter = [...allOptions];
@@ -56,16 +62,28 @@ const Autocomplete = ({
   };
 
   selectedValues = Boolean(value) ? [...value] : [];
-  filteredOptions = multiple ? filterSelectedOptionsFromOptions(options, selectedValues) : options;
+  filteredOptions = multiple
+    ? filterSelectedOptionsFromOptions(options, selectedValues)
+    : options;
 
   const [inputValue, setInputValue] = useState(
     !multiple && Boolean(value) ? getOptionLabel(selectedValues[0]) : ''
   );
-  const [filteredSuggestions, setFilteredSuggestions] = useState(filteredOptions);
+  const [filteredSuggestions, setFilteredSuggestions] = useState(
+    filteredOptions
+  );
   const [selectedOptions, setSelectedOptions] = useState(selectedValues);
   const [showOptions, setShowOptions] = useState(false);
   const [containerDimension, setContainerDimension] = useState({});
   const autocompleteRef = useRef();
+
+  useEffect(() => {
+    setFilteredSuggestions(
+      multiple
+        ? filterSelectedOptionsFromOptions(options, selectedValues)
+        : options
+    );
+  }, [JSON.stringify(options)]);
 
   const getContainerDimension = () => {
     let rect = autocompleteRef.current.getBoundingClientRect();
@@ -84,23 +102,46 @@ const Autocomplete = ({
     for (let i in options) {
       if (getOptionLabel(options[i]) === inputValue) isOptionCorrect = true;
     }
+
+    if (showOptionsOnBlur) {
+      /**
+       * Show the options list only if the following conditions are true:
+       * 1. The list is already open.
+       * 2. There is some text input by the user.
+       * 3. The text input doesn't matches any of the available options.
+       */
+      if (showOptions && inputValue && !isOptionCorrect) {
+        setShowOptions(true);
+      } else {
+        setShowOptions(false);
+      }
+      return
+    }
+
     if (!multiple && !isOptionCorrect) {
       setInputValue('');
       setFilteredSuggestions(options);
     }
     if (multiple) {
       setInputValue('');
-      setFilteredSuggestions(filterSelectedOptionsFromOptions(options, selectedOptions));
+      setFilteredSuggestions(
+        filterSelectedOptionsFromOptions(options, selectedOptions)
+      );
     }
     setShowOptions(false);
-    !isOptionCorrect && onInputChange(event, '');
+    !isOptionCorrect &&
+      typeof onInputChange === 'function' &&
+      onInputChange(event, '');
   };
 
   const changeHandler = (event) => {
     setInputValue(event.target.value);
     setShowOptions(true);
     if (multiple) {
-      const filteredSuggestions = filterSelectedOptionsFromOptions(options, selectedOptions);
+      const filteredSuggestions = filterSelectedOptionsFromOptions(
+        options,
+        selectedOptions
+      );
       const filteredOptions = filteredSuggestions.filter((option) => {
         return String(getOptionLabel(option) || '')
           .toLowerCase()
@@ -115,7 +156,10 @@ const Autocomplete = ({
       });
       setFilteredSuggestions(filteredOptions);
     }
-    onInputChange(event, event.target.value);
+
+    if (typeof onInputChange === 'function') {
+      onInputChange(event, event.target.value);
+    }
   };
 
   const selectOption = (event, value) => {
@@ -125,7 +169,9 @@ const Autocomplete = ({
       setInputValue('');
       const newOptions = [...selectedOptions, value];
       setSelectedOptions(newOptions);
-      setFilteredSuggestions(filterSelectedOptionsFromOptions(options, newOptions));
+      setFilteredSuggestions(
+        filterSelectedOptionsFromOptions(options, newOptions)
+      );
       onChange(event, newOptions);
     } else {
       setFilteredSuggestions(options);
@@ -137,14 +183,16 @@ const Autocomplete = ({
   const deletePill = (event, value) => {
     const filteredOptions = selectedOptions.filter((item) => item !== value);
     setSelectedOptions(filteredOptions);
-    setFilteredSuggestions(filterSelectedOptionsFromOptions(options, filteredOptions));
+    setFilteredSuggestions(
+      filterSelectedOptionsFromOptions(options, filteredOptions)
+    );
     onChange(event, filteredOptions);
   };
 
   const showSuggestions = () => {
     if (!(disabled || readOnly)) {
       getContainerDimension();
-      setShowOptions(!showOptions);
+      setShowOptions(true);
     }
   };
 
@@ -174,6 +222,7 @@ const Autocomplete = ({
 
   const crossIconClickHandler = (event) => {
     clearAllHandler(event);
+    event.stopPropagation();
   };
 
   const crossIconKeyDownHandler = (event) => {
@@ -196,7 +245,10 @@ const Autocomplete = ({
               disabled={disabled}
               readOnly={readOnly}
               label={getOptionLabel(option)}
-              onDelete={(event) => deletePill(event, option)}
+              onDelete={(event) => {
+                deletePill(event, option)
+                event.stopPropagation();
+              }}
             />
           </div>
         );
@@ -216,13 +268,19 @@ const Autocomplete = ({
 
   const containerClasses = {
     [classes.container]: multiple ? true : !readOnly,
-    [classes.autocompleteContainerError]: !(readOnly || disabled) && multiple && error,
-    [classes.autocompleteSingleSelectContainerError]: !(multiple || readOnly || disabled) && error,
+    [classes.autocompleteContainerError]:
+      !(readOnly || disabled) && multiple && error,
+    [classes.autocompleteSingleSelectContainerError]:
+      !(multiple || readOnly || disabled) && error,
     [classes.containerDisabled]: disabled,
     [classes.containerReadOnly]: readOnly,
     [classes.autocompleteContainerFocus]: !(disabled || readOnly),
     [classes.singleSelectContainer]: !(multiple || readOnly),
-    [classes.autocompleteSingleSelectContainerFocus]: !(multiple || disabled || readOnly),
+    [classes.autocompleteSingleSelectContainerFocus]: !(
+      multiple ||
+      disabled ||
+      readOnly
+    ),
   };
 
   const inputClasses = {
@@ -251,9 +309,11 @@ const Autocomplete = ({
       <div
         ref={autocompleteRef}
         className={classNames({ ...containerClasses })}
-        style={{ width: width }}
+        style={{ width, height }}
         tabIndex={defaultTabIndex}
         onBlur={blurHandler}
+        data-testid={classes.container}
+        onClick={inputClickHandler}
       >
         <div className={classNames({ ...pillInputWrapperClasses })}>
           {renderPills()}
@@ -287,24 +347,37 @@ const Autocomplete = ({
                 onBlur={(e) => onBlur && onBlur(e)}
               />
             ) : (
-              <div className={classes.autocompleteSingleSelectReadOnly}>{inputValue}</div>
+              <div className={classes.autocompleteSingleSelectReadOnly}>
+                {inputValue}
+              </div>
             ))}
         </div>
         {!readOnly && (
-          <div className={classes.actionsContainer}>
-            <div
-              className={classNames({ ...actionsContainerItemClasses })}
-              onClick={crossIconClickHandler}
-              onKeyDown={crossIconKeyDownHandler}
-              tabIndex={defaultTabIndex}
-            >
-              {((multiple && selectedOptions.length > 0) || (!multiple && inputValue !== '')) && (
-                <FiX
-                  size={defaultIconSize}
-                  className={disabled ? classes.autocompleteIconDisabled : classes.autocompleteIcon}
-                />
-              )}
-            </div>
+          <div
+            className={`${classes.actionsContainer} ${
+              multiple ? classes.multipleInputActionsContainer : ''
+            }`}
+          >
+            {allowClearing && (
+              <div
+                className={classNames({ ...actionsContainerItemClasses })}
+                onClick={crossIconClickHandler}
+                onKeyDown={crossIconKeyDownHandler}
+                tabIndex={defaultTabIndex}
+              >
+                {((multiple && selectedOptions.length > 0) ||
+                  (!multiple && inputValue !== '')) && (
+                  <FiX
+                    size={defaultIconSize}
+                    className={
+                      disabled
+                        ? classes.autocompleteIconDisabled
+                        : classes.autocompleteIcon
+                    }
+                  />
+                )}
+              </div>
+            )}
             <div
               className={classNames({ ...actionsContainerItemClasses })}
               onClick={inputClickHandler}
@@ -314,12 +387,20 @@ const Autocomplete = ({
               {showOptions ? (
                 <IoChevronUp
                   size={defaultIconSize}
-                  className={disabled ? classes.autocompleteIconDisabled : classes.autocompleteIcon}
+                  className={
+                    disabled
+                      ? classes.autocompleteIconDisabled
+                      : classes.autocompleteIcon
+                  }
                 />
               ) : (
                 <IoChevronDown
                   size={defaultIconSize}
-                  className={disabled ? classes.autocompleteIconDisabled : classes.autocompleteIcon}
+                  className={
+                    disabled
+                      ? classes.autocompleteIconDisabled
+                      : classes.autocompleteIcon
+                  }
                 />
               )}
             </div>
@@ -331,16 +412,26 @@ const Autocomplete = ({
           portalContainerId={autocompletePortalId}
           containerDimension={containerDimension}
           width={width}
-          options={filteredSuggestions}
+          options={
+            multiple || !filterCurrentValueFromOptions
+              ? filteredSuggestions
+              : filteredSuggestions.filter(
+                  (option) => getOptionLabel(option) !== inputValue
+                )
+          }
           onChange={selectOption}
           getOptionLabel={getOptionLabel}
           getOptionIcon={getOptionIcon}
           getOptionSublabel={getOptionSublabel}
           disablePortal={disablePortal}
+          groupPropertyName={groupPropertyName}
         />
       )}
       {error ? (
-        <div className={classes.autocompleteErrorMessage} style={{ width: width }}>
+        <div
+          className={classes.autocompleteErrorMessage}
+          style={{ width: width }}
+        >
           {errorMessage}
         </div>
       ) : null}
@@ -353,7 +444,7 @@ Autocomplete.propTypes = {
   multiple: PropTypes.bool,
   label: PropTypes.string,
   helperText: PropTypes.string,
-  onInputChange: PropTypes.func.isRequired,
+  onInputChange: PropTypes.func,
   onChange: PropTypes.func.isRequired,
   getOptionLabel: PropTypes.func.isRequired,
   getOptionSublabel: PropTypes.func,
@@ -366,6 +457,11 @@ Autocomplete.propTypes = {
   name: PropTypes.string,
   onBlur: PropTypes.func,
   disablePortal: PropTypes.bool,
+  height: PropTypes.string,
+  allowClearing: PropTypes.bool,
+  filterCurrentValueFromOptions: PropTypes.bool,
+  groupPropertyName: PropTypes.string,
+  showOptionsOnBlur: PropTypes.bool,
 };
 
 export default Autocomplete;

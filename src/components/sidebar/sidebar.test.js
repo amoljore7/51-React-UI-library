@@ -8,10 +8,10 @@ import { listRole } from './constants';
 describe('Unit tests for Sidebar component', () => {
   const sidebarData = [
     {
-      GroupHeader: 'My Vault',
+      GroupHeader: 'Britive Vault',
       items: [
         {
-          title: 'My Vault',
+          title: 'Britive Vault',
           route: '/',
           icon: '',
         },

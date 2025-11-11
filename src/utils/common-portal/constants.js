@@ -1,4 +1,5 @@
 export const classes = {
+  category: 'category',
   optionsContainer: 'options-container',
   option: 'option',
   optionIcon: 'option-icon',
@@ -14,6 +15,9 @@ export const classes = {
   optionLabelAlone: 'option-label-alone',
   separator: 'separator',
   selectedOption: 'selected-option',
+  highlightOption: 'highlight-option',
+  highlightOptionLabel: 'highlight-option-label',
+  grouped: 'grouped'
 };
 
 export const optionRole = 'option';

@@ -214,6 +214,51 @@ export const SingleSelectAutocomplete = () => {
   return <Autocomplete {...props} />;
 };
 
+export const SingleSelectAutocompleteWithCurrentValueRemovedFromOptions = () => {
+  const props = {
+    options: [
+      { title: 'secret-create', icon: SampleSmallIcon },
+      { title: 'secret-delete', icon: SampleSmallIcon },
+      { title: 'secret-update', icon: SampleSmallIcon },
+      { title: 'vault-create', icon: SampleSmallIcon },
+      { title: 'vault-update', icon: SampleSmallIcon },
+      { title: 'vault-delete', icon: SampleSmallIcon },
+    ],
+    width: '300px',
+    label: 'Actions',
+    helperText: 'Choose actions for Permission',
+    getOptionLabel: (option) => option.title,
+    onInputChange: (event, value) => console.log(value),
+    onChange: (event, value) => console.log(value),
+    placeholder: 'Enter text',
+    filterCurrentValueFromOptions: true,
+  };
+  return <Autocomplete {...props} />;
+};
+
+export const SingleSelectAutocompleteCustomHeight = () => {
+  const props = {
+    options: [
+      { title: 'secret-create', icon: SampleSmallIcon },
+      { title: 'secret-delete', icon: SampleSmallIcon },
+      { title: 'secret-update', icon: SampleSmallIcon },
+      { title: 'vault-create', icon: SampleSmallIcon },
+      { title: 'vault-update', icon: SampleSmallIcon },
+      { title: 'vault-delete', icon: SampleSmallIcon },
+    ],
+    width: '300px',
+    height: '26px',
+    label: 'Actions',
+    helperText: 'Choose actions for Permission',
+    getOptionLabel: (option) => option.title,
+    onInputChange: (event, value) => console.log(value),
+    onChange: (event, value) => console.log(value),
+    placeholder: 'Enter text',
+    allowClearing: false,
+  };
+  return <Autocomplete {...props} />;
+};
+
 export const DisabledSingleSelectAutocomplete = () => {
   let options = [
     { title: 'secret-create', icon: SampleSmallIcon },
@@ -257,6 +302,30 @@ export const ReadOnlySingleSelectAutocomplete = () => {
     getOptionLabel: (option) => option.title,
     onInputChange: (event, value) => console.log(value),
     onChange: (event, value) => console.log(value),
+    placeholder: 'Enter text',
+  };
+  return <Autocomplete {...props} />;
+};
+
+export const GroupOptionsAutocomplete = () => {
+  const props = {
+    options: [
+      { title: 'secret-create', type: "Create" },
+      { title: 'secret-delete', type: "Delete" },
+      { title: 'secret-update', type: "Update" },
+      { title: 'vault-update', type: "Update" },
+      { title: 'vault-create', type: "Create" },
+      { title: 'vault-delete', type: "Delete" },
+    ],
+    width: '512px',
+    label: 'Actions',
+    helperText: 'Choose actions for Permission',
+    onInputChange: (event, value) => console.log(value),
+    onChange: (event, value) => console.log(value),
+    getOptionLabel: (option) => {
+      return option.title;
+    },
+    groupPropertyName: 'type',
     placeholder: 'Enter text',
   };
   return <Autocomplete {...props} />;

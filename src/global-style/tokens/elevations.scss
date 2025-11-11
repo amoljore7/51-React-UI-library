@@ -1,0 +1,45 @@
+@import 'colors.scss';
+@import 'radius.scss';
+// Elevation
+// Elevation tokens define the depth of UI elements.
+// Higher levels appear closer to the user by casting stronger shadows.
+// Built with up to three layers, including a base outline shadow applied
+// to all levels by default. (elevation-1)
+
+$shadow-base: 0px 1px 1px material-black(20);
+
+@mixin elevation-1 {
+  box-shadow: $shadow-base;
+}
+
+@mixin elevation-2 {
+  box-shadow: 0px 2px 2px material-black(10), $shadow-base;
+}
+
+@mixin elevation-3 {
+  box-shadow: 0px 3px 5px material-black(10), $shadow-base;
+}
+
+@mixin elevation-4 {
+  box-shadow: 0px 1px 2px material-black(10), 0px 4px 7px material-black(20), $shadow-base;
+}
+
+@mixin elevation-5 {
+  box-shadow: 0px 1px 4px material-black(10), 0px 6px 9px material-black(20), $shadow-base;
+}
+
+@mixin elevation-6 {
+  box-shadow: 0px 1px 4px material-black(10), 0px 8px 12px material-black(20), $shadow-base;
+}
+
+@mixin elevation-7 {
+  box-shadow: 0px 1px 4px material-black(10), 0px 10px 16px material-black(20), $shadow-base;
+}
+
+@mixin elevation-8 {
+  box-shadow: 0px 2px 8px material-black(10), 0px 16px 20px material-black(20), $shadow-base;
+}
+
+@mixin elevation-9 {
+  box-shadow: 0px 6px 12px material-black(10), 0px 24px 40px material-black(20), $shadow-base;
+}

@@ -10,10 +10,22 @@ import { FiPlus } from 'react-icons/fi';
 
 import './query-builder.scss';
 
-const QueryBuilder = (props) => {
+const QueryBuilder = ({
+  combinator = 'AND',
+  isEditMode,
+  savedQuery,
+  existingSavedQueries,
+  attributeGetOptionLabel,
+  saveQueryFlag,
+  addButtonLabel = 'Add Criteria',
+  onlyAttributeInput = false,
+  disableAddButton = false,
+  attributeOptions,
+  getQueryCount,
+  ...restProps
+}) => {
   const [selectorList, setSelectorList] = useState([]);
   const [query, setQuery] = useState([]);
-  const combinator = props?.combinator || 'AND';
   const [isDisabled, setIsDisabled] = useState();
   const [checkIsAnyPillActive, setCheckIsAnyPillActive] = useState();
 
@@ -21,6 +33,7 @@ const QueryBuilder = (props) => {
   const handleAddQueryPills = (newQuery) => {
     const index = query.findIndex((e) => e.queryId === newQuery.queryId);
     if (index === -1) {
+
       setQuery((oldQuery) => [...oldQuery, newQuery]);
     } else {
       query[index] = newQuery;
@@ -41,19 +54,25 @@ const QueryBuilder = (props) => {
 
   useEffect(() => {
     massageData(query);
-  }, [query, props?.isEditMode]);
+  }, [query, isEditMode]);
+
+  useEffect(() => {
+    if (typeof getQueryCount === 'function') {
+      getQueryCount(selectorList.length)
+    }
+  }, [selectorList.length])
 
   const massageData = (data) => {
     const result = data?.map(({ queryId, ...rest }) => ({ ...rest }));
-    props.savedQuery(result);
+    savedQuery(result);
   };
 
   useEffect(()=>{
-    if(!isEmpty(props?.existingSavedQueries)) {
-      let massagedQueries = props.existingSavedQueries.map((element) => {
+    if(!isEmpty(existingSavedQueries) && !isEditMode) {
+      let massagedQueries = existingSavedQueries.map((element) => {
         const newId = nanoid();
         return {
-          attribute: props?.attributeGetOptionLabel(element),
+          attribute: attributeGetOptionLabel(element),
           operator: element?.operator,
           value: element?.value,
           isActiveIndex: false,
@@ -62,18 +81,21 @@ const QueryBuilder = (props) => {
       })
       setQuery(massagedQueries)
     }
-  },[props?.existingSavedQueries])
+    if (isEmpty(existingSavedQueries) && !isEditMode) {
+      setQuery([])
+    }
+  },[JSON.stringify(existingSavedQueries), isEditMode])
 
   useEffect(() => {
     setSelectorList([]);
-    if (props?.isEditMode && !isEmpty(query)) {
+    if (isEditMode && !isEmpty(query)) {
       query.map((element) => {
         if (undefined != element) {
           fillAllFields(element);
         }
       });
     }
-  }, [props?.isEditMode]);
+  }, [isEditMode]);
 
   const fillAllFields = (obj) => {
     setSelectorList((selectorList) => [
@@ -107,35 +129,35 @@ const QueryBuilder = (props) => {
 
   useEffect(() => {
     if (isAnyPillActive()) {
-      return props.saveQueryFlag(false);
-    } else if (!isEmpty(props?.existingSavedQueries) && isEmpty(selectorList) && isEmpty(query)) {
-      return props.saveQueryFlag(true);
-    } else if (isEmpty(props?.existingSavedQueries) && isEmpty(selectorList) && isEmpty(query)) {
-      return props.saveQueryFlag(false);
+      return saveQueryFlag(false);
+    } else if (!isEmpty(existingSavedQueries) && isEmpty(selectorList) && isEmpty(query)) {
+      return saveQueryFlag(true);
+    } else if (isEmpty(existingSavedQueries) && isEmpty(selectorList) && isEmpty(query)) {
+      return saveQueryFlag(false);
     }
-    if(!isEmpty(props?.existingSavedQueries) && props?.isEditMode) {
+    if(!isEmpty(existingSavedQueries) && isEditMode) {
       if (isEmpty(selectorList) &&  isEmpty(query)){
         setIsDisabled(true)
-        return props?.saveQueryFlag(true);
-      } 
+        return saveQueryFlag(true);
+      }
     }
     if (isEmpty(query)){
       setIsDisabled(false)
-      return props.saveQueryFlag(false);
+      return saveQueryFlag(false);
     }
     if (!isEmpty(selectorList)) {
       if (selectorList?.length === query.length) {
         setIsDisabled(true)
-        return props.saveQueryFlag(true);
+        return saveQueryFlag(true);
       } else {
         setIsDisabled(false)
-        return props.saveQueryFlag(false);
+        return saveQueryFlag(false);
       }
     }
-  }, [query, selectorList, props?.isEditMode, checkIsAnyPillActive]);
+  }, [query, selectorList, isEditMode, checkIsAnyPillActive]);
 
   const checkAddCriteriaBtnFlag =()=>{
-    if (isEmpty(props?.existingSavedQueries) && isEmpty(selectorList) && isEmpty(query)) {
+    if (isEmpty(selectorList) && isEmpty(query)) {
       return false;
     }
     return !isDisabled
@@ -146,25 +168,35 @@ const QueryBuilder = (props) => {
     setCheckIsAnyPillActive(flag)
     return flag;
   }
-  
+
   const renderValue = (value) => {
     let regex = /,/g;
     let str = value
       .split(',')
-      .map((e) => e.trim())
+      .map((e) => e?.trim())
       .filter((e) => e)
       .join(',');
     let text = str
       .split(',')
-      .map((e) => '"' + e.trim() + '"')
+      .map((e) => '"' + e?.trim() + '"')
       .join(',')
       .replace(regex, ' or ');
     return text;
   };
 
+  const getPillLabel = ({ attribute, operator, value }) => {
+    if (onlyAttributeInput) {
+      return attribute
+    }
+
+    return `${attribute} ${operator} ${renderValue(value)}`
+  }
+
+  const excludedAttributes = query?.map(q => q.attribute)
+
   return (
     <div>
-      {!props.isEditMode && (
+      {!isEditMode && (
         <div className={queryBuilderClasses.pillsContainer}>
           {query &&
             query.map((value, index) => {
@@ -185,16 +217,7 @@ const QueryBuilder = (props) => {
                     data-testid="query-pill-wrapper"
                     className={queryBuilderClasses.pillsContainer}
                   >
-                    <Pill
-                      readOnly={true}
-                      label={
-                        value.attribute +
-                        ' ' +
-                        value.operator +
-                        ' ' +
-                        renderValue(value.value)
-                      }
-                    />
+                    <Pill readOnly={true} label={getPillLabel(value)} />
                   </div>
                 </Fragment>
               );
@@ -202,16 +225,18 @@ const QueryBuilder = (props) => {
         </div>
       )}
 
-      {props.isEditMode && (
+      {isEditMode && (
         <>
-          <Button variant='textOnly' size='medium' onClick={onAddBtnClick} disabled={ checkIsAnyPillActive || checkAddCriteriaBtnFlag()}>
+          <Button variant='textOnly' size='medium' onClick={onAddBtnClick} disabled={disableAddButton || checkIsAnyPillActive || checkAddCriteriaBtnFlag()}>
             <FiPlus size='20' color='#067fdb' style={{ marginRight: 5 }} />
-            Add Criteria
+            {addButtonLabel}
           </Button>
           <div className={queryBuilderClasses.pillsContainer}>
             {selectorList.map((ele, index) => {
+              const currentAttribute = query[index]?.attribute
+              const excludedItemForCurrentSelector = excludedAttributes.filter(attr => attr !== currentAttribute)
               return (
-                <span key={ele.key} style={{ display: 'flex' }} >
+                <span key={`${excludedItemForCurrentSelector.join('-')}-${index}`} style={{ display: 'flex' }} >
                   <QuerySelector
                     queryId={ele.key}
                     deleteHandleClick={() => {
@@ -221,10 +246,14 @@ const QueryBuilder = (props) => {
                     index={index}
                     handleAddQueryPills={handleAddQueryPills}
                     updateActiveIndex={updateActiveIndex}
-                    currentElement={ele?.props?.object}
+                    currentElement={query[index]}
                     query={query}
                     selectorList={selectorList}
-                    {...props}
+                    attributeGetOptionLabel={attributeGetOptionLabel}
+                    onlyAttributeInput={onlyAttributeInput}
+                    attributeOptions={attributeOptions}
+                    excludedAttributes={excludedItemForCurrentSelector}
+                    {...restProps}
                   />
 
                   {index !== selectorList.length - 1 && (

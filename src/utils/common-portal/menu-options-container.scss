@@ -3,12 +3,13 @@
 $option-large-height: getRem(56px);
 $option-small-height: getRem(40px);
 $option-padding-left: getRem(16px);
+$option-padding-left-intended: getRem(32px);
 $option-padding-top: getRem(8px);
 $option-padding-bottom: getRem(8px);
 $option-icon-margin-right: getRem(16px);
 $option-option-hover-color: getRem(8px);
 $options-container-border-width: getRem(1px);
-$options-container-border-color: #067fdb;
+$options-container-border-color: var(--brand);
 $options-container-max-height: getRem(320px);
 $option-label-height: getRem(19px);
 $option-label-letter-spacing: getRem(0.32px);
@@ -30,6 +31,19 @@ $options-separator-margin-top-bottom: getRem(4px);
 $options-container-padding-top-bottom: getRem(4px);
 $selected-option-background-color: #d0e2ff;
 $options-container-border-radius: getRem(3px);
+$category-color: #ececec;
+
+
+.category {
+  padding-left: $option-padding-left;
+  padding-top: $option-padding-top;
+  padding-bottom: $option-padding-bottom;
+  font-weight: bold;
+  letter-spacing: 1px;
+  font-family: $font-type-01;
+  background-color: $category-color;
+  cursor: default;
+}
 
 .options-container {
   max-height: $options-container-max-height;
@@ -52,10 +66,17 @@ $options-container-border-radius: getRem(3px);
   &:hover {
     background: $option-hover-color;
   }
+  &.grouped {
+    padding-left: $option-padding-left-intended;
+  }
 }
 
 .selected-option {
   background-color: $selected-option-background-color;
+}
+
+.highlight-option {
+  background-color: $primary-intr-color;
 }
 
 .option-with-label-sublabel {
@@ -92,6 +113,14 @@ $options-container-border-radius: getRem(3px);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  &:hover {
+    color: $option-label-color;
+  }
+}
+
+.highlight-option-label {
+  color: $interactive-txt-color;
 }
 
 .disabled-option-label {

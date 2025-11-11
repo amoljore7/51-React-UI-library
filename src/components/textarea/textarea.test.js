@@ -45,7 +45,7 @@ describe('Unit tests for Textarea component', () => {
   });
 
   it('Width passed as a props appears on the screen', () => {
-    const updatedProps = { ...props, with: '200px' };
+    const updatedProps = { ...props, width: '200px' };
     const { getByTestId } = render(<Textarea {...updatedProps} />);
     expect(getByTestId('textarea-test-id')).toBeInTheDocument();
   });

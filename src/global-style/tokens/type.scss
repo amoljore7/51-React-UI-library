@@ -1,0 +1,274 @@
+// Type Tokens
+// Modular Scale of 1.19 – Minor Third
+//
+// This scale draws inspiration from musical intervals, creating a harmonious and balanced typographic
+// rhythm throughout the design. It utilizes a 2px line grid, a base font size of 18px, and a line height of 22px. 
+//
+// Primitive type tokens serve as essential design elements that standardize typography across various components,
+// ensuring both consistency and scalability. The inclusion of 11 steps in this scale offers a wide range of sizes
+// that can be effectively applied in different contexts, promoting a versatile and cohesive visual hierarchy.
+
+// Base fonts
+$font-size-200: 32px;
+$font-size-180: 29px;
+$font-size-160: 25px;
+$font-size-140: 23px;
+$font-size-120: 20px;
+$font-size-100: 18px;
+$font-size-80: 16px;
+$font-size-60: 14px;
+$font-size-40: 13px;
+$font-size-20: 11px;
+$font-size-0: 10px;
+
+@mixin type-base-200 {
+  font-size: $font-size-200;
+  line-height: 36px;
+  letter-spacing: -0.33px; /* -1.03% of 32px */
+}
+
+@mixin type-base-180 {
+  font-size: $font-size-180;
+  line-height: 34px;
+  letter-spacing: -0.24px; /* -0.83% of 29px */
+}
+
+@mixin type-base-160 {
+  font-size: $font-size-160;
+  line-height: 30px;
+  letter-spacing: -0.12px; /* -0.48% of 25px */
+}
+
+@mixin type-base-140 {
+  font-size: $font-size-140;
+  line-height: 28px;
+  letter-spacing: -0.06px; /* -0.26% of 23px */
+}
+
+@mixin type-base-120 {
+  font-size: $font-size-120;
+  line-height: 24px;
+  letter-spacing: 0.03px; /* 0.15% of 20px */
+}
+
+@mixin type-base-100 {
+  font-size: $font-size-100;
+  line-height: 22px;
+  letter-spacing: 0.09px; /* 0.5% of 18px */
+}
+
+@mixin type-base-80 {
+  font-size: $font-size-80;
+  line-height: 20px;
+  letter-spacing: 0.15px; /* 0.94% of 16px */
+}
+
+@mixin type-base-60 {
+  font-size: $font-size-60;
+  line-height: 18px;
+  letter-spacing: 0.21px; /* 1.5% of 14px */
+}
+
+@mixin type-base-40 {
+  font-size: $font-size-40;
+  line-height: 18px;
+  letter-spacing: 0.24px; /* 1.85% of 13px */
+}
+
+@mixin type-base-20 {
+  font-size: $font-size-20;
+  line-height: 16px;
+  letter-spacing: 0.30px; /* 2.73% of 11px */
+}
+
+@mixin type-base-0 {
+  font-size: $font-size-0;
+  line-height: 14px;
+  letter-spacing: 0.33px; /* 3.3% of 10px */
+}
+
+// Bold Type tokens
+@mixin type-bold-200 {
+  @include type-base-200;
+  font-weight: 700;
+}
+
+@mixin type-bold-180 {
+  @include type-base-180;
+  font-weight: 700;
+}
+
+@mixin type-bold-160 {
+  @include type-base-160;
+  font-weight: 700;
+}
+
+@mixin type-bold-140 {
+  @include type-base-140;
+  font-weight: 700;
+}
+
+@mixin type-bold-120 {
+  @include type-base-120;
+  font-weight: 600;
+}
+
+@mixin type-bold-100 {
+  @include type-base-100;
+  font-weight: 600;
+}
+
+@mixin type-bold-80 {
+  @include type-base-80;
+  font-weight: 600;
+}
+
+@mixin type-bold-60 {
+  @include type-base-60;
+  font-weight: 600;
+}
+
+@mixin type-bold-40 {
+  @include type-base-40;
+  font-weight: 600;
+}
+
+@mixin type-bold-20 {
+  @include type-base-20;
+  font-weight: 600;
+}
+
+@mixin type-bold-0 {
+  @include type-base-0;
+  font-weight: 600;
+}
+
+// Regular Type tokens
+@mixin type-regular-200 {
+  @include type-base-200;
+  font-weight: 400;
+}
+
+@mixin type-regular-180 {
+  @include type-base-180;
+  font-weight: 400;
+}
+
+@mixin type-regular-160 {
+  @include type-base-160;
+  font-weight: 400;
+}
+
+@mixin type-regular-140 {
+  @include type-base-140;
+  font-weight: 400;
+}
+
+@mixin type-regular-120 {
+  @include type-base-120;
+  font-weight: 400;
+}
+
+@mixin type-regular-100 {
+  @include type-base-100;
+  font-weight: 400;
+}
+
+@mixin type-regular-80 {
+  @include type-base-80;
+  font-weight: 400;
+}
+
+@mixin type-regular-60 {
+  @include type-base-60;
+  font-weight: 400;
+}
+
+@mixin type-regular-40 {
+  @include type-base-40;
+  font-weight: 400;
+}
+
+@mixin type-regular-20 {
+  @include type-base-20;
+  font-weight: 400;
+}
+
+@mixin type-regular-0 {
+  @include type-base-0;
+  font-weight: 400;
+}
+
+// Italic Type tokens
+@mixin type-italic-100 {
+  @include type-base-100;
+  font-weight: 400;
+  font-style: italic;
+}
+
+@mixin type-italic-80 {
+  @include type-base-80;
+  font-weight: 400;
+  font-style: italic;
+}
+
+@mixin type-italic-60 {
+  @include type-base-60;
+  font-weight: 400;
+  font-style: italic;
+}
+
+@mixin type-italic-40 {
+  @include type-base-40;
+  font-weight: 400;
+  font-style: italic;
+}
+
+@mixin type-italic-20 {
+  @include type-base-20;
+  font-weight: 400;
+  font-style: italic;
+}
+
+@mixin type-italic-0 {
+  @include type-base-0;
+  font-weight: 400;
+  font-style: italic;
+}
+
+// Bold Italic Type tokens
+@mixin type-bold-italic-100 {
+  @include type-base-100;
+  font-weight: 600;
+  font-style: italic;
+}
+
+@mixin type-bold-italic-80 {
+  @include type-base-80;
+  font-weight: 600;
+  font-style: italic;
+}
+
+@mixin type-bold-italic-60 {
+  @include type-base-60;
+  font-weight: 600;
+  font-style: italic;
+}
+
+@mixin type-bold-italic-40 {
+  @include type-base-40;
+  font-weight: 600;
+  font-style: italic;
+}
+
+@mixin type-bold-italic-20 {
+  @include type-base-20;
+  font-weight: 600;
+  font-style: italic;
+}
+
+@mixin type-bold-italic-0 {
+  @include type-base-0;
+  font-weight: 600;
+  font-style: italic;
+}

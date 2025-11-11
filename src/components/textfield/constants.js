@@ -2,6 +2,7 @@ export const classes = {
   container: 'bds-textfield-container',
   label: 'bds-label',
   labelDisabled: 'bds-label-disabled',
+  secondaryLabel: 'bds-secondary-label',
   helperText: 'bds-helper-text',
   helperTextDisabled: 'bds-helper-text-disabled',
   inputContainer: 'bds-input-container',
@@ -13,7 +14,8 @@ export const classes = {
   variantInline: 'bds-inline',
   inputContainerFocus: 'bds-input-container-focus',
   inputBoxWrapper: 'bds-input-box-wrapper',
-  iconBox: 'bds-icon-box',
+  iconBoxRight: 'bds-icon-box',
+  iconBoxLeft: 'bds-icon-box-left',
   inputWithIcon: 'bds-input-with-icon',
   inputContainerDisabled: 'bds-input-container-disabled',
   inputBoxDisabled: 'bds-input-box-disabled',
@@ -26,3 +28,5 @@ export const altText = 'input-icon';
 export const inputTestId = 'input-test-id';
 export const defaultType = 'text';
 export const autoCompleteOff = 'off';
+export const iconPositionLeft = 'left';
+export const iconPositionRight = 'right';

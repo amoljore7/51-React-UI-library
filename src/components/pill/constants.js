@@ -1,5 +1,7 @@
 export const classes = {
   container: 'bds-pill-container',
+  bgDarkColor: 'bds-pill-dark-color',
+  bgLightColor: 'bds-pill-light-color',
   label: 'bds-pill-label',
   readOnlyPillLabel: 'bds-pill-label-read-only',
   disabledPillLabel: 'bds-pill-label-disabled',

@@ -24,7 +24,7 @@ export const TooltipTop = () => {
         alignItems: 'center',
       }}
     >
-      <Tooltip title={text} position="top">
+      <Tooltip title={text} position="top" zIndex={2000}>
         <div>
           <Button variant="primary" size="small">
             Submit

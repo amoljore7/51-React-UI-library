@@ -13,8 +13,10 @@ export const classes = {
   textareaBoxReadOnly: 'bds-textarea-box-read-only',
   errorMsgText: 'bds-error-msg-text',
   variantNaked: 'bds-naked',
+  charLeftCount: 'bds-textarea-character-count-left-text'
 };
 
+export const dataTestIdForCharCount = 'character-left-count-test-id';
 export const variantNaked = 'naked';
 export const dataTestId = 'textarea-test-id';
 export const defaultHeight = '104px';

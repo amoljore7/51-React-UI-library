@@ -1,0 +1,32 @@
+@import "../../global-style/index.scss";
+
+$bds-progress-bar-leading-color: $success-color;
+$bds-progress-bar-trailing-color: $gray-10;
+$bds-progress-bar-value-left-margin: getRem(8px);
+
+.bds-progress-bar-parent-container {
+  display: flex;
+  width: max-content;
+  align-items: center;
+
+  .bds-progress-bar-container {
+    display: flex;
+    align-items: center;
+
+    .bds-progress-bar-leading {
+      display: flex;
+      height: inherit;
+      background-color: $bds-progress-bar-leading-color;
+    }
+    .bds-progress-bar-trailing {
+      display: flex;
+      height: inherit;
+      background-color: $bds-progress-bar-trailing-color;
+    }
+  }
+
+  .bds-progress-bar-value {
+    display: flex;
+    margin-left: $bds-progress-bar-value-left-margin;
+  }
+}

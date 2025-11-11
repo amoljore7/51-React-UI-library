@@ -1,4 +1,9 @@
 @import '../../global-style/index.scss';
+@import '../../global-style/tokens/colors.scss';
+@import '../../global-style/tokens/radius.scss';
+@import '../../global-style/tokens/spacing.scss';
+@import '../../global-style/tokens/type.scss';
+
 // font-size
 $font-size-small: getRem(12px);
 $font-size-medium: getRem(14px);
@@ -107,14 +112,134 @@ $border-radius: getRem(3px);
 }
 
 .bds-btn-primary.bds-btn-disabled {
-  cursor: default;
+  cursor: not-allowed;
   opacity: 70%;
+  &:hover {
+    background-color: $primary-intr-color;
+  }
 }
 .bds-btn-secondary.bds-btn-disabled {
-  cursor: default;
+  cursor: not-allowed;
   opacity: 35%;
+  &:hover {
+    background-color: transparent;
+  }
 }
 .bds-btn-textOnly.bds-btn-disabled {
-  cursor: default;
+  cursor: not-allowed;
   opacity: 35%;
+  &:hover {
+    background-color: transparent;
+  }
+}
+
+.bds-btn-v2 {
+  @include radius(8);
+  @include type-bold-60;
+  font-family: $font-type-01;
+  justify-content: center;
+  align-items: center;
+  display: inline-flex;
+  border-width: 1px;
+  border-style: solid;
+  transition: all 0.4s ease-in-out;
+
+  &-primary {
+    background-color: $tint-primary-100;
+    color: $white;
+    border-color: $tint-primary-100;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $tint-primary-80;
+      border-color: $tint-primary-80;
+    }
+
+    &:active {
+      background-color: $tint-primary-60;
+      border-color: $tint-primary-60;
+    }
+  }
+
+  &-secondary {
+    background-color: $white;
+    color: $tint-primary-100;
+    border-color: $tint-primary-100;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $tint-primary-10;
+      border-color: $tint-primary-80;
+    }
+
+    &:active {
+      background-color: $tint-primary-20;
+      border-color: $tint-primary-60;
+    }
+  }
+
+  &-tertiary {
+    background-color: transparent;
+    color: $tint-primary-100;
+    border-color: transparent;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $tint-primary-10;
+      border-color: $tint-primary-10;
+    }
+
+    &:active {
+      background-color: $tint-primary-20;
+      border-color: $tint-primary-20;
+    }
+  }
+
+  &-large {
+    padding: $spacing-8 $spacing-12;
+    gap: $spacing-6;
+  }
+
+  &-medium {
+    padding: $spacing-6 $spacing-8;
+    gap: $spacing-4;
+  }
+
+  &-small {
+    padding: $spacing-2 $spacing-6;
+    gap: $spacing-2;
+  }
+}
+
+.bds-btn-v2-primary.bds-btn-v2-disabled {
+  cursor: not-allowed;
+  background-color: $neutral-10;
+  border-color: $neutral-10;
+  color: $white;
+
+  &:hover {
+    background-color: $neutral-10;
+  }
+}
+
+.bds-btn-v2-secondary.bds-btn-v2-disabled {
+  cursor: not-allowed;
+  background-color: $white;
+  border-color: $neutral-20;
+  color: $neutral-20;
+
+  &:hover {
+    background-color: $white;
+  }
+}
+
+.bds-btn-v2-tertiary.bds-btn-v2-disabled {
+  cursor: not-allowed;
+  background-color: transparent;
+  border-color: transparent;
+  color: $neutral-20;
+
+  &:hover {
+    background-color: transparent;
+  }
 }

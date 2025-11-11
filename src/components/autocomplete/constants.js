@@ -7,6 +7,7 @@ export const classes = {
   containerDisabled: 'bds-autocomplete-container-disabled',
   containerReadOnly: 'bds-autocomplete-container-read-only',
   actionsContainer: 'bds-actions-container',
+  multipleInputActionsContainer: 'bds-actions-multiple-input-container',
   actionsContainerItem: 'bds-actions-container-item',
   autocompleteSingleSelectActionsContainerItem: 'bds-single-select-actions-container-item',
   autocompleteActionsContainerDisabledItem: 'bds-autocomplete-actions-container-disabled-item',

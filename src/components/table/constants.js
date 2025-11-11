@@ -2,34 +2,35 @@ export const classes = {
   container: 'bds-table-container',
   cell: 'bds-table-cell',
   render: 'bds-table-cell-render',
+  expandedCellRender:'bds-table-expanded-row-cell-render',
+  expandedContentRender:'bds-table-expanded-row-content-render',
+  dragging: 'bds-table-row-dragging',
   cellRender: 'bds-table-cell-custom',
   row: 'bds-table-row',
+  expandedRow: 'bds-table-expanded-row',
+  noDataFound: 'bds-table-expanded-row-no-data-found',
+  expandRow: 'bds-table-expand-row',
+  expandRowIcons: 'bds-table-expand-row-icons',
+  rowHighlighted: 'bds-table-row-highlighted',
+  rowSelectable: 'bds-table-row-selectable',
   resizer: 'bds-table-resizer',
   resizerHover: 'bds-table-resizer-hover',
   header: 'bds-table-header-row',
   headerCell: 'bds-table-header-cell',
+  headerCellNoBackground: 'bds-table-header-cell-no-background',
   headerCellContainer: 'bds-table-header-cell-container',
   headerText: 'bds-table-header-text',
   headerIcon: 'bds-table-header-icon',
   headerTextIconContainer: 'bds-table-header-text-icon',
-  pagination: 'bds-table-pagination',
-  paginationContainer: 'bds-pagination-container',
-  paginationDefault: 'bds-pagination-default',
-  paginationDefaultText: 'bds-pagination-default-text',
-  paginationDefaultIcon: 'bds-pagination-default-icon',
-  paginationOptionsActive: 'bds-pagination-options-active',
-  paginationRest: 'bds-pagination-rest',
-  paginationLabel: 'bds-pagination-label',
-  pagesRange: 'bds-pagination-range',
-  pageNavigation: 'bds-pagination-navigation',
-  pageNavigationHover: 'bds-pagination-navigation-hover',
-  pageNavigationPrev: 'bds-pagination-navigation-prev',
-  pageNavigationNext: 'bds-pagination-navigation-next',
-  pageNavigationDisabled: 'bds-pagination-navigation-disabled',
-  paginationControls: 'bds-pagination-controls',
+  search: 'bds-table-search',
   searchContainer: 'bds-table-search-container',
   sortIconResizeContainer: 'bds-table-sort-icon-resize-container',
   table: 'bds-table',
+  infiniteScrollInsideModal: 'table-infinite-scroll-inside-modal',
+  headerCursor: 'bds-table-header-text-cursor',
+  addNewRow: 'bds-add-new-row',
+  emptyNewRowHeader: 'bds-empty-new-row-header',
+  columnFilter: 'bds-table-column-filter'
 };
 export const paginationIconSize = 16;
 export const defaultIconSize = 24;
@@ -59,7 +60,8 @@ export const sortingType = {
 export const mousedownEvent = 'mousedown';
 export const mousemoveEvent = 'mousemove';
 export const mouseupEvent = 'mouseup';
-export const columnMinWidthPixels = '88px';
-export const columnMinWidth = 88;
+export const columnMinWidthPixels = '20px';
+export const columnMinWidth = 20;
 export const HUNDRED_DECIMAL = 100.0;
 export const resizerWidth = 4;
+export const tableSearchHeight = '3.53rem';

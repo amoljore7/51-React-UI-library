@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import Table from './Table';
+import Table from './table';
 import { classes, selectPageSize, tableRole } from './constants';
 describe('Unit tests for table component', () => {
   const columns = [
@@ -108,4 +108,29 @@ describe('Unit tests for table component', () => {
     fireEvent.click(sortIcon);
     expect(sortIcon.getAttribute('alt')).toEqual('unsorted-sort-icon');
   });
+
+  it('should render the correct style class for the highlighted row.', () => {
+    const highlighted = { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 }
+    const { getAllByTestId } = render(<Table {...props} highlightedRow={highlighted} />);
+
+    const highlightedTrElement = getAllByTestId(classes.row)[3]
+    
+    // verifying it is the correct row picked.
+    expect(highlightedTrElement.children[0].innerHTML).toEqual(`${highlighted.id}`)
+
+    // Verifying the highlighted classname
+    expect(highlightedTrElement.className).toContain(classes.rowHighlighted)
+  })
+
+
+  it('should render the correct style class and call the onRowSelect on click, when selecting a row is allowed.', () => {
+    const handleRowSelect = jest.fn()
+    const { getAllByTestId } = render(<Table {...props} allowRowSelect onRowSelect={handleRowSelect} />);
+    
+    const trElement = getAllByTestId(classes.row)[3]
+    fireEvent.click(trElement)
+
+    expect(trElement.className).toContain(classes.rowSelectable)
+    expect(handleRowSelect).toBeCalledWith({ id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 })
+  })
 });

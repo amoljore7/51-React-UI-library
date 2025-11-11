@@ -13,7 +13,7 @@ describe('Query selector component unit test cases', () => {
             { attribute: 'skills-3' },
         ],
         attributeGetOptionLabel: function (option) {
-            return option.attribute;
+            return option?.attribute;
         },
         currentElement: { attribute: 'skills-1', operator: 'equal', value: 'de', isActive: false, id: 1 } || undefined,
         handleAddQueryPills: jest.fn(),
@@ -41,6 +41,13 @@ describe('Query selector component unit test cases', () => {
         const { queryByPlaceholderText } = render(<QuerySelector {...props} />);
         const label = queryByPlaceholderText('Value');
         expect(label).toBeCalled;
+    });
+
+    it('should only render the attribute input when the onlyAttributeInput prop is true', () => {
+        const { queryAllByTestId } = render(<QuerySelector {...props} onlyAttributeInput />);
+        const select = queryAllByTestId('bds-autocomplete-container');
+        expect(select.length).toBe(1)
+        expect(select[0].classList.contains('bds-autocomplete-container')).toBe(true)
     });
 
 });

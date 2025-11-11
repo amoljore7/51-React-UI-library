@@ -3,10 +3,10 @@
 $pill-container-width: getRem(117px);
 $pill-container-height: getRem(32px);
 $pill-container-read-only-width: getRem(93px);
-$pill-container-border-color: $gray-50;
+$pill-container-border-color: $gray-30;
 $pill-container-error-border-color: $error-color;
 $pill-container-disabled-border-color: $gray-30;
-$pill-container-readOnly-border-color: $unselected-tab-txt-color;
+$pill-container-readOnly-border-color: $gray-30;
 $pill-container-border-width: getRem(1px);
 $pill-container-error-border-width: getRem(2px);
 $pill-container-border-radius: getRem(16px);
@@ -38,7 +38,6 @@ $pill-label-max-width: getRem(384px);
   align-items: center;
   border-radius: $pill-container-border-radius;
   border: $pill-container-border-width solid $pill-container-border-color;
-  background: $pill-background-color;
   box-sizing: border-box;
   &:hover {
     background: $pill-hover-background-color;
@@ -92,6 +91,21 @@ $pill-label-max-width: getRem(384px);
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.bds-pill-dark-color,
+.bds-pill-light-color {
+  transition: filter 0.2s ease-in-out;
+}
+
+.bds-pill-dark-color:hover {
+  -webkit-filter: brightness(150%);
+  filter: brightness(150%);
+}
+
+.bds-pill-light-color:hover {
+  -webkit-filter: brightness(90%);
+  filter: brightness(90%);
 }
 
 .bds-pill-icon {

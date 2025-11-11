@@ -31,6 +31,7 @@ describe('Unit test for Typography component', () => {
     expect(document.getElementsByTagName('span')[0].classList[0]).toContain(
       'label-01'
     );
+    expect(document.getElementsByTagName('span')[0].title).toBe(text);
     expect(document.getElementsByTagName('span')[0].textContent).toEqual(text);
   });
 

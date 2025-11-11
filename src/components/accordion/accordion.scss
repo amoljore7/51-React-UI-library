@@ -1,14 +1,23 @@
 @import '../../global-style/index.scss';
 
+
+@mixin headerCommon {
+  padding-bottom: getRem(8px);
+  cursor: pointer;
+  display: flex;
+  user-select: none;
+}
+
 .accordion-container {
   .header {
-    margin-top: getRem(32px);
-    padding-bottom: getRem(8px);
-    border-bottom: 1px solid #a8a8a8;
-    cursor: pointer;
-    display: flex;
-    user-select: none;
+    &-with-underline {
+      @include headerCommon();
+      border-bottom: 1px solid #a8a8a8;
+    }
 
+    &-without-underline {
+      @include headerCommon();
+    }
 
     img {
       display: inline;
@@ -28,9 +37,12 @@
     overflow: hidden;
     
     &-expanded {
-      padding-top: getRem(24px);
-      padding-bottom: getRem(24px);
       transition: 0.2s ease-out;
+
+      &-with-padding {
+        padding-top: getRem(24px);
+        padding-bottom: getRem(24px);
+      }
     }
 
     &-closed {

@@ -8,6 +8,7 @@ $autocomplete-container-padding-top: getRem(15px);
 $autocomplete-container-padding-left: getRem(16px);
 $autocomplete-container-focus-padding-top: getRem(14px);
 $autocomplete-container-focus-padding-left: getRem(15px);
+$autocomplete-action-container-padding-top: getRem(5px);
 $pill-container-margin-right: getRem(16px);
 $pill-container-margin-bottom: getRem(16px);
 $input-margin-bottom: getRem(14px);
@@ -90,19 +91,19 @@ $autocomplete-icon-disabled-color: $gray-30;
 }
 
 .bds-autocomplete-container {
+  background-color: $white;
   display: flex;
   justify-content: space-between;
-  min-height: $autocomplete-container-min-height;
   border: $autocomplete-container-border-width solid $autocomplete-container-border-color;
   border-radius: $autocomplete-border-radius;
   padding-top: $autocomplete-container-padding-top;
   padding-left: $autocomplete-container-padding-left;
   box-sizing: border-box;
+  align-items: center;
 }
 
 .bds-autocomplete-single-select-container {
-  height: $autocomplete-single-select-container;
-  min-height: $autocomplete-single-select-container-min-height;
+  background-color: $white;
   border: $autocomplete-container-border-width solid $autocomplete-container-border-color;
   border-radius: $autocomplete-border-radius;
   padding: $autocomplete-single-select-container-padding-top
@@ -156,6 +157,10 @@ $autocomplete-icon-disabled-color: $gray-30;
   display: flex;
 }
 
+.bds-actions-multiple-input-container {
+  padding-top: $autocomplete-action-container-padding-top;
+}
+
 .bds-actions-container-item {
   display: flex;
   flex-direction: column;
@@ -163,6 +168,8 @@ $autocomplete-icon-disabled-color: $gray-30;
   cursor: pointer;
   margin-bottom: $actions-container-margin-bottom;
   margin-right: $actions-container-margin-right;
+  height: 16px;
+  margin-top: -2px;
 }
 
 .bds-autocomplete-actions-container-disabled-item {
@@ -255,6 +262,7 @@ $autocomplete-icon-disabled-color: $gray-30;
 
 .bds-autocomplete-single-select-disabled-input {
   color: $autocomplete-single-select-disabled-input-color;
+  background: $white !important; // Added to overcome the default style added by ui-tenant-portal
 }
 
 .bds-autocomplete-single-select-read-only {

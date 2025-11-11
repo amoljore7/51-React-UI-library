@@ -16,10 +16,13 @@ import {
 
 import './modal-popup.scss';
 
-const ModalPopup = ({ width, title, buttons, onCancel, children }) => {
+const ModalPopup = React.forwardRef(({ width, title, buttons, onCancel, children, classNamePrefix },ref) => {
   const [modalEl] = useState(document.createElement('div'));
   modalEl.id = modalPopupId;
   modalEl.style.zIndex = 100;
+  if (classNamePrefix) {
+    modalEl.className = `${classNamePrefix}-${modalPopupId}`
+  }
 
   useEffect(() => {
     const bodyElement = document.getElementsByTagName('body')[0];
@@ -27,8 +30,18 @@ const ModalPopup = ({ width, title, buttons, onCancel, children }) => {
     return () => bodyElement.removeChild(modalEl);
   }, [modalEl]);
 
+  const getClassNames = (elementClassName) => {
+    let finalClassName = elementClassName
+
+    if (classNamePrefix) {
+      finalClassName += ` ${classNamePrefix}-${elementClassName}`
+    }
+
+    return finalClassName
+  }
+
   const getModalStrap = () => {
-    return <div className={classes.modalStrap} style={{ width: width - 2 }}></div>;
+    return <div className={getClassNames(classes.modalStrap)} style={{ width: width - 2 }}></div>;
   };
 
   const crossIconKeyDownHandler = (event) => {
@@ -39,17 +52,17 @@ const ModalPopup = ({ width, title, buttons, onCancel, children }) => {
 
   const getModalHeader = () => {
     return (
-      <div className={classes.headingContainer}>
-        <div className={classes.titleContainer}>
+      <div className={getClassNames(classes.headingContainer)}>
+        <div className={getClassNames(classes.titleContainer)}>
           <Typography variant="heading4">{title}</Typography>
         </div>
-        <div className={classes.iconContainer}>
+        <div className={getClassNames(classes.iconContainer)}>
           <FiX
             tabIndex={0}
             size={iconSize}
             onClick={onCancel}
             onKeyDown={crossIconKeyDownHandler}
-            className={classes.icon}
+            className={getClassNames(classes.icon)}
             role={crossIconRole}
           />
         </div>
@@ -60,11 +73,21 @@ const ModalPopup = ({ width, title, buttons, onCancel, children }) => {
   const getActionButtons = () => {
     return (
       buttons && (
-        <div className={classes.buttonsContainer}>
+        <div className={getClassNames(classes.buttonsContainer)}>
           {buttons.map((item, index) => {
             return (
-              <div key={`${buttonWrapperPrefix}${index}`} className={classes.buttonWrapper}>
-                <Button variant={item.variant} size={item.size} onClick={item.onClick}>
+              <div
+                key={`${buttonWrapperPrefix}${index}`}
+                className={getClassNames(classes.buttonWrapper)}
+              >
+                <Button
+                  variant={item.variant}
+                  size={item.size}
+                  onClick={item.onClick}
+                  disabled={item?.disabled}
+                  leftSVGIcon={item?.leftSVGIcon}
+                  rightSVGIcon={item?.rightSVGIcon}
+                >
                   {item.text}
                 </Button>
               </div>
@@ -77,20 +100,20 @@ const ModalPopup = ({ width, title, buttons, onCancel, children }) => {
 
   return createPortal(
     <>
-      <div className={classes.overlayContainer} />
-      <div role={modalPopupRole} className={classes.modalContainer} style={{ width: width }}>
+      <div className={getClassNames(classes.overlayContainer)} />
+      <div role={modalPopupRole} className={getClassNames(classes.modalContainer)} style={{ width: width }}>
         {getModalStrap()}
         {getModalHeader()}
         {getActionButtons()}
-        <hr className={classes.contentSeparator} />
-        <div className={classes.modalChildrenContainer}>
-          <div className={classes.modalChildren}>{children}</div>
+        <hr className={getClassNames(classes.contentSeparator)} />
+        <div className={getClassNames(classes.modalChildrenContainer)} ref={ref}>
+          <div className={getClassNames(classes.modalChildren)}>{children}</div>
         </div>
       </div>
     </>,
     modalEl
   );
-};
+});
 
 ModalPopup.propTypes = {
   width: PropTypes.number,
@@ -104,6 +127,7 @@ ModalPopup.propTypes = {
     })
   ),
   onCancel: PropTypes.func.isRequired,
+  classNamePrefix: PropTypes.string,
 };
 
 export default ModalPopup;

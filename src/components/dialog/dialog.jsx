@@ -8,7 +8,6 @@ import {
   alertColor,
   classes,
   errorColor,
-  generalColor,
   iconColor,
   iconSize,
   dialogType,
@@ -46,7 +45,7 @@ const DialogPopup = ({
   const getStrapColor = () => {
     switch (type) {
       case dialogType.general:
-        return generalColor;
+        return window.getComputedStyle(document.body).getPropertyValue('--brand');
       case dialogType.alert:
         return alertColor;
       case dialogType.error:
@@ -118,7 +117,7 @@ const DialogPopup = ({
       >
         {getDialogStrap()}
         {getDialogHeader()}
-        {getDialogMessage()}
+        {message && getDialogMessage()}
         {children && getChildrenContainer()}
         {(primaryButtonText || secondaryButtonText) && getDialogButton()}
       </div>
@@ -132,12 +131,12 @@ DialogPopup.propTypes = {
   width: PropTypes.number,
   height: PropTypes.number,
   title: PropTypes.string.isRequired,
-  message: PropTypes.string.isRequired,
+  message: PropTypes.string,
   primaryButtonText: PropTypes.string,
   secondaryButtonText: PropTypes.string,
   onSubmit: PropTypes.func,
   onCancel: PropTypes.func,
-  children: PropTypes.object,
+  children: PropTypes.oneOfType([PropTypes.elementType, PropTypes.func]),
   primaryButtonDisabled: PropTypes.bool,
 };
 

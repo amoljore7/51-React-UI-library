@@ -81,4 +81,29 @@ describe('Query builder component unit test cases', () => {
         expect(getAllByTestId('query-pill-wrapper').length).toEqual(2);
     });
 
+    it('should render only the attribute in the pill if the onlyAttributeInput prop is true.', () => {
+        const props = {
+            isEditMode: false,
+            attributeOptions: [
+                { attribute: 'skills-1' },
+                { attribute: 'skills-2' },
+                { attribute: 'skills-3' },
+            ],
+            attributeGetOptionLabel: function (option) {
+                return option.attribute;
+            },
+            savedQuery: jest.fn(),
+            saveQueryFlag: jest.fn(),
+            existingSavedQueries: [
+                { attribute: 'skills-1' },
+                { attribute: 'skills-2' },
+            ],
+            onlyAttributeInput: true
+        }
+
+        const { getAllByTestId } = render(<QueryBuilder {...props} />);
+        const pills = getAllByTestId('query-pill-wrapper')
+        expect(pills[0].firstChild.firstChild.innerHTML).toBe('skills-1')
+        expect(pills[1].firstChild.firstChild.innerHTML).toBe('skills-2')
+    })
 });

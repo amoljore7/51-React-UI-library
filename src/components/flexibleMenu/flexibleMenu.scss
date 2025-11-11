@@ -1,0 +1,51 @@
+@import '../../global-style/index.scss';
+@import '../../global-style/tokens/type.scss';
+@import '../../global-style/tokens/colors.scss';
+@import '../../global-style/tokens/spacing.scss';
+@import '../../global-style/tokens/elevations.scss';
+@import '../../global-style/tokens/radius.scss';
+
+.bds-flexible-menu {
+  width: 320px;
+  background: $feedback-accent-2;
+  display: flex;
+  max-height: 600px;
+  flex-direction: column;
+  @include radius(12);
+  @include elevation-8;
+
+  &-max-height {
+    height: 600px;
+  }
+
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-16;
+    background: $neutral-0;
+    font-family: $font-type-01;
+    border-radius: 12px 12px 0 0;
+
+    span {
+      @include type-bold-120;
+      color: $neutral-140;
+    }
+  }
+
+  &-content {
+    flex: 1;
+    padding: $spacing-0;
+    font-family: $font-type-01;
+    overflow-x: auto;
+  }
+
+  &-footer {
+    display: flex;
+    gap: $spacing-16;
+    justify-content: flex-end;
+    padding: $spacing-16;
+    background: $neutral-0;
+    border-radius: 0 0 12px 12px;
+  }
+}

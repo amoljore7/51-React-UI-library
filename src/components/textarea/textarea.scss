@@ -12,6 +12,7 @@ $width-scrollbar: getRem(8px);
 $padding-bottom-label: getRem(8px);
 $padding-bottom-helper-text: getRem(4px);
 $padding-top-textarea-box: getRem(10px);
+$padding-top-textarea-box-naked-variant: getRem(6px);
 $padding-bottom-textarea-box: getRem(11px);
 $padding-left-textarea-box: getRem(16px);
 $padding-right-textarea-box: getRem(16px);
@@ -134,7 +135,7 @@ $line-height-textarea-box: getRem(16px);
   .bds-naked {
     border: 0;
     outline: 0;
-    padding: 0;
+    padding: $padding-top-textarea-box-naked-variant 0;
   }
 
   .bds-textarea-box::-webkit-scrollbar-track {
@@ -149,4 +150,10 @@ $line-height-textarea-box: getRem(16px);
     border-radius: $border-radius-scrollbar;
     background-color: $scroll-bar-color;
   }
+
+  .bds-textarea-character-count-left-text {
+    font-size: $font-size-helper-text;
+    margin-top: $padding-bottom-helper-text;
+    color: $secondary-txt-color;
+  } 
 }

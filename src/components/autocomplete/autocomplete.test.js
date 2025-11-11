@@ -192,4 +192,29 @@ describe('Autocomplete test cases', () => {
     expect(queryByRole('textbox')).toEqual(null);
     expect(queryByRole('img')).toEqual(null);
   });
+  it('options appear in group in the suggestions list', () => {
+    const props = {
+      multiple: true,
+      label: 'Actions',
+      helperText: 'Choose actions for Permission',
+      options: [
+        { title: 'secret-create', type: "Create" },
+        { title: 'secret-delete', type: "Delete" },
+        { title: 'secret-update', type: "Update" },
+        { title: 'vault-update', type: "Update" },
+        { title: 'vault-create', type: "Create" },
+        { title: 'vault-delete', type: "Delete" },
+      ],
+      getOptionLabel: (option) => option.title,
+      onInputChange: jest.fn(),
+      onChange: jest.fn(),
+      groupPropertyName: 'type'
+    };
+    const { getByText, getByRole } = render(<Autocomplete {...props} />);
+    const inputEl = getByRole('textbox');
+    fireEvent.click(inputEl);
+    expect(getByText('Create')).toBeInTheDocument()
+    expect(getByText('Update')).toBeInTheDocument()
+    expect(getByText('Delete')).toBeInTheDocument()
+  });
 });

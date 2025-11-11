@@ -27,6 +27,7 @@ $scrollbar-border-radius: getRem(8px);
 $scrollbar-margin-top: getRem(2px);
 $modal-button-container-margin-left: getRem(32px);
 $modal-children-margin: getRem(32px);
+$modal-button-container-gap: getRem(1px);
 
 .modal-container {
   display: flex;
@@ -45,7 +46,7 @@ $modal-children-margin: getRem(32px);
   .modal-strap {
     min-height: $modal-strap-height;
     min-width: $modal-strap-min-width;
-    background-color: #067fdb;
+    background-color: var(--brand);
   }
 
   .heading-container {
@@ -78,6 +79,7 @@ $modal-children-margin: getRem(32px);
     flex-wrap: wrap;
     margin-left: $modal-button-container-margin-left;
     margin-right: $modal-button-container-margin-right;
+    gap: $modal-button-container-gap;
 
     .button-wrapper {
       margin-right: $modal-button-wrapper-margin-right;
@@ -92,6 +94,7 @@ $modal-children-margin: getRem(32px);
 
   .modal-children-container {
     overflow: auto;
+    height: 100%;
 
     .modal-children {
       margin: $modal-children-margin;

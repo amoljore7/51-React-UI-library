@@ -19,7 +19,7 @@ $vertical-li-with-icon-padding-top-bottom: getRem(15px);
 $vertical-li-with-icon-padding-left: getRem(16px);
 $selected-li-background-color: $blue-20;
 $vertical-selected-li-padding-left: getRem(22px);
-$selected-vertical-tab-border-color: $blue-70;
+$selected-vertical-tab-border-color: var(--brand);
 $vertical-li-hover-background-color: $gray-20;
 $vertical-li-padding-top-bottom: getRem(16px);
 $vertical-li-padding-left: getRem(24px);

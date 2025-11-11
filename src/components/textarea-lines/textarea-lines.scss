@@ -1,0 +1,186 @@
+@import "../../global-style/index.scss";
+
+$font-size: getRem(14px);
+$error-symbol-font-size: getRem(22px);
+$warning-symbol-font-size: getRem(18px);
+$error-symbol-line-height: getRem(21px);
+$font-size-helper-text: getRem(12px);
+$label-font-weight: 600;
+$label-font-color: $gray-80;
+$label-letter-spacing: getRem(0.32px);
+
+$height-error-msg-text: getRem(17px);
+$width-scrollbar: getRem(8px);
+
+$padding-bottom-label: getRem(8px);
+$padding-bottom-helper-text: getRem(4px);
+$padding-top-textarea-box: getRem(8px);
+$padding-bottom-textarea-box: getRem(12px);
+$padding-left-textarea-box: getRem(8px);
+$padding-right-textarea-box: getRem(8px);
+$padding-top-textarea-container-focus: getRem(10px);
+$padding-left-textarea-container-focus: getRem(15px);
+$padding-top-error-border-focus: getRem(10px);
+$padding-left-error-border-focus: getRem(16px);
+
+$padding-top-textarea-box-focus: getRem(9px);
+$padding-bottom-textarea-box-focus: getRem(10px);
+$padding-left-textarea-box-focus: getRem(15px);
+$padding-right-textarea-box-focus: getRem(15px);
+
+$border-textarea-container: getRem(1px);
+$border-radius-textarea-container: getRem(2px);
+$border-textarea-error: getRem(1px);
+$border-textarea-focus: getRem(1px);
+$border-radius-scrollbar: getRem(5px);
+
+$line-height-textarea-box: getRem(24px);
+$line-numbers-width: getRem(20px);
+
+$line-numbers-height: getRem(24px);
+$line-numbers-padding-top: getRem(2px);
+
+.bds-textarea-line-main-container {
+  font-family: $font-type-01;
+
+  .bds-textarea-line-label {
+    text-align: left;
+    font-size: $font-size;
+    padding-bottom: $padding-bottom-label;
+    color: $label-font-color;
+    font-weight: $label-font-weight;
+    letter-spacing: $label-letter-spacing;
+  }
+
+  .bds-textarea-line-label-disabled {
+    color: $ui-disabled-01;
+  }
+
+  .bds-textarea-line-helper-text {
+    text-align: left;
+    font-size: $font-size-helper-text;
+    padding-bottom: $padding-bottom-helper-text;
+    color: $tertiary-txt-color;
+  }
+
+  .bds-textarea-line-helper-text-disabled {
+    color: $ui-disabled-01;
+  }
+
+  .bds-textarea-line-container {
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    border-radius: $border-radius-textarea-container;
+    border: $border-textarea-container solid $card-border;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 2px;
+    padding-right: $padding-right-textarea-box;
+    padding-top: $padding-top-textarea-box;
+  }
+
+  .bds-textarea-line-container-disabled {
+    border: $border-textarea-container solid $ui-disabled-01;
+  }
+  .bds-textarea-line-container-error-border {
+    border: $border-textarea-error solid $error-txt-color;
+  }
+
+  .bds-textarea-line-box {
+    box-sizing: border-box;
+    font-family: $font-type-01;
+    font-weight: 400;
+    width: 100%;
+    font-size: $font-size;
+    line-height: $line-height-textarea-box;
+    resize: none;
+    background: transparent;
+    overflow-y: hidden;
+    overflow-x: scroll;
+    color: $secondary-txt-color;
+    min-height: 100%;
+    border: none;
+    outline: none;
+  }
+
+  .bds-textarea-line-box-disabled {
+    color: $ui-disabled-01;
+  }
+
+  .bds-textarea-line-box-read-only {
+    color: $secondary-read-only-textarea-color;
+  }
+
+  .bds-textarea-line-container-focus {
+    &:focus-within {
+      border: $border-textarea-focus solid $info-color;
+    }
+  }
+
+  .bds-error-msg-text {
+    text-align: left;
+    font-size: $font-size-helper-text;
+    color: $error-txt-color;
+    height: $height-error-msg-text;
+  }
+
+  .bds-naked {
+    border: 0;
+    outline: 0;
+    padding: 0;
+  }
+
+  ::-webkit-scrollbar-track {
+    border-radius: $border-radius-scrollbar;
+  }
+
+  ::-webkit-scrollbar {
+    width: $width-scrollbar;
+    height: $width-scrollbar;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: $border-radius-scrollbar;
+    background-color: $scroll-bar-color;
+  }
+}
+
+.line-number {
+  box-sizing: border-box;
+  padding-left: $padding-left-textarea-box;
+  padding-right: $padding-right-textarea-box;
+  margin-right: $padding-right-textarea-box;
+  font-size: $font-size-helper-text;
+  line-height: $line-height-textarea-box;
+  min-height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  div {
+    display: flex;
+    box-sizing: border-box;
+    color: #506882;
+    padding-top: $line-numbers-padding-top;
+    height: $line-numbers-height;
+
+    span {
+      display: flex;
+      justify-content: center;
+      width: $line-numbers-width;
+
+      &.error {
+        font-size: $error-symbol-font-size;
+        line-height: $error-symbol-line-height;
+        color: $error-color;
+      }
+
+      &.warning {
+        font-size: $warning-symbol-font-size;
+        color: $warning-color;
+      }
+    }
+  }
+}

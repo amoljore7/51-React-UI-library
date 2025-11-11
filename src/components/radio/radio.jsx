@@ -4,20 +4,11 @@ import classNames from 'classnames';
 import {
   classes,
   radioType,
-  iconAlt,
-  imageRole,
   horizontal,
   vertical,
   keyPrefix,
   testId,
 } from './constants';
-
-import unselectedRadio from '../../assets/icons/enabled-unselected-radio.svg';
-import selectedRadio from '../../assets/icons/enabled-selected-radio.svg';
-import unselectedHoverRadio from '../../assets/icons/hover-unselected-radio.svg';
-import selectedHoverRadio from '../../assets/icons/hover-selected-radio.svg';
-import unselectedDisabledRadio from '../../assets/icons/disabled-unselected-radio.svg';
-import selectedDisabledRadio from '../../assets/icons/disabled-selected-radio.svg';
 
 import './radio.scss';
 
@@ -39,116 +30,93 @@ const RadioGroup = ({
   };
 
   return (
-    <>
-      <div className={classes.mainLabel}>{label}</div>
+    <div className={classes.bdsRadioGroup}>
+      {label && <div className={classes.mainLabel}>{label}</div>}
       <div data-testid={testId} className={classNames({ ...radioClass })}>
         {options.map(({ label, value, disabled }, index) => {
           const allProps = {
             name,
-            onChange,
-            selected: value === defaultValue,
+            onChange: onChange,
+            selected: defaultValue === value,
             label,
             value,
             disabled,
           };
-
           return (
-            <div key={`${keyPrefix}${index}`} className={classNames({ ...radioItemClass })}>
+            <div
+              key={`${keyPrefix}${index}`}
+              className={classNames({ ...radioItemClass })}
+            >
               <RadioButton {...allProps} />
             </div>
           );
         })}
       </div>
-    </>
+    </div>
   );
 };
 
-const RadioButton = ({ name, label, value, disabled, selected, onChange }) => {
-  const [radioCheck, setRadioCheck] = useState(selected);
-  const [radioHover, setRadioHover] = useState(false);
-  const [radioIcon, setRadioIcon] = useState(disabled ? unselectedDisabledRadio : unselectedRadio);
-
-  useEffect(() => {
-    setRadioCheck(selected);
-  }, [selected]);
-
+export const RadioButton = ({
+  name,
+  label,
+  value,
+  disabled,
+  selected,
+  onChange,
+}) => {
   const radioLabelClass = {
     [classes.labelContainer]: true,
     [classes.disableLabel]: disabled,
   };
 
-  const handleIconOnCheck = () => {
-    if (!radioCheck && !disabled) {
-      setRadioIcon(unselectedRadio);
-    } else if (!radioCheck && disabled) {
-      setRadioIcon(unselectedDisabledRadio);
-    } else if (radioCheck && !disabled) {
-      setRadioIcon(selectedRadio);
-    } else if (radioCheck && disabled) {
-      setRadioIcon(selectedDisabledRadio);
-    }
+  const handleChange = (e) => {
+    if (disabled) return;
+    // Wrap the event to prevent preventDefault misuse
+    const safeEvent = {
+      ...e,
+      preventDefault: () => {
+        console.warn(
+          'preventDefault() is disabled in RadioButton to avoid breaking selection behavior.'
+        );
+      },
+      stopPropagation: e.stopPropagation?.bind(e),
+      persist: e.persist?.bind(e),
+      target: {
+        ...e.target,
+        value,
+        name,
+      },
+    };
+    onChange?.(safeEvent);
   };
-
-  const handleIconOnHover = () => {
-    if (disabled) {
-      if (radioCheck) {
-        setRadioIcon(selectedDisabledRadio);
-      } else {
-        setRadioIcon(unselectedDisabledRadio);
-      }
-    } else {
-      handleEnabledCase();
-    }
-  };
-
-  const handleEnabledCase = () => {
-    if (!radioCheck && radioHover) {
-      setRadioIcon(unselectedHoverRadio);
-    } else if (!radioCheck && !radioHover) {
-      setRadioIcon(unselectedRadio);
-    } else if (radioCheck && radioHover) {
-      setRadioIcon(selectedHoverRadio);
-    } else if (radioCheck && !radioHover) {
-      setRadioIcon(selectedRadio);
-    }
-  };
-
-  useEffect(handleIconOnCheck, [radioCheck, disabled]);
-  useEffect(handleIconOnHover, [radioHover]);
-
   return (
-    <>
-      <div className={classes.iconContainer}>
-        <input
-          role={radioType}
-          type={radioType}
-          id={`${name}${value}`}
-          name={name}
-          value={value}
-          className={classes.radioBtnStyle}
-          disabled={disabled}
-          onClick={(e) => {
-            setRadioCheck(true);
-            onChange(e);
-          }}
-          onMouseOver={() => {
-            setRadioHover(true);
-          }}
-          onMouseLeave={() => {
-            setRadioHover(false);
-          }}
-        />
-        <img role={imageRole} src={radioIcon} alt={iconAlt} />
-      </div>
-      <label htmlFor={`${name}${value}`} className={classNames({ ...radioLabelClass })}>
-        {label}
-      </label>
-    </>
+    <div className={classes.bdsRadioCustomBtn}>
+      <input
+        role={radioType}
+        type={radioType}
+        id={`${name}${value}`}
+        name={name}
+        value={value}
+        className={classes.radioBtnStyle}
+        disabled={disabled}
+        checked={selected}
+        onChange={handleChange}
+      />
+
+      {label && (
+        <label
+          htmlFor={`${name}${value}`}
+          className={classNames({ ...radioLabelClass })}
+        >
+          {label}
+        </label>
+      )}
+    </div>
   );
 };
 
 RadioGroup.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.node,
   name: PropTypes.string.isRequired,
   defaultValue: PropTypes.string,
   options: PropTypes.arrayOf(

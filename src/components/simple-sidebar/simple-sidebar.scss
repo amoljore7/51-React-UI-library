@@ -1,0 +1,52 @@
+@import '../../global-style/index.scss';
+
+$font-size: getRem(14px);
+$font-size-menu-title: getRem(20px);
+
+$drawer-width: getRem(328px);
+$closed-drawer-width: getRem(8px);
+$border-right-drawer: getRem(2px);
+
+$icon-width: getRem(24px);
+$icon-height: getRem(24px);
+$icon-position-top: getRem(16px);
+$icon-position-right-closed: getRem(-32px);
+$icon-position-right-open: getRem(8px);
+
+
+@mixin nav-list {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  list-style: none;
+  font-size: $font-size;
+  height: $height-nav-list;
+  padding-top: $padding-top-nav-list;
+  padding-top: $padding-top-nav-list;
+  padding-bottom: $padding-bottom-nav-list;
+  padding-bottom: $padding-bottom-nav-list;
+}
+
+.simple-sidebar-container {
+  font-family: $font-type-01;
+  border-right: $border-right-drawer solid $med-contrast-border;
+  position: relative;
+  width: $closed-drawer-width;
+
+  & .sidebar-toggle-arrow {
+    position: absolute;
+    right: $icon-position-right-closed;
+    top: $icon-position-top;
+    cursor: pointer;
+    height: $icon-height;
+    width: $icon-width;
+  }
+}
+
+.simple-sidebar-container.active {
+  min-width: $drawer-width;
+
+  & .sidebar-toggle-arrow {
+    right: $icon-position-right-open;
+  }
+}

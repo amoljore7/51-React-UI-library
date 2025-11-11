@@ -1,30 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { checkboxType, classes, iconAlt, imageRole } from './constants';
-
-import enabledUnchecked from '../../assets/icons/enabled-unchecked.svg';
-import hoverUnchecked from '../../assets/icons/hover-unchecked.svg';
-import disabledUnchecked from '../../assets/icons/disabled-unchecked.svg';
-import enabledChecked from '../../assets/icons/enabled-checked.svg';
-import hoverChecked from '../../assets/icons/hover-checked.svg';
-import disabledChecked from '../../assets/icons/disabled-checked.svg';
-import readonlyChecked from '../../assets/icons/readonly-checked.svg';
-
+import classNames from 'classnames';
+import { checkboxType, classes } from './constants';
 import './checkbox.scss';
 
-const Checkbox = ({ name, label, checked, disabled, readOnly, onChange }) => {
+const Checkbox = ({ name, label, checked, disabled, readOnly, onChange, indeterminate }) => {
+  const inputRef = useRef()
   const initialIconState = () => {
     if (disabled) {
       if (checked) {
-        return disabledChecked;
+        return {
+          checked: true,
+          disabled: true,
+        }
+      } else if (indeterminate) {
+        return {
+          indeterminate: true,
+          disabled: true,
+        }
       } else {
-        return disabledUnchecked;
+        return {
+          disabled: true,
+        }
       }
     } else {
       if (readOnly) {
-        return readonlyChecked;
+        return { readOnly };
+      } else if (indeterminate) {
+        return {
+          indeterminate: true,
+        }
       } else {
-        return enabledUnchecked;
+        return {};
       }
     }
   };
@@ -32,67 +39,93 @@ const Checkbox = ({ name, label, checked, disabled, readOnly, onChange }) => {
   const [checkboxHover, setCheckboxHover] = useState(false);
   const [checkboxIcon, setCheckboxIcon] = useState(initialIconState());
 
-  const handleIconOnChange = () => {
-    if (!checked && !disabled) {
-      setCheckboxIcon(enabledUnchecked);
-    } else if (!checked && disabled) {
-      setCheckboxIcon(disabledUnchecked);
-    } else if (checked && !disabled) {
-      setCheckboxIcon(enabledChecked);
-    } else if (checked && disabled) {
-      setCheckboxIcon(disabledChecked);
-    }
-  };
-
-  const handleIconOnHover = () => {
-    if (!checked && checkboxHover) {
-      setCheckboxIcon(hoverUnchecked);
-    } else if (!checked && !checkboxHover) {
-      setCheckboxIcon(enabledUnchecked);
-    } else if (checked && checkboxHover) {
-      setCheckboxIcon(hoverChecked);
-    } else if (checked && !checkboxHover) {
-      setCheckboxIcon(enabledChecked);
+  const handleIconChange = () => {
+    if (!checked && !disabled && !indeterminate) {
+      setCheckboxIcon({});
+    } else if (!checked && disabled && !indeterminate) {
+      setCheckboxIcon({ disabled: true });
+    } else if (checked && !disabled && !indeterminate) {
+      setCheckboxIcon({ checked: true });
+    } else if (checked && disabled && !indeterminate) {
+      setCheckboxIcon({
+        checked: true,
+        disabled: true,
+      });
+    } else if (indeterminate && disabled && !checked) {
+      setCheckboxIcon({
+        indeterminate: true,
+        disabled: true,
+      });
+    } else if (indeterminate && !disabled && !checked) {
+      setCheckboxIcon({ indeterminate: true });
     }
   };
 
   const handleIconOnReadOnly = () => {
     if (readOnly) {
-      setCheckboxIcon(readonlyChecked);
+      setCheckboxIcon({ readOnly });
     } else {
-      handleIconOnChange();
+      handleIconChange();
     }
   };
 
   useEffect(() => {
-    !readOnly && handleIconOnChange();
+    inputRef.current.indeterminate = indeterminate
+    handleIconChange()
+  }, [indeterminate])
+
+  useEffect(() => {
+    !readOnly && handleIconChange();
   }, [checked, disabled]);
   useEffect(handleIconOnReadOnly, [readOnly]);
-  useEffect(() => {
-    !readOnly && !disabled && handleIconOnHover();
-  }, [checkboxHover]);
+
+  const iconContainerClasses = {
+    [classes.iconContainer]: true,
+    [classes.iconContainerHover]: checkboxHover,
+  }
+
+  const checkboxIconClasses = {
+    [classes.checkboxIcon]: true,
+    [classes.checkboxIconDisabled]: checkboxIcon.disabled,
+    [classes.checkboxIconChecked]: checkboxIcon.checked,
+    [classes.checkboxIconReadonly]: checkboxIcon.readOnly,
+    [classes.checkboxIconCheckedDisabled]: checkboxIcon.checked && checkboxIcon.disabled,
+    [classes.checkboxIconIndeterminate]: checkboxIcon.indeterminate,
+    [classes.checkboxIconIndeterminateDisabled]: checkboxIcon.indeterminate && checkboxIcon.disabled,
+  }
+
+  const checkboxIconInnerClasses = {
+    [classes.checkboxIconInnerChecked]: checkboxIcon.checked,
+    [classes.checkboxIconInnerReadonly]: checkboxIcon.readOnly,
+    [classes.checkboxIconInnerIndeterminate]: checkboxIcon.indeterminate,
+    [classes.checkboxIconInnerIndeterminateDisabled]: checkboxIcon.indeterminate && checkboxIcon.disabled,
+  }
 
   return (
     <div className={classes.checkboxContainer}>
-      <div className={classes.iconContainer}>
+      <div
+        className={classNames(iconContainerClasses)}
+        onMouseOver={() => {
+          !readOnly && !disabled && setCheckboxHover(true);
+        }}
+        onMouseLeave={() => {
+          !readOnly && !disabled && setCheckboxHover(false);
+        }}
+      >
         <input
           type={checkboxType}
           role={checkboxType}
           id={name}
           name={name}
           value={name}
-          className={classes.checkboxInput}
           disabled={disabled || readOnly}
           checked={checked}
           onChange={onChange} //It will not get invoked on readOnly state.
-          onMouseOver={() => {
-            !readOnly && !disabled && setCheckboxHover(true);
-          }}
-          onMouseLeave={() => {
-            !readOnly && !disabled && setCheckboxHover(false);
-          }}
+          ref={inputRef}
         />
-        <img role={imageRole} src={checkboxIcon} alt={iconAlt} />
+        <div className={classNames(checkboxIconClasses)}>
+          <span className={classNames(checkboxIconInnerClasses)} />
+        </div>
       </div>
       <label htmlFor={name} className={classes.labelContainer}>
         {label}
@@ -102,12 +135,13 @@ const Checkbox = ({ name, label, checked, disabled, readOnly, onChange }) => {
 };
 
 Checkbox.propTypes = {
-  name: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  name: PropTypes.string,
+  label: PropTypes.string,
   checked: PropTypes.bool.isRequired,
   disabled: PropTypes.bool,
   readOnly: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
+  indeterminate: PropTypes.bool,
 };
 
 export default Checkbox;

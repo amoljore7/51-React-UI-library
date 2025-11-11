@@ -277,7 +277,7 @@ export const Height = () => {
     getOptionLabel: function (option) {
       return option.title;
     },
-    height: '26px'
+    height:'26px'
   };
   return <Select {...props} />;
 };

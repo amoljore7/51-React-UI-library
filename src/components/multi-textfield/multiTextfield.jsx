@@ -99,7 +99,7 @@ const MultiTextfield = ({
           {!isEmpty(inputList) &&
             inputList.map((ele, index) => {
               return (
-                <div key={index} className={classes.crossBtnWrapper}>
+                <div key={`multi-text-without-tooltip-${index}`} className={classes.crossBtnWrapper}>
                   <Textfield
                     name='value'
                     value={ele.value}
@@ -139,8 +139,8 @@ const MultiTextfield = ({
           {!isEmpty(inputList) &&
             inputList.map((ele, index) => {
               return (
-                <Tooltip title={ele?.value} position="top" zIndex={2000}>
-                  <div key={index} className={classes.crossBtnWrapper}>
+                <Tooltip key={`multi-text-with-tooltip-${index}`} title={ele?.value} position="top" zIndex={2000}>
+                  <div className={classes.crossBtnWrapper}>
                     <Textfield
                       name='value'
                       value={ele?.value}

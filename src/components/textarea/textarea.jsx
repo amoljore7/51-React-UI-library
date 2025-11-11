@@ -1,10 +1,18 @@
-import React from 'react';
-import './textarea.scss';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { classes, variantNaked, dataTestId, defaultHeight } from './constants';
+import React, { useState, useEffect } from "react";
+import "./textarea.scss";
+import PropTypes from "prop-types";
+import classNames from "classnames";
+import {
+  dataTestIdForCharCount,
+  variantNaked,
+  defaultHeight,
+  dataTestId,
+  classes,
+} from "./constants";
 
 const Textarea = ({
+  showCharLeftCount = false,
+  maxLength,
   value,
   label,
   placeholder,
@@ -21,6 +29,7 @@ const Textarea = ({
   height = defaultHeight,
   name,
 }) => {
+  const [charLeftCount, setCharLeftCount] = useState(0);
   const textareaLabelClass = {
     [classes.textareaLabel]: true,
     [classes.textareaLabelDisabled]: disabled,
@@ -43,13 +52,25 @@ const Textarea = ({
     [classes.variantNaked]: variant == variantNaked,
   };
 
+  useEffect(() => {
+    if (showCharLeftCount && parseInt(maxLength) > 0) {
+      const currentCharCount = value?.length;
+      const charLeftCount = parseInt(maxLength) - parseInt(currentCharCount);
+      setCharLeftCount(charLeftCount);
+    }
+  }, [value]);
+
   return (
     <div className={classes.container}>
       <div className={classNames({ ...textareaLabelClass })}>{label}</div>
-      {helperText && <div className={classNames({ ...textareaHelperTextClass })}>{helperText}</div>}
+      {helperText && (
+        <div className={classNames({ ...textareaHelperTextClass })}>
+          {helperText}
+        </div>
+      )}
       <div
         className={classNames({ ...textareaWrapper })}
-        style={{ width: `${width}`, height: `${height}` }}
+        style={{ width: `${width}`, height: variant == variantNaked ? 'auto' : `${height}` }}
       >
         <textarea
           className={classNames({ ...textareaClass })}
@@ -62,9 +83,15 @@ const Textarea = ({
           disabled={disabled}
           readOnly={readOnly}
           data-testid={dataTestId}
+          {...(maxLength > 0 && {maxLength})}
         />
       </div>
       {error && <div className={classes.errorMsgText}>{errorMsg}</div>}
+      {showCharLeftCount && charLeftCount > 0 &&
+        <div data-testid={dataTestIdForCharCount} className={classes.charLeftCount}>
+          {`${charLeftCount} character(s) remaining`}
+        </div>
+      }
     </div>
   );
 };
@@ -81,5 +108,7 @@ Textarea.propTypes = {
   name: PropTypes.string,
   onBlur: PropTypes.func,
   onFocus: PropTypes.func,
+  showCharLeftCount: PropTypes.bool,
+  maxLength: PropTypes.number
 };
 export default Textarea;

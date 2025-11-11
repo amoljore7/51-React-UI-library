@@ -10,7 +10,7 @@ export const Default = () => {
   const [value, setValue] = useState('');
 
   const onChangeHandler = (e) => {
-    const { value } = e.target.value;
+    const value = e.target.value;
     setValue(value);
   };
   const props = {
@@ -31,7 +31,7 @@ export const Readonly = () => {
   );
 
   const onChangeHandler = (e) => {
-    const { value } = e.target.value;
+    const value = e.target.value;
     setValue(value);
   };
   const props = {
@@ -53,7 +53,7 @@ export const Error = () => {
   const [value, setValue] = useState('');
 
   const onChangeHandler = (e) => {
-    const { value } = e.target.value;
+    const value = e.target.value;
     setValue(value);
   };
   const props = {
@@ -77,7 +77,7 @@ export const Scroll = () => {
   );
 
   const onChangeHandler = (e) => {
-    const { value } = e.target.value;
+    const value = e.target.value;
     setValue(value);
   };
   const props = {
@@ -99,7 +99,7 @@ export const FullWidth = () => {
   );
 
   const onChangeHandler = (e) => {
-    const { value } = e.target.value;
+    const value = e.target.value;
     setValue(value);
   };
   const props = {
@@ -118,7 +118,7 @@ export const Disabled = () => {
   );
 
   const onChangeHandler = (e) => {
-    const { value } = e.target.value;
+    const value = e.target.value;
     setValue(value);
   };
   const props = {
@@ -140,7 +140,7 @@ export const OnBlur = () => {
   const [value, setValue] = useState('');
 
   const onChangeHandler = (e) => {
-    const { value } = e.target.value;
+    const value = e.target.value;
     setValue(value);
     setBlurLabel('');
   };
@@ -168,4 +168,25 @@ export const OnBlur = () => {
       <label>{blurLable && blurLable}</label>
     </>
   );
+};
+
+export const MaxLength = () => {
+  const [value, setValue] = useState('');
+
+  const onChangeHandler = (e) => {
+    const value = e.target.value;
+    setValue(value);
+  };
+  const props = {
+    type: 'text',
+    label: 'Label',
+    value: value,
+    placeholder: 'Placeholder...',
+    width: '300px',
+    height: '104px',
+    onChange: onChangeHandler,
+    maxLength: 512,
+    showCharLeftCount: true
+  };
+  return <Textarea {...props} />;
 };

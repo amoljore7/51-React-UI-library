@@ -154,6 +154,7 @@ const Select = ({
           style={{ width: width, height: height }}
           tabIndex={defaultTabIndex}
           onBlur={blurHandler}
+          data-testid={classes.container}
         >
           {
             enableTooltip && showTooltip ? (
@@ -190,7 +191,7 @@ const Select = ({
           <MenuOptions
             portalContainerId={'dropdown-components'}
             containerDimension={containerDimension}
-            width={width}
+            width={selectRef?.current?.offsetWidth || width}
             options={options}
             onChange={selectOption}
             getOptionLabel={getOptionLabel}
@@ -215,7 +216,7 @@ Select.propTypes = {
   inline: PropTypes.bool,
   label: PropTypes.string,
   helperText: PropTypes.string,
-  value: PropTypes.object,
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   placeholder: PropTypes.string,
   size: PropTypes.string,
   error: PropTypes.bool,

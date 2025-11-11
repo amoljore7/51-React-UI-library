@@ -17,7 +17,6 @@ export const dialogType = {
   error: 'error',
 };
 
-export const generalColor = '#067FDB';
 export const alertColor = '#F1C21B';
 export const errorColor = '#E15C5C';
 export const iconColor = '#393939';

@@ -1,15 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
-import { FiSlash, FiCheck, FiX } from 'react-icons/fi';
 import Select from '../select';
 import MultiTextfield from '../multi-textfield';
 import Typography from '../typography';
+import Autocomplete from '../autocomplete/autocomplete';
 import { classes } from './constants';
 import { isEmpty } from 'lodash';
+import cancel from '../../assets/icons/cancel.svg';
+import close from '../../assets/icons/close.svg';
+import checkLight from '../../assets/icons/check-light.svg';
+import checkGreen from '../../assets/icons/check-green.svg';
 
 import './query-selector.scss';
 
-const QuerySelector = (props) => {
+const QuerySelector = ({
+  queryId,
+  currentElement,
+  query,
+  isStandalone,
+  updateActiveIndex,
+  attributeOptionsLabel,
+  attributeGetOptionLabel,
+  handleAddQueryPills,
+  index,
+  selectorList,
+  deleteHandleClick,
+  attributeOptions,
+  onlyAttributeInput = false,
+  attributeSelectPlaceholder = 'Attribute',
+  attributeInputWidth = '140px',
+  excludedAttributes = [],
+  groupPropertyName
+}) => {
   const [attributeValue, setAttributeValue] = useState(null);
   const [operatorValue, setOperatorValue] = useState(null);
   const [value, setValue] = useState('');
@@ -18,13 +40,15 @@ const QuerySelector = (props) => {
   const [isAllFieldSaved, setIsAllFieldSaved] = useState();
 
   useEffect(() => {
-    if (!isEmpty(props?.currentElement)) {
-      commonUtils(props?.currentElement);
+    if (!isEmpty(currentElement)) {
+      commonUtils(currentElement);
     }
-  }, [props?.currentElement]);
+  }, [currentElement]);
 
   const isQueryEmpty = () => {
-    if (isEmpty(attributeValue) || isEmpty(operatorValue) || !isAllFieldSaved) {
+    if (onlyAttributeInput && isEmpty(attributeValue)) {
+      return true;
+    } else if (!onlyAttributeInput && (isEmpty(attributeValue) || isEmpty(operatorValue) || !isAllFieldSaved)) {
       return true;
     } else {
       return false;
@@ -36,64 +60,64 @@ const QuerySelector = (props) => {
   },[attributeValue, operatorValue, value])
 
   const resetHandleClick = (id) => {
-    const value = props?.query?.findIndex((e) => e.queryId === id);
+    const value = query?.findIndex((e) => e.queryId === id);
     if (value === -1) {
       setValue('');
       setAttributeValue(null);
       setOperatorValue(null);
       setIsActive(false);
     } else {
-      commonUtils(props?.query[value]);
+      commonUtils(query[value]);
     }
     setIsActive(false)
     setIsError(false);
-    props?.updateActiveIndex(props?.queryId, false)
+    !isStandalone && updateActiveIndex(queryId, false)
   };
 
   const commonUtils = (data) => {
     const { attribute, operator, value } = data;
-    const key = props?.attributeOptionsLabel || 'attribute';
+    const key = attributeOptionsLabel || 'attribute';
     let attributeValueObject = {};
     attributeValueObject[key] = attribute;
     setAttributeValue(attributeValueObject);
     setOperatorValue({ operator: operator });
-    setValue(value.trim());
+    setValue(value?.trim());
     setIsActive(false);
   };
 
   const checkHandleClick = (queryId) => {
     setIsError(isQueryEmpty());
-    setValue(value.trim())
+    setValue(value?.trim())
     if (!isQueryEmpty()) {
       const toBeInserted = {
-        attribute: props?.attributeGetOptionLabel(attributeValue),
+        attribute: attributeGetOptionLabel(attributeValue),
         operator: operatorValue?.operator,
         value,
         isActiveIndex: false,
         queryId,
       };
       setIsActive(false);
-      props?.updateActiveIndex(queryId, false)
-      props?.handleAddQueryPills(toBeInserted);
+      !isStandalone && updateActiveIndex(queryId, false)
+      handleAddQueryPills(toBeInserted);
     }
   };
 
   const checkIsAnyPillActive =()=>{
-    let flag = props?.query?.some((obj) => obj?.isActiveIndex === true)
+    let flag = query?.some((obj) => obj?.isActiveIndex === true)
     return flag
   }
 
   const disabledOtherPills =(obj)=>{
-    if (props?.currentElement?.isActiveIndex) {
+    if (currentElement?.isActiveIndex) {
       return false
-    } else if(!props?.currentElement?.isActiveIndex){
+    } else if(!currentElement?.isActiveIndex){
       return true
     }
     return false
   }
 
   const checkIsAnyPillEmpty =()=>{
-      if (props?.index === props?.selectorList?.length -1) return false
+      if (index === selectorList?.length -1) return false
       return true
   }
 
@@ -102,21 +126,29 @@ const QuerySelector = (props) => {
     [classes.errorPill]: isError,
   };
   const queryClass = {
-    [classes.disabledPill]:
-      props?.selectorList?.length !== props?.query?.length ? checkIsAnyPillEmpty() : checkIsAnyPillActive() ? disabledOtherPills() : false,
+    [classes.disabledPill]: isStandalone ? false :
+      selectorList?.length !== query?.length ? checkIsAnyPillEmpty() : checkIsAnyPillActive() ? disabledOtherPills() : false,
   };
 
+  let attrOptions = attributeOptions
+  if (excludedAttributes?.length) {
+    attrOptions = attributeOptions.filter(option => !excludedAttributes.includes(attributeGetOptionLabel(option)))
+  }
+
   const attributeProps = {
-    options: props?.attributeOptions,
+    options: attrOptions,
     onChange: (event, value) => {
-      props?.updateActiveIndex(props?.queryId, true)
+      !isStandalone && updateActiveIndex(queryId, true)
       setAttributeValue(value), setIsActive(true);
     },
-    value: attributeValue,
-    getOptionLabel: props?.attributeGetOptionLabel,
-    placeholder: 'Attribute',
-    width: '140px',
-    height: '26px'
+    value: attributeValue ? [attributeValue] : [],
+    getOptionLabel: attributeGetOptionLabel,
+    placeholder: attributeSelectPlaceholder,
+    width: attributeInputWidth,
+    height: '26px',
+    allowClearing: false,
+    filterCurrentValueFromOptions: true,
+    groupPropertyName,
   };
 
   const operatorProps = {
@@ -128,7 +160,7 @@ const QuerySelector = (props) => {
       return option.operator;
     },
     onChange: (event, value) => {
-      props?.updateActiveIndex(props?.queryId, true)
+      !isStandalone && updateActiveIndex(queryId, true)
       setOperatorValue(value), setIsActive(true);
     },
     value: operatorValue,
@@ -143,7 +175,7 @@ const QuerySelector = (props) => {
     addBtnTooltipText: 'Add Additional value with "Or" condition',
     finalValue: (value) => {
       setValue(value)
-      props?.updateActiveIndex(props?.queryId, true)
+      !isStandalone && updateActiveIndex(queryId, true)
       setIsActive(true);
     },
     isAllFieldSaved: (flag) => setIsAllFieldSaved(flag),
@@ -157,37 +189,38 @@ const QuerySelector = (props) => {
         <div>
           <div className={classNames({ ...pillContainerClasses })}>
             <div className={classes.levelOneFields}>
-              <Select {...attributeProps} />
+              <Autocomplete {...attributeProps} />
               <span className={classes.pipe} />
-              <Select {...operatorProps} />
-              <span className={classes.pipe} />
-              <MultiTextfield {...valueProps} />
-              <span className={classes.pipe} />
+              {!onlyAttributeInput && (
+                <>
+                  <Select {...operatorProps} />
+                  <span className={classes.pipe} />
+                  <MultiTextfield {...valueProps} />
+                  <span className={classes.pipe} />
+                </>
+              )}
               {isActive && (
                 <>
                   <div
                     className={classes.cancelIconBox}
-                    onClick={() => checkHandleClick(props?.queryId)}
+                    onClick={() => checkHandleClick(queryId)}
                   >
-                    <FiCheck
-                      size='24'
-                      color={isQueryEmpty() ? '#c6c6c6' : '#24a148'}
-                    />
+                    <img src={isQueryEmpty() ? checkLight : checkGreen} />
                   </div>
                   <div
                     className={classes.cancelIconBox}
-                    onClick={() => resetHandleClick(props?.queryId)}
+                    onClick={() => resetHandleClick(queryId)}
                   >
-                    <FiSlash size='24' />
+                    <img src={cancel} />
                   </div>
                 </>
               )}
               {
                 <div
                   className={classes.cancelIconBox}
-                  onClick={props?.deleteHandleClick}
+                  onClick={deleteHandleClick}
                 >
-                  <FiX size='24' />
+                  <img src={close} />
                 </div>
               }
             </div>

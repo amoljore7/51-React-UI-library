@@ -102,3 +102,35 @@ export const ButtonGroupsRadioSmall = () => {
     </ButtonGroup>
   );
 };
+
+export const ButtonGroupsRadioWithDefaultValue = () => {
+  return (
+    <ButtonGroup type="radio" onClick={(value) => { alert(value) }} defaultValue="three">
+      <Button value="one">
+        <FaList/>&nbsp;one
+      </Button>
+      <Button value="two">
+        <FaChartBar/>&nbsp;Two
+      </Button>
+      <Button value="three">
+        <FaTable/>&nbsp;Three
+      </Button>
+    </ButtonGroup>
+  );
+};
+
+export const ButtonGroupsWithTooltip = () => {
+  return (
+    <ButtonGroup>
+      <Button variant="primary" onClick={() => alert('Button clicked')} tooltipText="One">
+        one
+      </Button>
+      <Button variant="primary" onClick={() => alert('Button clicked')} tooltipText="Two">
+        Two
+      </Button>
+      <Button variant="primary" onClick={() => alert('Button clicked')} tooltipText="Three">
+        Three
+      </Button>
+    </ButtonGroup>
+  );
+};

@@ -14,6 +14,7 @@ import {
   tooltipMargin,
   tooltipMaxHeight,
   tooltipMaxWidth,
+  zIndexDefault
 } from './constants';
 import './tooltip.scss';
 // checks if mouse current Position is near the boundary of tooltip
@@ -236,7 +237,7 @@ const changeTooltipPos = (tooltipElement, element, position) => {
   }
 };
 
-const Tooltip = ({ title, children, position }) => {
+const Tooltip = ({ title, children, position, zIndex = zIndexDefault, className }) => {
   const [tooltipElement] = useState(document.createElement('div'));
   const [isHover, setIsHover] = useState(false);
   const [isNear, setIsNear] = useState(false);
@@ -244,12 +245,15 @@ const Tooltip = ({ title, children, position }) => {
   tooltipElement.id = `${tooltipId}`;
   tooltipElement.style.position = 'absolute';
   tooltipElement.style.willChange = 'transform';
-  tooltipElement.style.zIndex = 2000;
+  tooltipElement.style.zIndex = zIndex;
   tooltipElement.style.top = 0;
   tooltipElement.style.left = 0;
   tooltipElement.style.maxWidth = tooltipMaxWidth;
   tooltipElement.style.maxHeight = tooltipMaxHeight;
   tooltipElement.style.overflow = 'auto';
+  if (className) {
+    tooltipElement.classList.add(className);
+  }
 
   useEffect(() => {
     document.body.appendChild(tooltipElement);
@@ -275,7 +279,7 @@ const Tooltip = ({ title, children, position }) => {
     if (childRef && childRef.current && isHover) {
       changeTooltipPos(tooltipElement, childRef.current, position);
     }
-  }, [isHover,title]);
+  }, [isHover, title]);
 
   return (
     <>
@@ -288,7 +292,7 @@ const Tooltip = ({ title, children, position }) => {
           setIsHover(false);
         },
       })}
-      {(isHover || isNear)&& title &&
+      {(isHover || isNear) && title &&
         createPortal(
           <div
             className={classes.tooltipContainer}

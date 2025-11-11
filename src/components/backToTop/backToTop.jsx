@@ -12,6 +12,10 @@ const BackToTop = ({ parentRef, id }) => {
   portalModal.style.top = 0;
   portalModal.style.left = 0;
 
+  useLayoutEffect(() => {
+     parentRef.current && onResize();
+  }, [parentRef.current])
+
   const handleOnScroll = () => {
     if (parentRef.current.scrollTop >= parentRef.current.offsetHeight / 2) setShow(true);
     else if (parentRef.current.scrollTop <= parentRef.current.offsetHeight / 2) setShow(false);
@@ -29,10 +33,6 @@ const BackToTop = ({ parentRef, id }) => {
       }px,${bottom - bottomOffset - width}px)`;
     }
   };
-
-  useLayoutEffect(() => {
-    onResize();
-  }, [parentRef]);
 
   useEffect(() => {
     document.body.appendChild(portalModal);

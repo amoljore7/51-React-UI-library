@@ -13,6 +13,13 @@ RegularPill.args = {
   onDelete: (event) => alert('This Pill will be deleted'),
 };
 
+const PillWithCustomBGColor = (args) => <Pill {...args} />;
+export const PillWithBGColor = PillTemplate.bind({});
+PillWithBGColor.args = {
+  label: 'Regular',
+  pillColor:"#4B0082",
+};
+
 export const PillWithError = PillTemplate.bind({});
 PillWithError.args = {
   error: true,

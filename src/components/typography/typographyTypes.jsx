@@ -108,5 +108,14 @@ export const spanTexts = ({ variant, children, dataAttribute }) => {
     [classes.caption1]: variant === caption1,
     [classes.helperText1]: variant === helperText1,
   };
-  return <span className={classNames({ ...labelClasses })} data-auto-id={dataAttribute}>{children}</span>;
+
+  const spanTitle = () => {
+    if (typeof children === 'string') {
+      return children
+    }
+
+    return ''
+  }
+
+  return <span className={classNames({ ...labelClasses })} data-auto-id={dataAttribute} title={spanTitle()}>{children}</span>;
 };

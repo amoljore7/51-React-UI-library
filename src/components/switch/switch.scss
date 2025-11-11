@@ -1,0 +1,26 @@
+@import "../../global-style/index.scss";
+
+//tokens
+$gap: getRem(8px);
+
+.bds-switch-container {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+
+  .bds-switch {
+    display: flex;
+    gap: $gap;
+    align-items: center;
+    cursor: pointer;
+
+    &.disabled {
+      pointer-events: none;
+      opacity: 0.3;
+    }
+  }
+
+  .bds-switch-error-message {
+    color: $error-color;
+  }
+}

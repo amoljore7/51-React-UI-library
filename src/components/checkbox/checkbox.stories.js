@@ -83,6 +83,21 @@ export const CheckboxGroup = () => {
           onChange={onChange}
         />
       </div>
+      <div style={{ marginBottom: '8px' }}>
+        <Checkbox
+          name="Austria"
+          label="Austria"
+          indeterminate
+        />
+      </div>
+      <div style={{ marginBottom: '8px' }}>
+        <Checkbox
+          name="Ukraine"
+          label="Ukraine"
+          indeterminate
+          disabled
+        />
+      </div>
     </div>
   );
 };

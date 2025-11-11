@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { classes, optionRole, defaultTabIndex } from './constants';
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import './menu-options-container.scss';
+import React, { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
+import { classes, optionRole, defaultTabIndex } from "./constants";
+import classNames from "classnames";
+import PropTypes from "prop-types";
+import "./menu-options-container.scss";
 
 const MenuOptions = ({
   options,
@@ -16,19 +16,26 @@ const MenuOptions = ({
   value,
   portalContainerId,
   disablePortal = false,
+  groupPropertyName,
 }) => {
   const [optionsContainerHeight, setOptionsContainerHeight] = useState(0);
   const [optionsContainerWidth, setOptionsContainerWidth] = useState(0);
-  const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-  const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-  const [optionsEl] = useState(document.createElement('div'));
+  const vh = Math.max(
+    document.documentElement.clientHeight || 0,
+    window.innerHeight || 0,
+  );
+  const vw = Math.max(
+    document.documentElement.clientWidth || 0,
+    window.innerWidth || 0,
+  );
+  const [optionsEl] = useState(document.createElement("div"));
   optionsEl.id = `${portalContainerId}`;
   optionsEl.style.zIndex = 3000;
-  optionsEl.style.backgroundColor = 'white';
+  optionsEl.style.backgroundColor = "white";
 
   let bottomWidth, rightWidth, left, top;
   if (!disablePortal) {
-    optionsEl.style.position = 'absolute';
+    optionsEl.style.position = "absolute";
     optionsEl.style.top = 0;
     optionsEl.style.left = 0;
     if (containerDimension) {
@@ -46,12 +53,14 @@ const MenuOptions = ({
 
     optionsEl.style.transform =
       containerDimension &&
-      `translate3d(${left + window.pageXOffset}px,${top + window.pageYOffset}px,0)`;
+      `translate3d(${left + window.pageXOffset}px,${
+        top + window.pageYOffset
+      }px,0)`;
   }
 
   useEffect(() => {
     if (!disablePortal) {
-      const bodyElement = document.getElementsByTagName('body')[0];
+      const bodyElement = document.getElementsByTagName("body")[0];
       bodyElement.appendChild(optionsEl);
       const optionsElHeight = optionsEl.getBoundingClientRect().height;
       const optionsElWidth = optionsEl.getBoundingClientRect().width;
@@ -70,10 +79,11 @@ const MenuOptions = ({
     onChange,
     width,
     disablePortal,
+    groupPropertyName,
   };
 
   return disablePortal ? (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: "relative" }}>
       <OptionsList {...optionsListProps} />
     </div>
   ) : (
@@ -90,6 +100,7 @@ const OptionsList = ({
   onChange,
   width,
   disablePortal,
+  groupPropertyName
 }) => {
   const isOptionSelected = (item) => {
     let isOptionSelected = false;
@@ -108,79 +119,135 @@ const OptionsList = ({
 
   const labelClasses = {
     [classes.optionLabel]: true,
-    [classes.optionLabelWithSublabel]: Boolean(getOptionLabel) && Boolean(getOptionSublabel),
+    [classes.optionLabelWithSublabel]:
+      Boolean(getOptionLabel) && Boolean(getOptionSublabel),
     [classes.optionLabelAlone]:
-      Boolean(getOptionLabel) && !Boolean(getOptionSublabel) && !Boolean(getOptionIcon),
+      Boolean(getOptionLabel) &&
+      !Boolean(getOptionSublabel) &&
+      !Boolean(getOptionIcon),
   };
 
   const optionClasses = {
     [classes.option]: true,
     [classes.optionWithLabelSublabel]:
-      Boolean(getOptionLabel) && Boolean(getOptionSublabel) && !Boolean(getOptionIcon),
+      Boolean(getOptionLabel) &&
+      Boolean(getOptionSublabel) &&
+      !Boolean(getOptionIcon),
     [classes.optionWithLabel]:
-      Boolean(getOptionLabel) && !Boolean(getOptionSublabel) && !Boolean(getOptionIcon),
+      Boolean(getOptionLabel) &&
+      !Boolean(getOptionSublabel) &&
+      !Boolean(getOptionIcon),
+    [classes.grouped]: !!groupPropertyName
   };
 
   const optionIconClasses = {
     [classes.optionIcon]: true,
     [classes.optionIconLarge]:
-      Boolean(getOptionIcon) && Boolean(getOptionLabel) && Boolean(getOptionSublabel),
+      Boolean(getOptionIcon) &&
+      Boolean(getOptionLabel) &&
+      Boolean(getOptionSublabel),
     [classes.optionIconSmall]:
-      Boolean(getOptionLabel) && !Boolean(getOptionSublabel) && Boolean(getOptionIcon),
+      Boolean(getOptionLabel) &&
+      !Boolean(getOptionSublabel) &&
+      Boolean(getOptionIcon),
   };
 
   const optionContainerClasses = {
     [classes.optionsContainer]: true,
   };
+
+  const optionsByCategories = useMemo(() => {
+    if (!groupPropertyName) {
+      return {
+        _default: options,
+      };
+    }
+    let result = [];
+    options.forEach((option) => {
+      if (!result[option[groupPropertyName]]) {
+        result[option[groupPropertyName]] = [option];
+      } else {
+        result[option[groupPropertyName]].push(option);
+      }
+    });
+    return result;
+  }, [options]);
+
+  if(!Object.entries(optionsByCategories).length) {
+    return null
+  }
+
   return (
     <div
       className={classNames({ ...optionContainerClasses })}
       style={{
         width: width,
         ...(disablePortal
-          ? { backgroundColor: 'white', position: 'absolute', top: 0, left: 0, zIndex: 30000 }
+          ? {
+              backgroundColor: "white",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              zIndex: 30000,
+            }
           : {}),
       }}
     >
-      {options &&
-        Boolean(options.length) &&
-        options.map((item, index) => {
-          return Boolean(item.separator) ? (
-            <hr role={optionRole} key={`separator-${index}`} className={classes.separator} />
-          ) : (
-            <div
-              tabIndex={defaultTabIndex}
-              role={optionRole}
-              title={getOptionLabel(item)}
-              className={classNames({
-                ...optionClasses,
-                [classes.selectedOption]: isOptionSelected(item),
-              })}
-              onMouseDown={(event) => event.preventDefault()}
-              key={`filter-option-${index}`}
-              onClick={(event) => onChange(event, item)}
-            >
-              {getOptionIcon && (
-                <div className={classNames({ ...optionIconClasses })}>
-                  <img src={getOptionIcon(item)} alt={getOptionLabel(item)} />
-                </div>
-              )}
-              <div className={classes.optionLabelSublabelContainer}>
+      {Object.entries(optionsByCategories).map(([category, options]) => (
+        <div key={category}>
+          {category && category !== "_default" && <div className={classes.category}>{category}</div>}
+          {options &&
+            Boolean(options.length) &&
+            options.map((item, index) => {
+              return Boolean(item.separator) ? (
+                <hr
+                  role={optionRole}
+                  key={`separator-${index}`}
+                  className={classes.separator}
+                />
+              ) : (
                 <div
+                  tabIndex={defaultTabIndex}
+                  role={optionRole}
+                  title={getOptionLabel(item)}
                   className={classNames({
-                    ...labelClasses,
-                    [classes.disabledOptionLabel]: isOptionDisabled(item),
+                    ...optionClasses,
+                    [classes.selectedOption]: isOptionSelected(item),
+                    [classes.highlightOption]: item.highlight,
                   })}
+                  onMouseDown={(event) => event.preventDefault()}
+                  key={`filter-option-${index}`}
+                  onClick={(event) => onChange(event, item)}
                 >
-                  {getOptionLabel(item)}
+                  {getOptionIcon && (
+                    <div className={classNames({ ...optionIconClasses })}>
+                      <img
+                        src={getOptionIcon(item)}
+                        alt={getOptionLabel(item)}
+                      />
+                    </div>
+                  )}
+                  <div className={classes.optionLabelSublabelContainer}>
+                    <div
+                      className={classNames({
+                        ...labelClasses,
+                        [classes.disabledOptionLabel]: isOptionDisabled(item),
+                        [classes.highlightOptionLabel]: item.highlight,
+                      })}
+                    >
+                      {getOptionLabel(item)}
+                    </div>
+                    {getOptionSublabel && (
+                      <div className={classes.optionSublabel}>
+                        {getOptionSublabel(item)}
+                      </div>
+                    )}
+                  </div>
                 </div>
-                {getOptionSublabel && (
-                  <div className={classes.optionSublabel}>{getOptionSublabel(item)}</div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+              );
+            })}
+        </div>
+      ))}
     </div>
   );
 };
@@ -196,6 +263,7 @@ MenuOptions.propTypes = {
   value: PropTypes.array,
   portalContainerId: PropTypes.string.isRequired,
   disablePortal: PropTypes.bool,
+  groupPropertyName: PropTypes.string,
 };
 
 export default MenuOptions;

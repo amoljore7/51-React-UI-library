@@ -1,0 +1,11 @@
+// This is a set of radius tokens to define consistent corner rounding across components.
+// These tokens help maintain a unified look and feel across buttons, cards, inputs, and more. 
+// It’s based on a 2px increment scale, supporting both subtle and fully rounded UI.
+
+@mixin radius($value) {
+  @if $value == full {
+    border-radius: 9999px;
+  } @else {
+    border-radius: #{$value}px;
+  }
+}

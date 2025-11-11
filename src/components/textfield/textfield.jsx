@@ -10,12 +10,15 @@ import {
   inputTestId,
   defaultType,
   autoCompleteOff,
+  iconPositionLeft,
+  iconPositionRight,
 } from './constants';
 
 const Textfield = ({
   type = defaultType,
-  value,
+  value = '',
   label,
+  secondaryLabel,
   placeholder,
   error = false,
   helperText,
@@ -31,35 +34,51 @@ const Textfield = ({
   readOnly = false,
   name,
   height,
+  styleClasses = classes,
+  onKeyUp,
+  iconPosition = iconPositionRight,
+  autoComplete = autoCompleteOff
 }) => {
   const labelClass = {
-    [classes.label]: true,
-    [classes.labelDisabled]: disabled,
+    [styleClasses.label]: true,
+    [styleClasses.labelDisabled]: disabled,
+  };
+  const secondaryLabelClass = {
+    [styleClasses.secondaryLabel]: true,
   };
   const helperTextClass = {
-    [classes.helperText]: true,
-    [classes.helperTextDisabled]: disabled,
+    [styleClasses.helperText]: true,
+    [styleClasses.helperTextDisabled]: disabled,
   };
   const inputClass = {
-    [classes.inputContainer]: true,
-    [classes.inputContainerErrorBorder]: error,
-    [classes.variantInline]: variant === variantInline,
-    [classes.variantNaked]: variant === variantNaked,
-    [classes.inputContainerFocus]: !readOnly,
-    [classes.inputWithIcon]: !!icon,
-    [classes.inputContainerDisabled]: disabled,
+    [styleClasses.inputContainer]: true,
+    [styleClasses.inputContainerErrorBorder]: error,
+    [styleClasses.variantInline]: variant === variantInline,
+    [styleClasses.variantNaked]: variant === variantNaked,
+    [styleClasses.inputContainerFocus]: !readOnly,
+    [styleClasses.inputWithIcon]: !!icon,
+    [styleClasses.inputContainerDisabled]: disabled,
   };
   const inputBox = {
-    [classes.inputBox]: true,
-    [classes.inputBoxDisabled]: disabled,
-    [classes.inputBoxReadOnly]: readOnly,
+    [styleClasses.inputBox]: true,
+    [styleClasses.inputBoxDisabled]: disabled,
+    [styleClasses.inputBoxReadOnly]: readOnly,
   };
 
   return (
-    <div className={classes.container}>
-      {label && <div className={classNames({ ...labelClass })}>{label}</div>}
+    <div className={styleClasses.container}>
+      {label && <div className={classNames({ ...labelClass })}>{label}{secondaryLabel && <span className={classNames({ ...secondaryLabelClass })}> {secondaryLabel}</span>}</div>}
       {helperText && <div className={classNames({ ...helperTextClass })}>{helperText}</div>}
       <div className={classNames({ ...inputClass })} style={{ width: width, height: height }}>
+        {icon && iconPosition === iconPositionLeft && (
+          <div
+            data-testid="icon-textfield"
+            className={styleClasses.iconBoxLeft}
+            onClick={onIconClick}
+          >
+            {icon}
+          </div>
+        )}
         <input
           className={classNames({ ...inputBox })}
           onBlur={onBlur}
@@ -73,31 +92,37 @@ const Textfield = ({
           disabled={disabled}
           roles={inputRole}
           data-testid={inputTestId}
-          autoComplete={autoCompleteOff}
+          autoComplete={autoComplete}
+          onKeyUp={onKeyUp}
         />
 
-        {icon && (
-          <div className={classes.iconBox} onClick={onIconClick}>
+        {icon && iconPosition === iconPositionRight && (
+          <div
+            data-testid="icon-textfield"
+            className={styleClasses.iconBoxRight}
+            onClick={onIconClick}
+          >
             {icon}
           </div>
         )}
       </div>
-      {error && <div className={classes.errorMsgText}>{errorMsg}</div>}
+      {error && <div className={styleClasses.errorMsgText}>{errorMsg}</div>}
     </div>
   );
 };
 
 Textfield.propTypes = {
   type: PropTypes.string,
-  value: PropTypes.string.isRequired,
-  label: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  label: PropTypes.node,
+  secondaryLabel: PropTypes.string,
   errorMsg: PropTypes.string,
   placeholder: PropTypes.string,
   error: PropTypes.bool,
   helperText: PropTypes.string,
   variant: PropTypes.string,
   disabled: PropTypes.bool,
-  icon: PropTypes.string,
+  icon: PropTypes.any,
   width: PropTypes.string,
   readonly: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
@@ -106,6 +131,29 @@ Textfield.propTypes = {
   onBlur: PropTypes.func,
   onFocus: PropTypes.func,
   height: PropTypes.string,
+  onKeyUp: PropTypes.func,
+  iconPosition: PropTypes.oneOf([ iconPositionLeft, iconPositionRight ]),
+  styleClasses: PropTypes.shape({
+    container: PropTypes.string,
+    label: PropTypes.string,
+    labelDisabled: PropTypes.string,
+    helperText: PropTypes.string,
+    helperTextDisabled: PropTypes.string,
+    inputContainer: PropTypes.string,
+    inputContainerErrorBorder: PropTypes.string,
+    inputBox: PropTypes.string,
+    inputIcon: PropTypes.string,
+    errorMsgText: PropTypes.string,
+    variantNaked: PropTypes.string,
+    variantInline: PropTypes.string,
+    inputContainerFocus: PropTypes.string,
+    inputBoxWrapper: PropTypes.string,
+    iconBox: PropTypes.string,
+    inputWithIcon: PropTypes.string,
+    inputContainerDisabled: PropTypes.string,
+    inputBoxDisabled: PropTypes.string,
+    inputBoxReadOnly: PropTypes.string,
+  })
 };
 
 export default Textfield;

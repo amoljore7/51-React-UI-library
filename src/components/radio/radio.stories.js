@@ -14,7 +14,24 @@ export default {
   },
 };
 
-const RadioGroupTemplate = (args) => <RadioGroup {...args} />;
+const RadioGroupTemplate = (args) => {
+  const [value, setValue] = useState(args.defaultValue);
+
+  const handleChange = (event) => {
+    const newValue = event.target.value;
+    console.log(newValue);
+    setValue(newValue);
+  };
+
+  return (
+    <RadioGroup
+      {...args}
+      defaultValue={value}
+      onChange={handleChange}
+    />
+  );
+};
+
 export const RadioButtonGroup = RadioGroupTemplate.bind({});
 RadioButtonGroup.args = {
   label: 'Gender',
@@ -37,11 +54,6 @@ RadioButtonGroup.args = {
     },
   ],
   direction: 'horizontal',
-};
-
-RadioButtonGroup.args.onChange = function (event) {
-  event.preventDefault();
-  console.log(event.target.value);
 };
 
 export const RadioButtonReset = () => {

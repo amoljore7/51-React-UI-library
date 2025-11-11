@@ -1,0 +1,52 @@
+@import '../../global-style/tokens/elevations.scss';
+@import '../../global-style/tokens/radius.scss';
+
+.elevation {
+  &-container {
+    width: 200px;
+    height: 200px;
+    @include radius(8);
+    padding-top: 12px;
+    padding-right: 10px;
+    padding-bottom: 12px;
+    padding-left: 10px;
+  }
+
+  &-level {
+    &-1 {
+      @include elevation-1;
+    }
+
+    &-2 {
+      @include elevation-2;
+    }
+
+    &-3 {
+      @include elevation-3;
+    }
+
+    &-4 {
+      @include elevation-4;
+    }
+
+    &-5 {
+      @include elevation-5;
+    }
+
+    &-6 {
+      @include elevation-6;
+    }
+
+    &-7 {
+      @include elevation-7;
+    }
+
+    &-8 {
+      @include elevation-8;
+    }
+
+    &-9 {
+      @include elevation-9;
+    }
+  }
+}

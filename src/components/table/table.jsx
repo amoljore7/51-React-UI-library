@@ -1,21 +1,23 @@
 import classNames from 'classnames';
+import { isEqual, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import SearchInput from '../search';
-import { PaginationBar } from './tableElements';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import SortedAscending from '../../assets/icons/column-ascending.svg';
 import Unsorted from '../../assets/icons/column-unsorted.svg';
 import SortedDescending from '../../assets/icons/columns-descending.svg';
+import DragAndDrop from '../../assets/icons/drag-and-drop.svg';
+import SearchInput from '../search';
 import {
+  HUNDRED_DECIMAL,
   classes,
   columnMinWidth,
   columnMinWidthPixels,
-  HUNDRED_DECIMAL,
   mousedownEvent,
   mousemoveEvent,
   mouseupEvent,
   navigationRole,
-  paginationArialLabel,
   resizeEvent,
   resizerWidth,
   searchBarSize,
@@ -27,14 +29,21 @@ import {
   tableHeaderPrefix,
   tableRole,
   tableRowPrefix,
+  tableSearchHeight,
 } from './constants';
 import './table.scss';
+import Filter from './ColumnFilter';
+import ExpandRowIcon from './ExpandRowIcon';
+import TableWithNoData from './TableWithNoData';
+
 const useTableWidth = () => {
   const [width, setWidth] = useState(0);
   useLayoutEffect(() => {
     const element = document.getElementsByClassName(classes.table)[0];
     const updateWidth = () => {
-      setWidth(element.offsetWidth);
+      if (element?.offsetWidth) {
+        setWidth(element.offsetWidth);
+      }
     };
     window.addEventListener(resizeEvent, updateWidth);
     updateWidth();
@@ -43,12 +52,60 @@ const useTableWidth = () => {
   return width;
 };
 
-const Table = ({ columns, rows, sortHandler, paginationModal, searchBar, resizableColumns }) => {
+const Table = ({
+  columns,
+  rows = [{}],
+  sortHandler,
+  searchBar,
+  resizableColumns,
+  nextPageLink,
+  hasInfiniteScroll,
+  onScrollEnd,
+  infiniteScrollLoadingText,
+  isInsideModal = false,
+  allowRowSelect = false,
+  onRowSelect,
+  highlightedRow,
+  allowDraggableRow = false,
+  onDragEnd,
+  addNewRow,
+  columnsForNewRow,
+  noDataMessage,
+  hideNewRowHeader = false,
+  noHeaderBackground = false,
+  expandedContent,
+  expandedRows: controlledExpandedRows,
+  onExpandedRowsChange,
+}) => {
   const tableNode = useRef();
   const containerNode = useRef();
-  const headerProps = { sortHandler, columns, tableNode, resizableColumns };
+  const headerProps = {
+    sortHandler,
+    columns,
+    tableNode,
+    resizableColumns,
+    isSearchVisible: Boolean(searchBar),
+  };
   const tableWidth = useTableWidth();
   const [searchText, setSearchText] = useState('');
+  const [internalExpandedRows, setInternalExpandedRows] = useState([]);
+
+  const expandedRows = controlledExpandedRows ?? internalExpandedRows;
+  const handleExpandedRows = (expandedRowId, onExpand = () => {}, row = {}) => {
+    const expandedRowsList = [...expandedRows];
+    var index = expandedRowsList?.indexOf(expandedRowId);
+    if (index !== -1) {
+      expandedRowsList?.splice(index, 1);
+    } else {
+      expandedRowsList?.push(expandedRowId);
+      onExpand(row);
+    }
+    if (onExpandedRowsChange) {
+      onExpandedRowsChange(expandedRowsList);
+    } else {
+      setInternalExpandedRows(expandedRowsList);
+    }
+  };
 
   const onChangeSearch = (e) => {
     setSearchText(e.target.value);
@@ -62,44 +119,164 @@ const Table = ({ columns, rows, sortHandler, paginationModal, searchBar, resizab
     }
   };
 
-  return (
-    <div ref={containerNode} className={classes.container}>
-      {(searchBar || paginationModal) && (
-        <div
-          className={classes.pagination}
-          style={{ width: getWidth() }}
-          role={navigationRole}
-          aria-label={paginationArialLabel}
-          tabIndex={tabIndex}
+  useEffect(() => {
+    if (searchBar?.isSearchEmpty) {
+      setSearchText('');
+    }
+  }, [searchBar?.isSearchEmpty]);
+
+  const columnContent = [...columns];
+  if (columns && allowDraggableRow) {
+    columnContent.splice(0, 0, {
+      field: 'dragNDrop',
+      headerName: '',
+      sortable: false,
+      renderColumn: () => {
+        return <img src={DragAndDrop} />;
+      },
+      width: '50px',
+    });
+    headerProps.columns = columnContent;
+  }
+  headerProps.hideNewRowHeader = hideNewRowHeader;
+  headerProps.noHeaderBackground = noHeaderBackground;
+
+  const renderTable = () =>
+    allowDraggableRow ? (
+      <DragDropContext onDragEnd={onDragEnd}>
+        <table
+          ref={tableNode}
+          className={classes.table}
+          role={tableRole}
+          aria-label={tableAriaLabel}
         >
-          {searchBar && (
-            <div className={classes.searchContainer}>
-              <SearchInput
-                value={searchText}
-                onChange={onChangeSearch}
-                disabled={false}
-                width={searchBarSize}
-                placeholder={searchBar.placeholder}
-              />
-            </div>
-          )}
-          {paginationModal && <PaginationBar paginationModal={paginationModal} />}
-        </div>
-      )}
-      <table ref={tableNode} className={classes.table} role={tableRole} aria-label={tableAriaLabel}>
+          <TableHeader {...headerProps} />
+          <Droppable droppableId="droppable-container">
+            {(provider) => (
+              <tbody
+                ref={provider.innerRef}
+                {...provider.droppableProps}
+                tabIndex={tabIndex}
+              >
+                {rows && rows.length > 0 ? (
+                  rows.map((row, index) => {
+                    const props = {
+                      row,
+                      rowIndex: index,
+                      columns: columnContent,
+                      highlightedRow,
+                      allowRowSelect,
+                      allowDraggableRow,
+                      handleExpandedRows,
+                      expandedRows,
+                      noDataMessage,
+                      expandedContent,
+                    };
+
+                    if (allowRowSelect) {
+                      props.onClick = (e) => onRowSelect(row, e);
+                    }
+
+                    return (
+                      <TableRow key={`${tableRowPrefix}-${index}`} {...props} />
+                    );
+                  })
+                ) : (
+                  <TableWithNoData noDataMessage={noDataMessage} columns={columns} />
+                )}
+                {provider.placeholder}
+              </tbody>
+            )}
+          </Droppable>
+        </table>
+      </DragDropContext>
+    ) : (
+      <table
+        ref={tableNode}
+        className={classes.table}
+        role={tableRole}
+        aria-label={tableAriaLabel}
+      >
         <TableHeader {...headerProps} />
         <tbody tabIndex={tabIndex}>
-          {rows &&
+          {rows && rows.length > 0 ? (
             rows.map((row, index) => {
               const props = {
                 row,
                 rowIndex: index,
-                columns,
+                columns: columnContent,
+                highlightedRow,
+                allowRowSelect,
+                allowDraggableRow,
+                handleExpandedRows,
+                expandedRows,
+                noDataMessage,
+                expandedContent
               };
+
+              if (allowRowSelect) {
+                props.onClick = (e) => onRowSelect(row, e);
+              }
+
               return <TableRow key={`${tableRowPrefix}-${index}`} {...props} />;
-            })}
+            })
+          ) : (
+            <TableWithNoData noDataMessage={noDataMessage} columns={columns} />
+          )}
         </tbody>
       </table>
+    );
+
+  let infiniteModalProps = {};
+  if (isInsideModal) {
+    infiniteModalProps = {
+      height: 'calc(100vh - 160px)',
+      className: classes.infiniteScrollInsideModal,
+    };
+  }
+
+  return (
+    <div ref={containerNode} className={classes.container}>
+      {searchBar && (
+        <div
+          className={classes.search}
+          style={getWidth() ? { width: getWidth() } : {}}
+          role={navigationRole}
+          tabIndex={tabIndex}
+        >
+          <div className={classes.searchContainer}>
+            <SearchInput
+              value={searchText}
+              onChange={onChangeSearch}
+              disabled={Boolean(searchBar?.isDisabled)}
+              width={searchBarSize}
+              placeholder={searchBar?.placeholder || ''}
+            />
+          </div>
+        </div>
+      )}
+      {hasInfiniteScroll && rows.length !== 0 ? (
+        <InfiniteScroll
+          dataLength={rows?.length || 0}
+          hasMore={!!nextPageLink}
+          next={onScrollEnd}
+          loader={infiniteScrollLoadingText}
+          scrollThreshold={1}
+          {...infiniteModalProps}
+        >
+          {renderTable()}
+        </InfiniteScroll>
+      ) : (
+        renderTable()
+      )}
+      {addNewRow && (
+        <div
+          className={`${classes.addNewRow} ${rows?.length === 0 ? classes.emptyNewRowHeader : {}
+            }`}
+        >
+          <Table hideNewRowHeader={rows?.length === 0} columns={columnsForNewRow} />
+        </div>
+      )}
     </div>
   );
 };
@@ -122,7 +299,12 @@ const Table = ({ columns, rows, sortHandler, paginationModal, searchBar, resizab
  *
  *  Resizing is done only if both column width are >= 88 pixels
  */
-const resizeHelper = ({ currentColumn, adjacentColumn, currentCursorPosition, tableWidth }) => {
+const resizeHelper = ({
+  currentColumn,
+  adjacentColumn,
+  currentCursorPosition,
+  tableWidth,
+}) => {
   // obtain current header cell width and right of the bounding element rectangle
   const {
     width: currentColumnWidth,
@@ -131,7 +313,8 @@ const resizeHelper = ({ currentColumn, adjacentColumn, currentCursorPosition, ta
   // obtain the adjacent column width from bounding client Rect
   const { width: adjacentColumnWidth } = adjacentColumn.getBoundingClientRect();
 
-  const initialMousePosition = currentColumnRight + window.pageXOffset - resizerWidth;
+  const initialMousePosition =
+    currentColumnRight + window.pageXOffset - resizerWidth;
   const deltaMousePosition = currentCursorPosition - initialMousePosition;
 
   // the length of mouse moved is added to current header width
@@ -139,21 +322,34 @@ const resizeHelper = ({ currentColumn, adjacentColumn, currentCursorPosition, ta
   const currentColumnNewWidth = currentColumnWidth + deltaMousePosition;
   const adjacentColumnNewWidth = adjacentColumnWidth - deltaMousePosition;
 
-  if (currentColumnNewWidth >= columnMinWidth && adjacentColumnNewWidth >= columnMinWidth) {
+  if (
+    currentColumnNewWidth >= columnMinWidth &&
+    adjacentColumnNewWidth >= columnMinWidth
+  ) {
     // plug in width percentage value for responsiveness
-    currentColumn.style.width = `${(currentColumnNewWidth / tableWidth) * HUNDRED_DECIMAL}%`;
-    adjacentColumn.style.width = `${
-      ((adjacentColumnWidth - deltaMousePosition) / tableWidth) * HUNDRED_DECIMAL
-    }%`;
+    currentColumn.style.width = `${(currentColumnNewWidth / tableWidth) * HUNDRED_DECIMAL
+      }%`;
+    adjacentColumn.style.width = `${((adjacentColumnWidth - deltaMousePosition) / tableWidth) * HUNDRED_DECIMAL
+      }%`;
   }
 };
 
-const TableHeader = ({ columns, sortHandler, tableNode, resizableColumns }) => {
+const TableHeader = ({
+  columns,
+  sortHandler,
+  tableNode,
+  resizableColumns,
+  isSearchVisible,
+  hideNewRowHeader,
+  noHeaderBackground,
+}) => {
   const [sortedColumn, setSortedColumn] = useState('');
   const headerSortHandler = (fieldName) => {
     sortedColumn !== fieldName && setSortedColumn(fieldName);
   };
   const [headerRefs] = useState(columns.map(() => useRef()));
+  const [resizerFocus, setResizerFocus] = useState(false);
+  const [filterValues, setFilterValues] = useState({});
 
   const resizeHandler = (event, index) => {
     if (!resizableColumns) return;
@@ -164,7 +360,12 @@ const TableHeader = ({ columns, sortHandler, tableNode, resizableColumns }) => {
     const tableWidth = tableElement.offsetWidth;
 
     if (!tableElement && !currentColumn && !adjacentColumn) return;
-    resizeHelper({ currentColumn, adjacentColumn, currentCursorPosition, tableWidth });
+    resizeHelper({
+      currentColumn,
+      adjacentColumn,
+      currentCursorPosition,
+      tableWidth,
+    });
   };
 
   useEffect(() => {
@@ -178,7 +379,11 @@ const TableHeader = ({ columns, sortHandler, tableNode, resizableColumns }) => {
         if (headerElement) {
           const origWidth = headerElement.offsetWidth;
           const tableWidth = tableElement.offsetWidth;
-          headerElement.style.width = `${(origWidth / tableWidth) * HUNDRED_DECIMAL}%`;
+          headerElement.style.width = `${(origWidth / tableWidth) * HUNDRED_DECIMAL
+            }%`;
+          if (isSearchVisible) {
+            headerElement.style.top = tableSearchHeight;
+          }
         }
       });
     }
@@ -186,10 +391,15 @@ const TableHeader = ({ columns, sortHandler, tableNode, resizableColumns }) => {
 
   return (
     <thead tabIndex={tabIndex}>
-      <tr tabIndex={tabIndex} className={classes.header}>
+      <tr
+        tabIndex={tabIndex}
+        className={classes.header}
+        onMouseLeave={() => setResizerFocus(false)}
+        onMouseOver={() => setResizerFocus(true)}
+      >
         {columns &&
           columns.map((column, index) => {
-            const { headerName, sortable, field } = column;
+            const { headerName, sortable, field, renderHeader } = column;
             const reset = sortedColumn !== field;
 
             const iconProps = {
@@ -203,13 +413,24 @@ const TableHeader = ({ columns, sortHandler, tableNode, resizableColumns }) => {
               columnLength: columns.length,
               index,
               headerName,
+              renderHeader,
               sortable,
               iconProps,
               resizeHandler,
               resizableColumns,
+              resizerFocus,
+              setResizerFocus,
             };
             return (
-              <TableHeaderCell key={`${index}`} ref={headerRefs[index]} {...tableHeaderCellProp} />
+              <TableHeaderCell
+                key={`${index}`}
+                ref={headerRefs[index]}
+                {...tableHeaderCellProp}
+                filterValues={filterValues}
+                setFilterValues={setFilterValues}
+                hideNewRowHeader={hideNewRowHeader}
+                noHeaderBackground={noHeaderBackground}
+              />
             );
           })}
       </tr>
@@ -223,17 +444,24 @@ const TableHeaderCell = React.forwardRef(
       column,
       index,
       headerName,
+      renderHeader,
       sortable,
       iconProps,
       resizeHandler,
       columnLength,
       resizableColumns,
+      setResizerFocus,
+      resizerFocus,
+      filterValues,
+      setFilterValues,
+      hideNewRowHeader,
+      noHeaderBackground,
     },
     tableHeaderRef
   ) => {
-    const resizeRef = useRef();
-    const [resizerFocus, setResizerFocus] = useState(false);
+    const columnFilterRef = useRef();
     const parentResizeHandler = (e) => {
+      e.stopPropagation();
       if (!resizableColumns) return;
       setResizerFocus(true);
       resizeHandler(e, index);
@@ -251,50 +479,157 @@ const TableHeaderCell = React.forwardRef(
       if (
         index !== columnLength - 1 &&
         tableHeaderRef?.current &&
-        resizeRef?.current &&
         resizableColumns
       ) {
-        resizeRef.current.addEventListener(mousedownEvent, resizeInit);
+        tableHeaderRef.current.addEventListener(mousedownEvent, resizeInit);
         document.addEventListener(mouseupEvent, () => {
           setResizerFocus(false);
           if (tableHeaderRef && tableHeaderRef.current)
             document.removeEventListener(mousemoveEvent, parentResizeHandler);
         });
       }
-    }, [resizeRef, tableHeaderRef]);
+    }, [tableHeaderRef]);
+
+    useEffect(() => {
+      if (columnFilterRef?.current) {
+        columnFilterRef.current.addEventListener(mousedownEvent, (e) => {
+          // To prevent resize event from being triggered
+          e.stopPropagation();
+        });
+      }
+    }, [columnFilterRef]);
+
+    const [sortType, setSortType] = useState(sortingType.unsorted);
+    useEffect(() => {
+      iconProps.reset && setSortType(sortingType.unsorted);
+    }, [iconProps.reset]);
+
+    useEffect(() => {
+      setFilterValues(column.filter?.selectedFilters)
+    }, [JSON.stringify(column.filter?.selectedFilters)]);
+
+    const getSortIcon = (sortType) => {
+      switch (sortType) {
+        case sortingType.ascending:
+          return SortedAscending;
+        case sortingType.descending:
+          return SortedDescending;
+        default:
+          return Unsorted;
+      }
+    };
+    const getNextType = () => {
+      switch (sortType) {
+        case sortingType.ascending:
+          return sortingType.descending;
+        case sortingType.descending:
+          return sortingType.unsorted;
+        case sortingType.unsorted:
+          return sortingType.ascending;
+        default:
+          return sortingType.unsorted;
+      }
+    };
+
+    const clickHandler = () => {
+      const nextType = getNextType();
+      iconProps.headerSortHandler(iconProps.field);
+      setSortType(nextType);
+      iconProps.sortHandler(nextType, iconProps.field);
+    };
+
+    const sortClasses = {
+      [classes.headerTextIconContainer]: true,
+      [classes.headerCursor]: sortable,
+    };
+
+    const handleOnApply = (field, currentFilterValues) => {
+      const columnFilters = { ...filterValues };
+      // To store filter values based on column name
+      columnFilters[field] = currentFilterValues;
+      setFilterValues(columnFilters);
+      column.filter.onApply(columnFilters);
+    };
 
     return (
-      <>
-        <th
-          className={classes.headerCell}
-          style={{ width: column.width, minWidth: columnMinWidthPixels }}
-          key={`${tableHeaderPrefix}-${index}`}
-          tabIndex={tabIndex}
-          title={headerName}
-          ref={tableHeaderRef}
-          onMouseLeave={() => setResizerFocus(false)}
-        >
-          <div className={classes.headerTextIconContainer}>
-            <div className={classes.headerText} tabIndex={tabIndex}>
-              {headerName}
-            </div>
-            <div className={classes.sortIconResizeContainer}>
-              {sortable && <SortIcon {...iconProps} />}
-              {index !== columnLength - 1 && resizableColumns && (
-                <div
-                  className={classNames(resizerClasses)}
-                  ref={resizeRef}
-                  onMouseOver={() => setResizerFocus(true)}
-                />
+
+      <th
+        className={noHeaderBackground ? classes.headerCellNoBackground : classes.headerCell}
+        style={{ width: column.width, minWidth: columnMinWidthPixels }}
+        key={`${tableHeaderPrefix}-${index}`}
+        tabIndex={tabIndex}
+        title={headerName}
+        ref={tableHeaderRef}
+      >
+        {!hideNewRowHeader && (
+          <>
+            {typeof renderHeader === 'function' ? renderHeader() :
+              (
+                <div className={classNames(sortClasses)}>
+                  <div className={classes.headerText} tabIndex={tabIndex} onClick={() => sortable && clickHandler()}>
+                    {headerName}
+                  </div>
+                  <div
+                  >
+                    <div className={classes.sortIconResizeContainer}>
+                      {sortable && (
+                        <span
+                          className={classes.headerIcon}
+                          tabIndex={tabIndex}
+                          onClick={() => clickHandler()}
+                          onMouseEnter={() => setResizerFocus(false)}
+                          onMouseOver={(e) => e.stopPropagation()}
+                        >
+                          <img
+                            src={getSortIcon(sortType)}
+                            alt={`${sortType}-${sortIconSuffix}`}
+                            title={`${sortType}`}
+                          />
+                        </span>
+                      )}
+                      {column.showFilter && (
+                        <div
+                          ref={columnFilterRef}
+                          className={classes.columnFilter}
+                          onMouseEnter={() => setResizerFocus(false)}
+                          onMouseOver={(e) => e.stopPropagation()}
+                        >
+                          <Filter
+                            onApply={(currentFilterValues) =>
+                              handleOnApply(column.field, currentFilterValues)
+                            }
+                            options={column.filter.options}
+                            singleSelector={column.filter.singleSelector}
+                            values={filterValues?.[column.field]}
+                          />
+                        </div>
+                      )}
+                      {index !== columnLength - 1 && resizableColumns && (
+                        <div
+                          className={classNames(resizerClasses)}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+
+                      )}
+                    </div>
+                  </div>
+                </div>
               )}
-            </div>
-          </div>
-        </th>
-      </>
+          </>
+        )}
+      </th>
     );
   }
 );
-const renderTableRow = (row, columns, rowIndex) => {
+const renderTableRow = (
+  row,
+  columns,
+  rowIndex,
+  dragHandleProps = {},
+  handleExpandedRows = () => {},
+  expandedRows = [],
+  isSubRow = false
+) => {
   const arrTableCells = [];
 
   for (let fieldIndex = 0; fieldIndex < columns.length; fieldIndex++) {
@@ -306,113 +641,239 @@ const renderTableRow = (row, columns, rowIndex) => {
         horizontalAlignment={column.horizontalAlignment}
         width={column.width}
         renderColumn={column.renderColumn}
+        allowExpand={column.allowExpand}
         row={row}
+        dragHandleProps={dragHandleProps}
+        index={rowIndex}
+        handleExpandedRows={handleExpandedRows}
+        renderTableRow={renderTableRow}
+        expandedRows={expandedRows}
+        onExpand={column.onExpand}
+        isSubRow={isSubRow}
       />
     );
   }
   return arrTableCells;
 };
-const TableRow = ({ row, columns, rowIndex }) => {
-  return <tr className={classes.row}>{row && renderTableRow(row, columns, rowIndex)}</tr>;
+const TableRow = ({
+  row,
+  columns,
+  rowIndex,
+  highlightedRow,
+  allowRowSelect,
+  allowDraggableRow,
+  handleExpandedRows,
+  expandedRows,
+  noDataMessage,
+  expandedContent,
+  ...restProps
+}) => {
+  const isHighlighted = isEqual(row, highlightedRow);
+  const isExpanded = expandedRows.includes(rowIndex);
+
+  return allowDraggableRow ? (
+    <Draggable
+      key={rowIndex}
+      draggableId={rowIndex.toString()}
+      index={rowIndex}
+    >
+      {(provider, snapshot) => (
+        <>
+          <tr
+            {...provider.draggableProps}
+            ref={provider.innerRef}
+            data-testid={classes.row}
+            className={`${classes.row} ${snapshot.isDragging ? classes.dragging : ""
+              }`}
+            {...provider.dragHandleProps} // or apply dragHandleProps on drag icon only
+            style={provider.draggableProps.style}
+            {...restProps}
+          >
+            {row &&
+              renderTableRow(
+                row,
+                columns,
+                rowIndex,
+                snapshot.isDragging ? {} : provider.dragHandleProps, // pass dragHandleProps to drag icon only if needed
+                handleExpandedRows,
+                expandedRows
+              )}
+          </tr>
+          {isExpanded && (
+            <>
+              {expandedContent && (
+                <tr className={classes.row}>
+                  <td
+                    colSpan={columns.length}
+                    style={{ backgroundColor: "#f9f9f9", padding: "0px" }}
+                  >
+                    {expandedContent(row)}
+                  </td>
+                </tr>
+              )}
+              {!row?.subRows?.length && !expandedContent && (
+                <tr className={classes.row}>
+                  <td colSpan={columns.length} className={classes.noDataFound}>
+                    {noDataMessage}
+                  </td>
+                </tr>
+              )}
+            </>
+          )}
+        </>
+      )}
+    </Draggable>
+  ) : (
+    <>
+      <tr
+        data-testid={classes.row}
+        className={`${classes.row} ${isHighlighted ? classes.rowHighlighted : ''} ${allowRowSelect ? classes.rowSelectable : ''
+          }`}
+        {...restProps}
+      >
+        {row &&
+          renderTableRow(
+            row,
+            columns,
+            rowIndex,
+            {},
+            handleExpandedRows,
+            expandedRows
+          )}
+      </tr>
+      {expandedRows?.includes(rowIndex) &&
+        (row?.subRows?.length > 0 ? (
+          row.subRows.map((subRow, index) => {
+            return (
+              <tr
+                key={`${rowIndex}-${index}`}
+                className={`${classes.row} ${classes.expandedRow}`}
+              >
+                {renderTableRow(subRow, columns, subRow?.id, {}, () => {}, [], true)}
+              </tr>
+            );
+          })
+        ) : (
+          <tr className={classes.row}>
+            <td
+              className={
+                expandedContent
+                  ? `${classes.expandedContentRender}`
+                  : `${classes.expandedCellRender} ${classes.render}`
+              }
+              colSpan={columns?.length}
+            >
+              {expandedContent && <>{expandedContent(row)}</>}
+              {!row?.subRows?.length && !expandedContent && (
+                <div className={classes.noDataFound}>{noDataMessage}</div>
+              )}
+            </td>
+          </tr>
+        ))}
+    </>
+  );
 };
 
-const TableCell = ({ value, horizontalAlignment, width, renderColumn, row }) => {
+const TableCell = ({
+  value,
+  horizontalAlignment,
+  width,
+  renderColumn,
+  row,
+  dragHandleProps = {},
+  index,
+  handleExpandedRows = () => {},
+  allowExpand,
+  expandedRows,
+  onExpand = () => {},
+  isSubRow = false,
+}) => {
   const cellClasses = {
     [classes.cell]: !renderColumn,
     [classes.render]: renderColumn,
   };
+
+  const isRowExpandable =
+    typeof allowExpand === 'boolean'
+      ? allowExpand
+      : typeof allowExpand === 'function'
+        ? allowExpand(row)
+        : false;
+
+  const isExpanded = expandedRows?.includes(index);
+
+  const handleMouseDown = (mouseDownEvent) => {
+    if (isEmpty(dragHandleProps)) {
+      return;
+    }
+    mouseDownEvent.currentTarget.focus();
+  };
+
   return (
     <td
       style={{
         width: width,
         textAlign: horizontalAlignment,
+        paddingLeft:
+          allowExpand && (!isRowExpandable || isSubRow) ? '2.625rem' : '1rem',
       }}
       className={classNames(cellClasses)}
       tabIndex={tabIndex}
       title={value}
+      {...dragHandleProps}
+      onMouseDown={handleMouseDown}
     >
       {(renderColumn && (
         <div tabIndex={tabIndex} className={classes.cellRender}>
-          {renderColumn(row, value)}
+          {isRowExpandable && !isSubRow && (
+            <ExpandRowIcon
+              isExpanded={isExpanded}
+              onClick={() => handleExpandedRows(index, onExpand, row)}
+            />
+          )}
+          {renderColumn(row, value, index)}
         </div>
-      )) ||
-        value}
+      )) || (
+          <div className={classes.expandRow}>
+            {isRowExpandable && !isSubRow && (
+              <ExpandRowIcon
+                isExpanded={isExpanded}
+                onClick={() => handleExpandedRows(index, onExpand, row)}
+              />
+            )}
+            <span>{value}</span>
+          </div>
+        )}
     </td>
   );
 };
 
-const SortIcon = ({ sortHandler, field, reset, headerSortHandler }) => {
-  const [sortType, setSortType] = useState(sortingType.unsorted);
-  useEffect(() => {
-    reset && setSortType(sortingType.unsorted);
-  }, [reset]);
-
-  const getSortIcon = (sortType) => {
-    switch (sortType) {
-      case sortingType.ascending:
-        return SortedAscending;
-      case sortingType.descending:
-        return SortedDescending;
-      default:
-        return Unsorted;
-    }
-  };
-  const getNextType = () => {
-    switch (sortType) {
-      case sortingType.ascending:
-        return sortingType.descending;
-      case sortingType.descending:
-        return sortingType.unsorted;
-      case sortingType.unsorted:
-        return sortingType.ascending;
-      default:
-        return sortingType.unsorted;
-    }
-  };
-
-  const clickHandler = () => {
-    const nextType = getNextType();
-    headerSortHandler(field);
-    setSortType(nextType);
-    sortHandler(nextType, field);
-  };
-  return (
-    <span className={classes.headerIcon} tabIndex={tabIndex} onClick={(e) => clickHandler()}>
-      <img
-        src={getSortIcon(sortType)}
-        alt={`${sortType}-${sortIconSuffix}`}
-        title={`${sortType}`}
-      />
-    </span>
-  );
-};
 Table.propTypes = {
   columns: PropTypes.arrayOf(
     PropTypes.shape({
       field: PropTypes.string,
       headerName: PropTypes.string.isRequired,
+      renderHeader: PropTypes.func,
       sortable: PropTypes.bool,
       width: PropTypes.string,
       horizontalAlignment: PropTypes.string,
+      onExpand: PropTypes.func,
+      allowExpand: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
     })
   ).isRequired,
   rows: PropTypes.arrayOf(PropTypes.object),
   sortHandler: PropTypes.func,
-  paginationModal: PropTypes.shape({
-    page: PropTypes.number.isRequired,
-    pageSizes: PropTypes.arrayOf(PropTypes.number).isRequired,
-    pageSize: PropTypes.number.isRequired,
-    totalLength: PropTypes.number.isRequired,
-    lastPage: PropTypes.bool,
-    onPageChange: PropTypes.func.isRequired,
-    onPageSizeChange: PropTypes.func.isRequired,
-  }),
   searchBar: PropTypes.shape({
     onSearch: PropTypes.func.isRequired,
     placeholder: PropTypes.string,
   }),
   verticalScroll: PropTypes.bool,
   horizontalScroll: PropTypes.bool,
+  isInsideModal: PropTypes.bool,
+  allowRowSelect: PropTypes.bool,
+  onRowSelect: PropTypes.func,
+  highlightedRow: PropTypes.object,
+  noDataMessage: PropTypes.string,
 };
 
 export default Table;

@@ -4,6 +4,7 @@ import '@testing-library/jest-dom';
 import { fireEvent, render } from '@testing-library/react';
 import Button from './button';
 import { classes } from './constants';
+import cancelRequestIcon from '../../story-assets/icons/cancelRequest.svg'
 
 describe('Button component unit test cases', () => {
   const primaryVariant = 'primary';
@@ -98,4 +99,55 @@ describe('Button component unit test cases', () => {
     fireEvent.click(buttonComponent);
     expect(props.onClick).toHaveBeenCalledTimes(1);
   });
+
+  it('To show svg icon on adding leftSVGIcon prop', () => {
+    const props = {
+      variant: 'primary',
+      size: 'large',
+      leftSVGIcon: cancelRequestIcon,
+    }
+    const {getByAltText} = render(<Button {...props}/>)
+
+    const icon = getByAltText('left Icon');
+    expect(icon).toBeInTheDocument();
+  })
+
+  it('To show svg icon on adding rightSVGIcon prop', () => {
+    const props = {
+      variant: 'primary',
+      size: 'large',
+      rightSVGIcon: cancelRequestIcon,
+    }
+    const {getByAltText} = render(<Button {...props}/>)
+
+    const icon = getByAltText('right Icon');
+    expect(icon).toBeInTheDocument();
+  })
+
+  it('To show the right svg icon if added both icon props are added', () => {
+    const props = {
+      variant: 'primary',
+      size: 'large',
+      leftSVGIcon: cancelRequestIcon,
+      rightSVGIcon: cancelRequestIcon,
+    }
+    render(<Button {...props}/>)
+    
+    const iconElements = document.getElementsByTagName('img');
+    expect(iconElements.length).toBe(1);
+    expect(iconElements[0].getAttribute('alt')).toBe('right Icon');
+  })
+
+  it('should show the tooltip on hover when the tooltipText prop has a value.', () => {
+    const tooltipText = 'This is a tooltip.'
+    const props = {
+      variant: 'primary',
+      tooltipText,
+    }
+    const { queryByText, queryByRole } = render(<Button {...props}>One</Button>)
+
+    expect(queryByText(tooltipText)).not.toBeInTheDocument()
+    fireEvent.mouseOver(queryByRole('button'))
+    expect(queryByText(tooltipText)).toBeInTheDocument()
+  })
 });

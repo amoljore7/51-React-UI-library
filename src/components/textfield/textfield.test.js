@@ -3,25 +3,34 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render, fireEvent } from '@testing-library/react';
 import Textfield from './textfield';
+import searchIcon from '../../assets/icons/search.svg';
+import { classes } from './constants';
 
-describe.only('Unit tests for Textfield component', () => {
-  const props = {
-    label: 'Label',
-    helperText: 'Sub Label',
-    value: '',
-    placeholder: 'Placeholder...',
-    disabled: false,
-    readOnly: false,
-    error: false,
-    errorMsg: 'Error Message Here',
-    width: '200px',
-    onChange: jest.fn(),
-  };
+const props = {
+  label: 'Label',
+  secondaryLabel: 'Secondary Label',
+  helperText: 'Sub Label',
+  value: '',
+  placeholder: 'Placeholder...',
+  disabled: false,
+  readOnly: false,
+  error: false,
+  errorMsg: 'Error Message Here',
+  width: '200px',
+  onChange: jest.fn(),
+};
 
+describe('Unit tests for Textfield component', () => {
   it('Label passed in the props appears on the screen', () => {
     const { getByText } = render(<Textfield {...props} />);
     expect(getByText(props.label)).toBeInTheDocument();
   });
+
+  it('Secondary label passed in the props appears on the screen', () => {
+    const { getByText } = render(<Textfield {...props} />);
+    expect(getByText(props.secondaryLabel)).toBeInTheDocument();
+  });
+
   it('Helper text passed in the props appears on the screen', () => {
     const { getByText } = render(<Textfield {...props} />);
     expect(getByText(props.helperText)).toBeInTheDocument();
@@ -68,3 +77,29 @@ describe.only('Unit tests for Textfield component', () => {
     expect(getByTestId('input-test-id')).toBeFalsy;
   });
 });
+
+describe('Textfield component when the icon position is left.', () => {
+  const updatedProps = {
+    ...props,
+    icon: <img src={searchIcon} />,
+    iconPosition: 'left',
+  };
+
+  it('should render the icon with the left classname.', () => {
+    const { getByTestId } = render(<Textfield {...updatedProps} />);
+    expect(getByTestId('icon-textfield')).toHaveClass(classes.iconBoxLeft)
+  })
+})
+
+describe('Textfield component when the icon position is right.', () => {
+  const updatedProps = {
+    ...props,
+    icon: <img src={searchIcon} />,
+    iconPosition: 'right',
+  };
+
+  it('should render the icon with the left classname.', () => {
+    const { getByTestId } = render(<Textfield {...updatedProps} />);
+    expect(getByTestId('icon-textfield')).toHaveClass(classes.iconBoxRight)
+  })
+})

@@ -1,0 +1,202 @@
+@import '../../global-style/index.scss';
+
+$container-border-radius: getRem(3px);
+$container-border-color: $gray-40;
+$container-padding-top-bottom: getRem(16px);
+$container-padding-left-right: getRem(103px);
+$container-border-width: getRem(1px);
+
+$container-width: getRem(490px);
+$container-height: getRem(238px);
+$instruct-text-color: $blue-70;
+$filename-text-color: $blue-70;
+$error-icon-right-margin: getRem(8px);
+
+$container-border-width-dragged-over: getRem(2px);
+$container-border-color-dragged-over: $blue-70;
+
+$upload-complete-text-icon-margin: getRem(32px);
+$upload-complete-file-icon-margin: getRem(8px);
+$upload-complete-file-container-bottom-margin: getRem(16px);
+$upload-complete-image-window-width-height: getRem(120px);
+
+$upload-complete-thumbnail-padding: getRem(8px);
+$upload-complete-filename-width: getRem(144px);
+$upload-complete-bottom-panel-in-between-margin: getRem(16px);
+$upload-input-required-error-border-color: $error-color;
+$upload-input-required-error-border-width: getRem(2px);
+
+@mixin inputLabel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+}
+
+@mixin input {
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+.bds-upload-form-container.bds-upload-form-container-error-border {
+  border-color: $upload-input-required-error-border-color;
+  border-width: $upload-input-required-error-border-width;
+}
+
+.bds-upload-form-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: $container-border-width solid $container-border-color;
+  border-radius: $container-border-radius;
+  width: $container-width;
+  height: $container-height;
+  text-align: center;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: $container-padding-top-bottom 0;
+
+  .bds-upload-form-container-input-label {
+    @include inputLabel();
+  }
+  .bds-upload-form-container-input {
+    @include input();
+  }
+
+  .bds-upload-form-max-size-text {
+    display: flex;
+  }
+
+  .bds-upload-form-instruct-text {
+    display: flex;
+    color: $instruct-text-color;
+  }
+
+  .bds-upload-form-error-text {
+    color: $error-txt-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .bds-upload-form-error-icon {
+      margin-right: $error-icon-right-margin;
+    }
+  }
+  .bds-upload-form-error-text-file {
+    display: flex;
+    width: fit-content;
+    max-width: 40%;
+    & > span {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      min-width: 0px;
+    }
+  }
+}
+
+.bds-upload-form-file-complete-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: $container-padding-top-bottom 0;
+  width: $container-width;
+  height: $container-height;
+  border: $container-border-width solid $container-border-color;
+  border-radius: $container-border-radius;
+
+  .bds-upload-form-complete-file-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    color: $filename-text-color;
+    margin-bottom: $upload-complete-file-container-bottom-margin;
+
+    .bds-upload-form-complete-file-name {
+      font-family: 'OpenSansRegular';
+      display: flex;
+      max-width: $upload-complete-filename-width;
+      min-width: 0;
+      align-items: center;
+      justify-content: center;
+      color: $filename-text-color;
+      margin-right: $upload-complete-bottom-panel-in-between-margin;
+
+      & > span {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        min-width: 0px;
+      }
+    }
+
+    .bds-upload-form-complete-reset {
+      color: $gray-80;
+      display: flex;
+      align-items: center;
+    }
+    .bds-upload-form-complete-replace {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      margin-right: $upload-complete-bottom-panel-in-between-margin;
+
+      .bds-upload-form-container-input {
+        @include input();
+        width: 100%;
+        height: 100%;
+      }
+      .bds-upload-form-container-input-label {
+        @include inputLabel();
+        top: 0;
+        left: 0;
+        width: inherit;
+        height: inherit;
+      }
+    }
+  }
+
+  .bds-upload-form-file-complete {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+
+    .bds-upload-form-file-complete-icon {
+      display: flex;
+      color: $gray-80;
+      margin-top: $upload-complete-text-icon-margin;
+    }
+    .bds-upload-form-file-complete-thumbnail {
+      box-sizing: border-box;
+      display: flex;
+      color: $gray-80;
+      margin-top: $upload-complete-text-icon-margin;
+      width: $upload-complete-image-window-width-height;
+      height: $upload-complete-image-window-width-height;
+      padding: $upload-complete-thumbnail-padding;
+      object-fit: cover;
+    }
+  }
+}
+
+.bds-upload-form-dragged-over-container {
+  display: flex;
+  border: $container-border-width-dragged-over dashed
+    $container-border-color-dragged-over;
+  border-radius: $container-border-radius;
+  width: $container-width;
+  height: $container-height;
+  text-align: center;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: $container-padding-top-bottom 0;
+
+  .bds-upload-form-dragged-over {
+    display: flex;
+  }
+}

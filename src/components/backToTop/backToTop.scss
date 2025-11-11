@@ -31,9 +31,9 @@ $back-to-top-arrow-fill-color: white;
 }
 
 [id^='bds-back-to-top-modal'] {
-  position: fixed;
+  position: absolute;
   width: fit-content;
   height: fit-content;
   min-height: 0;
-  z-index: 90;
+  z-index: 29;
 }

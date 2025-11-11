@@ -1,0 +1,109 @@
+@import '../../../global-style/index.scss';
+
+$tree-view-node-text-color: $gray-80;
+$tree-view-node-icon-color: $gray-60;
+$tree-view-node-hover-color: $subtle-border;
+$tree-view-node-node-elements-margin-right: getRem(8px);
+$tree-view-node-text-font-size: getRem(14px);
+$tree-view-node-text-letter-spacing: getRem(0.32px);
+
+$parent-container-left-right-padding: getRem(16px);
+$parent-container-top-bottom-padding: getRem(12px);
+$parent-container-width: getRem(304px);
+
+$tree-view-node-box-height: getRem(48px);
+
+.tree-view-node-parent-node-container {
+  height: $tree-view-node-box-height;
+
+  &-remove-padding {
+    height: unset
+  }
+
+  &-single-environment-select {
+    width: 100%;
+
+    &-checked {
+      background-color: $tree-view-node-hover-color;
+    }
+
+    &:hover {
+      background-color: $tree-view-node-hover-color;
+      cursor: pointer;
+    }
+  }
+}
+.tree-view-node-container {
+  height: fit-content;
+  min-width: $parent-container-width;
+  // width: max-content;
+  position: relative;
+}
+.tree-view-node-container:first-child {
+  margin-left: 0;
+}
+
+.tree-view-node-parent-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 0;
+  padding: $parent-container-top-bottom-padding $parent-container-left-right-padding;
+  height: $tree-view-node-box-height;
+  box-sizing: border-box;
+
+  &-remove-padding {
+    height: unset;
+    padding: unset;
+  }
+
+  .tree-view-node-content {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.tree-view-node-parent-icon {
+  margin-right: $tree-view-node-node-elements-margin-right;
+  display: flex;
+  align-items: center;
+}
+.tree-view-node-parent-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  color: $tree-view-node-text-color;
+  font-family: $font-type-01;
+  font-size: $tree-view-node-text-font-size;
+  letter-spacing: $tree-view-node-text-letter-spacing;
+  margin-right: $tree-view-node-node-elements-margin-right;
+}
+
+.tree-view-node-parent-icon {
+  color: $tree-view-node-icon-color;
+}
+
+.tree-view-node-left-empty-padding {
+  margin-left: getRem(24px);
+}
+
+.tree-view-table-name-cell-content {
+  display: flex;
+  gap: getRem(6px);
+}
+.tree-view-node-disabled {
+
+  .tree-view-node-parent-text {
+    color: $gray-40;
+  }
+
+  .tree-view-node-dir-icon {
+    color: $gray-40;
+  }
+  
+  &:hover {
+    background-color: transparent;
+    cursor: not-allowed;
+  }
+}

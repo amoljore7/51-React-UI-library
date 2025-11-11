@@ -21,9 +21,9 @@ const getButtonGroupElements = () => {
 };
 
 const clickHandler = jest.fn();
-const getButtonGroupElementsWithRadioType = () => {
+const getButtonGroupElementsWithRadioType = (defaultValue) => {
   return (
-    <ButtonGroup type="radio" onClick={(value) => { clickHandler(value); }}>
+    <ButtonGroup type="radio" onClick={(value) => { clickHandler(value); }} defaultValue={defaultValue}>
       <Button value="one">
         one
       </Button>
@@ -87,4 +87,14 @@ describe('ButtonGroup component unit test cases when the type is radio.', () => 
     expect(clickHandler).toBeCalledWith('two');
   });
 
+});
+
+describe('ButtonGroup component unit test cases when the type is radio and a default value is present.', () => {
+  it('should render the second button with primary class.', () => {
+    const { queryAllByRole } = render(getButtonGroupElementsWithRadioType('two'));
+    const button = queryAllByRole('button')
+
+    expect(button[0].className.includes('bds-btn-secondary')).toBe(true);
+    expect(button[1].className.includes('bds-btn-primary')).toBe(true);
+  });
 });

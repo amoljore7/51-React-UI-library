@@ -1,8 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { capitalize } from 'lodash';
+import { FaCheckCircle } from "react-icons/fa";
+import { FiEdit2 } from "react-icons/fi";
 import { BsToggleOff, BsToggleOn } from 'react-icons/bs';
 import { FaUserAltSlash, FaUserAlt } from 'react-icons/fa';
+import { IoAddCircle } from "react-icons/io5";
 import Button from '../button';
 import Table from './table';
+import ModalPopup from '../modal-popup/modal-popup';
+import Select from '../select';
+import Switch from '../switch';
+import Pill from '../pill';
+import PillInput from '../pill-input/PillInput';
+import Accordion from "../accordion/accordion";
 
 export default {
   title: 'design-components/Table',
@@ -994,3 +1004,1615 @@ const sortOnfirstNameDescending = (obj1, obj2) => {
   else if (obj2.firstName === null) return -1;
   else return obj1.firstName.localeCompare(obj2.firstName) * -1;
 };
+
+export const InfiniteScroll = () => {
+  const [tableData, setTableData] = useState([])
+  const [nextPageLink, setNextPageLink] = useState('https://rickandmortyapi.com/api/character')
+
+  useEffect(() => {
+    (async () => {
+      const data = await fetchData()
+      setTableData(data.results)
+      setNextPageLink(data.info?.next)
+    })()
+  }, [])
+
+  const fetchData = async () => {
+    const response = await fetch(nextPageLink)
+    const data = await response.json()
+    return data
+  }
+
+  const handleScroll = async () => {
+    const data = await fetchData(nextPageLink)
+    setTableData([...tableData, ...data.results])
+    setNextPageLink(data.info?.next)
+  }
+
+  return (
+    <>
+      <Table
+        resizableColumns={true}
+        columns={[
+          {
+            field: 'id',
+            headerName: 'Id',
+            sortable: false,
+          },
+          {
+            field: 'name',
+            headerName: 'Name',
+            sortable: false,
+          },
+          {
+            field: 'species',
+            headerName: 'Species',
+            sortable: false,
+          },
+          {
+            field: 'status',
+            headerName: 'Status',
+            sortable: false,
+          },
+          {
+            field: 'gender',
+            headerName: 'Gender',
+            sortable: false,
+          },
+        ]}
+        rows={tableData}
+        nextPageLink={nextPageLink}
+        hasInfiniteScroll
+        onScrollEnd={handleScroll}
+        infiniteScrollLoadingText={<h4>Loading...</h4>}
+      />
+    </>
+  )
+}
+
+export const TableInsideAModal = () => {
+  const [tableData, setTableData] = useState([])
+  const [nextPageLink, setNextPageLink] = useState('https://rickandmortyapi.com/api/character')
+
+  useEffect(() => {
+    (async () => {
+      const data = await fetchData()
+      setTableData(data.results)
+      setNextPageLink(data.info?.next)
+    })()
+  }, [])
+
+  const fetchData = async () => {
+    const response = await fetch(nextPageLink)
+    const data = await response.json()
+    return data
+  }
+
+  const handleScroll = async () => {
+    const data = await fetchData(nextPageLink)
+    setTableData([...tableData, ...data.results])
+    setNextPageLink(data.info?.next)
+  }
+
+  return (
+    <>
+      <ModalPopup
+        width={720}
+        title={'View Table In a Modal.'}
+        buttons={[
+          {
+            text: 'Cancel',
+            type: 'secondary',
+            onClick: () => {},
+            size: 'large',
+          },
+        ]}
+        onCancel={() => {}}
+      >
+        <Table
+          isInsideModal
+          resizableColumns={true}
+          columns={[
+            {
+              field: 'id',
+              headerName: 'Id',
+              sortable: false,
+            },
+            {
+              field: 'name',
+              headerName: 'Name',
+              sortable: false,
+            },
+            {
+              field: 'species',
+              headerName: 'Species',
+              sortable: false,
+            },
+            {
+              field: 'status',
+              headerName: 'Status',
+              sortable: false,
+            },
+            {
+              field: 'gender',
+              headerName: 'Gender',
+              sortable: false,
+            },
+          ]}
+          rows={tableData}
+          nextPageLink={nextPageLink}
+          hasInfiniteScroll
+          onScrollEnd={handleScroll}
+          infiniteScrollLoadingText={<h4>Loading...</h4>}
+        />
+      </ModalPopup>
+    </>
+  )
+}
+
+export const TableWithSelectableRow = () => {
+  const [selectedRow, setSelectedRow] = useState(null)
+
+  const tableData = [
+    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
+    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
+    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
+    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
+    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: 455 },
+    { id: 6, lastName: 'Melisandre', firstName: 'Something', age: 50 },
+    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
+    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
+    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+    { id: 10, lastName: 'Stark', firstName: 'Arya', age: 16 },
+  ]
+
+  return (
+    <>
+      <Table
+        resizableColumns
+        rows={tableData}
+        columns={[
+          {
+            field: 'id',
+            headerName: 'Id',
+            sortable: false,
+          },
+          {
+            field: 'firstName',
+            headerName: 'First Name',
+            sortable: false,
+          },
+          {
+            field: 'lastName',
+            headerName: 'Last Name',
+            sortable: false,
+          },
+          {
+            field: 'age',
+            headerName: 'Age',
+            sortable: false,
+          }
+        ]}
+        allowRowSelect
+        highlightedRow={selectedRow}
+        onRowSelect={clickedRow => {
+          setSelectedRow(clickedRow)
+        }}
+      />
+      <br /> <br />
+      <b>Selected Row: </b>{JSON.stringify(selectedRow)}
+    </>
+  )
+}
+
+export const TableWithEditableRow = () => {
+  const tableData = [
+    {
+        "priority": 1,
+        "action": "BLOCK",
+        "field": "Country",
+        "invert": false,
+        "operator": "EQUALS",
+        "values": [
+            "KP",
+            "CU",
+            "SY",
+            "IR",
+            "CG",
+            "ZW",
+            "MM",
+            "SD",
+            "IQ",
+            "CI"
+        ]
+    },
+    {
+        "priority": 2,
+        "action": "ALLOW",
+        "field": "Client IP",
+        "invert": true,
+        "operator": "EQUALS",
+        "values": [
+            "192.168.0.0/24",
+            "2001:db8::/32"
+        ]
+    },
+    {
+      "priority": 3,
+      "action": "BLOCK",
+      "field": "Country",
+      "invert": false,
+      "operator": "EQUALS",
+      "values": [
+          "SY",
+          "IR",
+      ]
+  },
+    {
+      "priority": 4,
+      "action": "ALLOW",
+      "field": "Client IP",
+      "invert": true,
+      "operator": "EQUALS",
+      "values": [
+          "120.145.0.0/24",
+          "2005:db8::/32"
+      ]
+  }
+];
+  const [rowToBeEdited, setRowToBeEdited] = useState({});
+  const [tableListData, setTableListData] = useState(tableData);
+
+  const handleFieldChange = (id, value) => {
+    const tableData = [...tableListData];
+    const updatedRow = tableData.findIndex(data => data.priority === id);
+    tableData[updatedRow] = {
+      ...tableData[updatedRow],
+      field: value
+    };
+    setTableListData(tableData);
+  };
+
+  const handleOperatorChange = (id, value) => {
+    const tableData = [...tableListData];
+    const updatedRow = tableData.findIndex(data => data.priority === id);
+    tableData[updatedRow] = {
+      ...tableData[updatedRow],
+      operator: value
+    };
+    setTableListData(tableData);
+  };
+
+  const setInvertValue = (id, value) => {
+    const tableData = [...tableListData];
+    const updatedRow = tableData.findIndex(data => data.priority === id);
+    tableData[updatedRow] = {
+      ...tableData[updatedRow],
+      invert: !value
+    };
+    setTableListData(tableData);
+  };
+
+  const setActionValue = (id, value) => {
+    const tableData = [...tableListData];
+    const updatedRow = tableData.findIndex(data => data.priority === id);
+    tableData[updatedRow] = {
+      ...tableData[updatedRow],
+      action: value === 'ALLOW' ? 'BLOCK' : 'ALLOW'
+    };
+    setTableListData(tableData);
+  };
+
+  const propsforField = {
+    options: [
+      { title: 'Country' },
+      { title: 'Client IP' },
+    ],
+    width: '300px',
+    getOptionLabel: function (option) {
+      return option.title;
+    },
+  };
+
+  const propsforOperator = {
+    options: [
+      { title: 'EQUALS' },
+      { title: 'Contains' },
+    ],
+    width: '300px',
+    getOptionLabel: function (option) {
+      return option.title;
+    },
+  };
+
+  return (
+    <Table
+      resizableColumns
+      rows={tableListData}
+      columns={[
+        {
+          field: 'field',
+          headerName: 'Field',
+          sortable: false,
+          renderColumn: (row, value) => {
+            let columnValue = value?.split('_')
+            columnValue[0] = capitalize(columnValue[0])
+            columnValue[1] = columnValue[1] === 'ip' ? 'IP' : capitalize(columnValue[1])
+            columnValue = columnValue.join(" ")
+            if (rowToBeEdited?.priority === row?.priority) {
+              return <Select {...propsforField} onChange={() => handleFieldChange(row?.priority, columnValue)} value={{ title: columnValue }} />
+            } else {
+              const columnValue = value?.split('_')
+              columnValue[0] = capitalize(columnValue[0])
+              columnValue[1] = columnValue[1] === 'ip' ? 'IP' : capitalize(columnValue[1])
+              return columnValue.join(" ")
+            }
+          },
+          width: '340px'
+        },
+        {
+          field: 'operator',
+          headerName: 'Operator',
+          sortable: false,
+          renderColumn: (row, value) => {
+            if (rowToBeEdited?.priority === row?.priority) {
+              return <Select value={{ title: value }} onChange={() => handleOperatorChange(row?.priority, value)} {...propsforOperator} />
+            } else {
+              return value
+            }
+          },
+          width: '340px'
+        },
+        {
+          field: 'values',
+          headerName: 'Values',
+          sortable: false,
+          renderColumn: (row, value) => {
+            return (
+              <div style={{ display: 'flex', flexDirection: 'row', gap: 10, borderRight: 'none',margin: 10 }}>
+                {value?.map((value, index) => (
+                  <Pill
+                    key={value+index}
+                    disabled={'true'}
+                    readOnly={'true'}
+                    label={value}
+                  />
+                ))}
+              </div>
+            )
+          },
+          width: '400px'
+        },
+        {
+          field: 'invert',
+          headerName: 'Invert',
+          sortable: false,
+          renderColumn: (row, value) => {
+              return (
+                <Switch
+                  disabled={rowToBeEdited?.priority !== row?.priority}
+                  label={value ? 'Yes' : 'No'}
+                  checked={value}
+                  onToggle={() => setInvertValue(row?.priority, value)}
+                />
+              );
+            },
+          width: '150px'
+        },
+        {
+          field: 'action',
+          headerName: 'Action',
+          sortable: false,
+          renderColumn: (row, value) => {
+              return (
+                <Switch
+                  label={value === 'ALLOW' ? 'Allow' : 'Deny'}
+                  disabled={rowToBeEdited?.priority !== row?.priority}
+                  checked={value === 'ALLOW'}
+                  onToggle={() => setActionValue(row?.priority, value)}
+                />
+              );
+            },
+          width: '140px'
+        },
+        {
+          field: '',
+          headerName: '',
+          renderColumn: (row, value) => {
+            return (
+              <div style={{ display: 'flex', flexDirection: 'row', gap: 15, cursor: 'pointer' }}>
+                {(rowToBeEdited?.priority === row.priority) ? 
+                  <FaCheckCircle color="#0561a7" size='28' onClick={() => setRowToBeEdited({})} /> :
+                  <FiEdit2 size="22" onClick={() => setRowToBeEdited(row)} />
+                }
+              </div>
+            )
+          },
+        },
+      ]}
+    />
+  )
+}
+
+export const TableWithDraggableRow = () => {
+  const tableData = [
+    {
+        "priority": 1,
+        "action": "BLOCK",
+        "field": "Country",
+        "invert": false,
+        "operator": "EQUALS",
+        "values": [
+            "KP",
+            "CU",
+            "SY",
+            "IR",
+            "CG",
+            "ZW",
+            "MM",
+            "SD",
+            "IQ",
+            "CI"
+        ]
+    },
+    {
+        "priority": 2,
+        "action": "ALLOW",
+        "field": "Client IP",
+        "invert": true,
+        "operator": "EQUALS",
+        "values": [
+            "192.168.0.0/24",
+            "2001:db8::/32"
+        ]
+    },
+    {
+      "priority": 3,
+      "action": "BLOCK",
+      "field": "Country",
+      "invert": false,
+      "operator": "EQUALS",
+      "values": [
+          "SY",
+          "IR",
+      ]
+  },
+    {
+      "priority": 4,
+      "action": "ALLOW",
+      "field": "Client IP",
+      "invert": true,
+      "operator": "EQUALS",
+      "values": [
+          "120.145.0.0/24",
+          "2005:db8::/32"
+      ]
+  }
+];
+  const [rowToBeEdited, setRowToBeEdited] = useState({});
+  const [tableListData, setTableListData] = useState(tableData);
+
+  const handleFieldChange = (id, value) => {
+    const tableData = [...tableListData];
+    const updatedRow = tableData.findIndex(data => data.priority === id);
+    tableData[updatedRow] = {
+      ...tableData[updatedRow],
+      field: value
+    };
+    setTableListData(tableData);
+  };
+
+  const handleOperatorChange = (id, value) => {
+    const tableData = [...tableListData];
+    const updatedRow = tableData.findIndex(data => data.priority === id);
+    tableData[updatedRow] = {
+      ...tableData[updatedRow],
+      operator: value
+    };
+    setTableListData(tableData);
+  };
+
+  const setInvertValue = (id, value) => {
+    const tableData = [...tableListData];
+    const updatedRow = tableData.findIndex(data => data.priority === id);
+    tableData[updatedRow] = {
+      ...tableData[updatedRow],
+      invert: !value
+    };
+    setTableListData(tableData);
+  };
+
+  const setActionValue = (id, value) => {
+    const tableData = [...tableListData];
+    const updatedRow = tableData.findIndex(data => data.priority === id);
+    tableData[updatedRow] = {
+      ...tableData[updatedRow],
+      action: value === 'ALLOW' ? 'BLOCK' : 'ALLOW'
+    };
+    setTableListData(tableData);
+  };
+
+  const handleDragEnd = (e) => {
+    if (!e.destination) return;
+    let tempData = Array.from(tableListData);
+    let [source_data] = tempData.splice(e.source.index, 1);
+    tempData.splice(e.destination.index, 0, source_data);
+    setTableListData(tempData);
+  };
+
+  const propsforField = {
+    options: [
+      { title: 'Country' },
+      { title: 'Client IP' },
+    ],
+    width: '300px',
+    getOptionLabel: function (option) {
+      return option.title;
+    },
+  };
+
+  const propsforOperator = {
+    options: [
+      { title: 'EQUALS' },
+      { title: 'Contains' },
+    ],
+    width: '300px',
+    getOptionLabel: function (option) {
+      return option.title;
+    },
+  };
+
+  return (
+    <Table
+      resizableColumns
+      rows={tableListData}
+      allowDraggableRow
+      onDragEnd={handleDragEnd}
+      columns={[
+        {
+          field: 'field',
+          headerName: 'Field',
+          sortable: false,
+          renderColumn: (row, value) => {
+            let columnValue = value?.split('_')
+            columnValue[0] = capitalize(columnValue[0])
+            columnValue[1] = columnValue[1] === 'ip' ? 'IP' : capitalize(columnValue[1])
+            columnValue = columnValue.join(" ")
+            if (rowToBeEdited?.priority === row?.priority) {
+              return <Select {...propsforField} onChange={() => handleFieldChange(row?.priority, columnValue)} value={{ title: columnValue }} />
+            } else {
+              const columnValue = value?.split('_')
+              columnValue[0] = capitalize(columnValue[0])
+              columnValue[1] = columnValue[1] === 'ip' ? 'IP' : capitalize(columnValue[1])
+              return columnValue.join(" ")
+            }
+          },
+          width: '240px'
+        },
+        {
+          field: 'operator',
+          headerName: 'Operator',
+          sortable: false,
+          renderColumn: (row, value) => {
+            if (rowToBeEdited?.priority === row?.priority) {
+              return <Select value={{ title: value }} onChange={() => handleOperatorChange(row?.priority, value)} {...propsforOperator} />
+            } else {
+              return value
+            }
+          },
+          width: '240px'
+        },
+        {
+          field: 'values',
+          headerName: 'Values',
+          sortable: false,
+          renderColumn: (row, value) => {
+            return (
+              <div style={{ display: 'flex', flexDirection: 'row', gap: 10, borderRight: 'none',margin: 10 }}>
+                {value?.map((value, index) => (
+                  <Pill
+                    key={value+index}
+                    disabled={'true'}
+                    readOnly={'true'}
+                    label={value}
+                  />
+                ))}
+              </div>
+            )
+          },
+          width: '400px'
+        },
+        {
+          field: 'invert',
+          headerName: 'Invert',
+          sortable: false,
+          renderColumn: (row, value) => {
+              return (
+                <Switch
+                  disabled={rowToBeEdited?.priority !== row?.priority}
+                  label={value ? 'Yes' : 'No'}
+                  checked={value}
+                  onToggle={() => setInvertValue(row?.priority, value)}
+                />
+              );
+            },
+          width: '150px'
+        },
+        {
+          field: 'action',
+          headerName: 'Action',
+          sortable: false,
+          renderColumn: (row, value) => {
+              return (
+                <Switch
+                  label={value === 'ALLOW' ? 'Allow' : 'Deny'}
+                  disabled={rowToBeEdited?.priority !== row?.priority}
+                  checked={value === 'ALLOW'}
+                  onToggle={() => setActionValue(row?.priority, value)}
+                />
+              );
+            },
+          width: '140px'
+        },
+        {
+          field: '',
+          headerName: '',
+          renderColumn: (row, value) => {
+            return (
+              <div style={{ display: 'flex', flexDirection: 'row', gap: 15, cursor: 'pointer' }}>
+                {(rowToBeEdited?.priority === row.priority) ? 
+                  <FaCheckCircle color="#0561a7" size='28' onClick={() => setRowToBeEdited({})} /> :
+                  <FiEdit2 size="22" onClick={() => setRowToBeEdited(row)} />
+                }
+              </div>
+            )
+          },
+        },
+      ]}
+    />
+  )
+}
+
+export const AddNewRowToTheTable = () => {
+  const tableData = [
+    {
+        "priority": 1,
+        "action": "BLOCK",
+        "field": "Country",
+        "invert": false,
+        "operator": "EQUALS",
+        "values": [
+            "KP",
+            "CU",
+            "SY",
+            "IR",
+            "CG",
+            "ZW",
+            "MM",
+            "SD",
+            "IQ",
+            "CI"
+        ]
+    },
+    {
+        "priority": 2,
+        "action": "ALLOW",
+        "field": "Client IP",
+        "invert": true,
+        "operator": "EQUALS",
+        "values": [
+            "192.168.0.0/24",
+            "2001:db8::/32"
+        ]
+    },
+    {
+      "priority": 3,
+      "action": "BLOCK",
+      "field": "Country",
+      "invert": false,
+      "operator": "EQUALS",
+      "values": [
+          "SY",
+          "IR",
+      ]
+    },
+    {
+      "priority": 4,
+      "action": "ALLOW",
+      "field": "Client IP",
+      "invert": true,
+      "operator": "EQUALS",
+      "values": [
+          "120.145.0.0/24",
+          "2005:db8::/32"
+      ]
+    }
+  ];
+  const [rowToBeEdited, setRowToBeEdited] = useState({});
+  const [tableListData, setTableListData] = useState(tableData);
+  const [newRowData, setNewRowData] = useState({});
+  const [pillListData, setPillListData] = useState([]);
+
+  const handleEditPillData = (value) => {
+    if (value) {
+      const pillValues = [...pillListData];
+      pillValues.push(value);
+      setPillListData(pillValues);
+      handleNewRowData('values', pillValues);
+    }
+  };
+
+  const handleDeletePillData = (pill) => {
+    if (pill) {
+      let pillValues = [...pillListData];
+      pillValues = pillValues.filter(e => e !== pill);
+      setPillListData(pillValues);
+      handleNewRowData('values', pillValues);
+    }
+  };
+
+  const handleFieldChange = (id, value) => {
+    const tableData = [...tableListData];
+    const updatedRow = tableData.findIndex(data => data.priority === id);
+    tableData[updatedRow] = {
+      ...tableData[updatedRow],
+      field: value
+    };
+    setTableListData(tableData);
+  };
+
+  const handleOperatorChange = (id, value) => {
+    const tableData = [...tableListData];
+    const updatedRow = tableData.findIndex(data => data.priority === id);
+    tableData[updatedRow] = {
+      ...tableData[updatedRow],
+      operator: value
+    };
+    setTableListData(tableData);
+  };
+
+  const setInvertValue = (id, value) => {
+    const tableData = [...tableListData];
+    const updatedRow = tableData.findIndex(data => data.priority === id);
+    tableData[updatedRow] = {
+      ...tableData[updatedRow],
+      invert: !value
+    };
+    setTableListData(tableData);
+  };
+
+  const setActionValue = (id, value) => {
+    const tableData = [...tableListData];
+    const updatedRow = tableData.findIndex(data => data.priority === id);
+    tableData[updatedRow] = {
+      ...tableData[updatedRow],
+      action: value === 'ALLOW' ? 'BLOCK' : 'ALLOW'
+    };
+    setTableListData(tableData);
+  };
+
+  const handleDragEnd = (e) => {
+    if (!e.destination) return;
+    let tempData = Array.from(tableListData);
+    let [source_data] = tempData.splice(e.source.index, 1);
+    tempData.splice(e.destination.index, 0, source_data);
+    setTableListData(tempData);
+  };
+
+  const propsforField = {
+    options: [
+      { title: 'Country' },
+      { title: 'Client IP' },
+    ],
+    width: '180px',
+    getOptionLabel: function (option) {
+      return option.title;
+    },
+  };
+
+  const propsforOperator = {
+    options: [
+      { title: 'EQUALS' },
+      { title: 'Contains' },
+    ],
+    width: '180px',
+    getOptionLabel: function (option) {
+      return option.title;
+    },
+  };
+
+  const handleNewRowData = (fieldName, value) => {
+    const rowData = {...newRowData};
+    rowData[fieldName] = value;
+    rowData.priority = tableListData?.length + 1;
+    setNewRowData(rowData);
+  };
+
+  const handleAddNewRow = () => {
+    const tableData = [...tableListData];
+    tableData.push(newRowData);
+    setTableListData(tableData);
+  };
+
+  return (
+    <Table
+      addNewRow
+      resizableColumns
+      rows={tableListData}
+      allowDraggableRow
+      onDragEnd={handleDragEnd}
+      columnsForNewRow={[
+        {
+          field: '',
+          headerName: '',
+          sortable: false,
+          renderColumn: () => {
+            return null
+          },
+          width: '50px'
+        },
+        {
+          field: 'field',
+          headerName: 'Field',
+          sortable: false,
+          renderColumn: () => {
+            return <Select onChange={(_, value) => handleNewRowData('field', value.title)} {...propsforField} />
+          },
+          width: '240px'
+        },
+        {
+          field: 'operator',
+          headerName: 'Operator',
+          sortable: false,
+          renderColumn: () => {
+            return <Select onChange={(_, value) => handleNewRowData('operator', value.title)} {...propsforOperator} />
+          },
+          width: '240px'
+        },
+        {
+          field: 'values',
+          headerName: 'Values',
+          sortable: false,
+          renderColumn: () => {
+            return (
+              <PillInput pillListData={pillListData} handleDeletePill={handleDeletePillData} handleUpdatePillList={handleEditPillData} width="330px" />
+            )
+          },
+          width: '400px'
+        },
+        {
+          field: 'invert',
+          headerName: 'Invert',
+          sortable: false,
+          renderColumn: () => {
+              return (
+                <Switch
+                  label={newRowData?.invert ? 'Yes' : 'No'}
+                  checked={newRowData?.invert}
+                  onToggle={(checked) => handleNewRowData('invert', !checked)}
+                />
+              );
+            },
+          width: '150px'
+        },
+        {
+          field: 'action',
+          headerName: 'Action',
+          sortable: false,
+          renderColumn: () => {
+              return (
+                <Switch
+                  label={newRowData?.action ? 'Allow' : 'Deny'}
+                  checked={newRowData?.action}
+                  onToggle={(checked) => handleNewRowData('action', !checked)}
+                />
+              );
+            },
+          width: '140px'
+        },
+        {
+          field: '',
+          headerName: '',
+          renderColumn: () => {
+            return (
+              <div style={{ display: 'flex', flexDirection: 'row', gap: 15, cursor: 'pointer' }}>
+                <IoAddCircle size="56" color="#0561a7" onClick={() => handleAddNewRow()} />
+              </div>
+            )
+          },
+        },
+      ]}
+      columns={[
+        {
+          field: 'field',
+          headerName: 'Field',
+          sortable: false,
+          renderColumn: (row, value) => {
+            let columnValue = ''
+            columnValue = value?.split('_')
+            columnValue[0] = capitalize(columnValue[0])
+            columnValue[1] = columnValue[1] === 'ip' ? 'IP' : capitalize(columnValue[1])
+            columnValue = columnValue.join(" ")
+            if (rowToBeEdited?.priority === row?.priority) {
+              return <Select {...propsforField} onChange={() => handleFieldChange(row?.priority, columnValue)} value={{ title: columnValue }} />
+            } else {
+                const columnValue = value?.split('_')
+                columnValue[0] = capitalize(columnValue[0])
+                columnValue[1] = columnValue[1] === 'ip' ? 'IP' : capitalize(columnValue[1])
+                return columnValue.join(" ")
+            }
+          },
+          width: '240px'
+        },
+        {
+          field: 'operator',
+          headerName: 'Operator',
+          sortable: false,
+          renderColumn: (row, value) => {
+            if (rowToBeEdited?.priority === row?.priority) {
+              return <Select value={{ title: value }} onChange={() => handleOperatorChange(row?.priority, value)} {...propsforOperator} />
+            } else {
+              return value
+            }
+          },
+          width: '240px'
+        },
+        {
+          field: 'values',
+          headerName: 'Values',
+          sortable: false,
+          renderColumn: (row, value) => {
+            return (
+              <div style={{ display: 'flex', flexDirection: 'row', gap: 10, borderRight: 'none',margin: 10 }}>
+                {value?.map((value, index) => (
+                  <Pill
+                    key={value+index}
+                    disabled={'true'}
+                    readOnly={'true'}
+                    label={value}
+                  />
+                ))}
+              </div>
+            )
+          },
+          width: '400px'
+        },
+        {
+          field: 'invert',
+          headerName: 'Invert',
+          sortable: false,
+          renderColumn: (row, value) => {
+              return (
+                <Switch
+                  disabled={rowToBeEdited?.priority !== row?.priority}
+                  label={value ? 'Yes' : 'No'}
+                  checked={value}
+                  onToggle={() => setInvertValue(row?.priority, value)}
+                />
+              );
+            },
+          width: '150px'
+        },
+        {
+          field: 'action',
+          headerName: 'Action',
+          sortable: false,
+          renderColumn: (row, value) => {
+              return (
+                <Switch
+                  label={value === 'ALLOW' ? 'Allow' : 'Deny'}
+                  disabled={rowToBeEdited?.priority !== row?.priority}
+                  checked={value === 'ALLOW'}
+                  onToggle={() => setActionValue(row?.priority, value)}
+                />
+              );
+            },
+          width: '140px'
+        },
+        {
+          field: '',
+          headerName: '',
+          renderColumn: (row, value) => {
+            return (
+              <div style={{ display: 'flex', flexDirection: 'row', gap: 15, cursor: 'pointer' }}>
+                {(rowToBeEdited?.priority === row.priority) ? 
+                  <FaCheckCircle color="#0561a7" size='28' onClick={() => setRowToBeEdited({})} /> :
+                  <FiEdit2 size="22" onClick={() => setRowToBeEdited(row)} />
+                }
+              </div>
+            )
+          },
+        },
+      ]}
+    />
+  )
+}
+
+export const TableWithColumnFiltering = () => {
+  const tableData = [
+    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
+    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
+    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
+    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
+    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: 455 },
+    { id: 6, lastName: 'Melisandre', firstName: 'Something', age: 50 },
+    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
+    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
+    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+    { id: 10, lastName: 'Stark', firstName: 'Arya', age: 16 },
+  ]
+  const [tableListData, setTableListData] = useState([]);
+
+  useEffect(() => {
+    setTableListData(tableData)
+  }, [])
+
+  /**
+   * 
+   * @param {*} columnFilters - returns the object, with colum names as keys and correspoding value as the array of applied filters
+   */
+  const applyFilter = (columnFilters) => {
+    const tableListData = [...tableData];
+    const tableContent = tableListData.filter(data => {
+      return columnFilters?.id?.length > 0 ? columnFilters?.firstName?.length > 0 ?
+        columnFilters?.id?.includes(data?.id) && columnFilters?.firstName?.includes(data?.firstName) : columnFilters?.id?.includes(data?.id) : 
+        columnFilters?.firstName?.length > 0 ? columnFilters?.firstName?.includes(data?.firstName) :  true
+    })
+    setTableListData(tableContent)
+  }
+
+  return (
+    <>
+      <Table
+        resizableColumns
+        rows={tableListData}
+        columns={[
+          {
+            field: 'id',
+            headerName: 'Id',
+            sortable: false,
+            showFilter: true,
+            filter: {
+              options: [{ label: '1', value: 1 }, { label: '2', value: 2 }, { label: '3', value: 3 },
+                { label: '4', value: 4 }, { label: '5', value: 5 }, { label: '6', value: 6 },
+                { label: '7', value: 7 }, { label: '8', value: 8 }, { label: '9', value: 9 }, { label: '10', value: 10 }],
+              onApply: (values) => applyFilter(values),
+            },
+          },
+          {
+            field: 'firstName',
+            headerName: 'First Name',
+            sortable: false,
+            showFilter: true,
+            filter: {
+              options: [{ label: 'Jon', value: 'Jon' }, { label: 'Cersei', value: 'Cersei' },
+                { label: 'Jaime', value: 'Jaime' }, { label : 'Arya', value: 'Arya' }],
+              onApply: (values) => applyFilter(values),
+            },
+          },
+          {
+            field: 'lastName',
+            headerName: 'Last Name',
+            sortable: false,
+          },
+          {
+            field: 'age',
+            headerName: 'Age',
+            sortable: false,
+          }
+        ]}
+      />
+    </>
+  )
+}
+
+export const TableWithColumnFilteringRadioButton = () => {
+  const tableData = [
+    { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
+    { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
+    { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
+    { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
+    { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: 455 },
+    { id: 6, lastName: "Melisandre", firstName: "Something", age: 50 },
+    { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
+    { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
+    { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
+    { id: 10, lastName: "Stark", firstName: "Arya", age: 16 },
+    { id: 11, lastName: "White", firstName: "Jon", age: 35 },
+  ];
+  const [tableListData, setTableListData] = useState([]);
+
+  useEffect(() => {
+    setTableListData(tableData);
+  }, []);
+
+  /**
+   *
+   * @param {*} columnFilters - returns the object, with colum names as keys and correspoding value as the array of applied filters
+   */
+  const applyFilter = (columnFilters) => {
+    const tableListData = [...tableData];
+    const tableContent = tableListData.filter((data) => {
+      return columnFilters?.id?.length > 0
+        ? columnFilters?.firstName?.length > 0
+          ? columnFilters?.id?.includes(data?.id) &&
+            columnFilters?.firstName?.includes(data?.firstName)
+          : columnFilters?.id?.includes(data?.id)
+        : columnFilters?.firstName?.length > 0
+        ? columnFilters?.firstName?.includes(data?.firstName)
+        : true;
+    });
+    setTableListData(tableContent);
+  };
+
+  return (
+    <>
+      <Table
+        resizableColumns
+        rows={tableListData}
+        columns={[
+          {
+            field: "id",
+            headerName: "Id",
+            sortable: false,
+            showFilter: true,
+            filter: {
+              options: [
+                { label: "1", value: 1 },
+                { label: "2", value: 2 },
+                { label: "3", value: 3 },
+                { label: "4", value: 4 },
+                { label: "5", value: 5 },
+                { label: "6", value: 6 },
+                { label: "7", value: 7 },
+                { label: "8", value: 8 },
+                { label: "9", value: 9 },
+                { label: "10", value: 10 },
+              ],
+              onApply: (values) => applyFilter(values),
+            },
+          },
+          {
+            field: "firstName",
+            headerName: "First Name",
+            sortable: false,
+            showFilter: true,
+            filter: {
+              options: [
+                { label: "Jon", value: "Jon" },
+                { label: "Cersei", value: "Cersei" },
+                { label: "Jaime", value: "Jaime" },
+                { label: "Arya", value: "Arya" },
+              ],
+              onApply: (values) => applyFilter(values),
+              singleSelector: true,
+            },
+          },
+          {
+            field: "lastName",
+            headerName: "Last Name",
+            sortable: false,
+          },
+          {
+            field: "age",
+            headerName: "Age",
+            sortable: false,
+          },
+        ]}
+      />
+    </>
+  );
+};
+
+export const TableWithCollapsibleRow = () => {
+  const tableData = [
+    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35,
+      subRows: [
+          { id: 11, lastName: 'Melisandre', firstName: 'Something', age: 35 },
+          { id: 12, lastName: 'Stark', firstName: 'Jon', age: 35 }
+        ]
+    },
+    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
+    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
+    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
+    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: 45, subRows: [{
+      id: 13, lastName: 'Frances', firstName: 'Rossini', age: 35},
+      {id: 14, lastName: 'Snow', firstName: 'Jon', age: 35}
+    ] },
+    { id: 6, lastName: 'Melisandre', firstName: 'Something', age: 50 },
+    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
+    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
+    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+    { id: 10, lastName: 'Stark', firstName: 'Arya', age: 16 },
+  ]
+  const [tableListData, setTableListData] = useState([]);
+
+  useEffect(() => {
+    setTableListData(tableData)
+  }, [])
+
+  return (
+    <>
+      <Table
+        noDataMessage={'No data found!'}
+        resizableColumns
+        rows={tableListData}
+        columns={[
+          {
+            field: 'id',
+            headerName: 'Id',
+            sortable: false,
+            width: '100px',
+            allowExpand: true,
+          },
+          {
+            field: 'firstName',
+            headerName: 'First Name',
+            sortable: false,
+            width: '100px'
+          },
+          {
+            field: 'lastName',
+            headerName: 'Last Name',
+            sortable: false,
+            width: '100px',
+          },
+          {
+            field: 'age',
+            headerName: 'Age',
+            sortable: false,
+            width: '100px'
+          }
+        ]}
+      />
+    </>
+  )
+}
+
+export const TableWithApiCallOnExpandingCollapsibleRow = () => {
+  const tableData = [
+    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
+    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
+    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
+    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
+    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: 45},
+    { id: 6, lastName: 'Melisandre', firstName: 'Something', age: 50 },
+    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
+    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
+    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+    { id: 10, lastName: 'Stark', firstName: 'Arya', age: 16 },
+  ]
+  const [tableListData, setTableListData] = useState([]);
+
+  useEffect(() => {
+    setTableListData(tableData)
+  }, [])
+
+  const handleOnRowExpand = async(row) => {
+    //Mock API to get dynamic data on expanding the row
+    const tableData = [...tableListData]
+    const response = await fetch('https://rickandmortyapi.com/api/episode/28')
+    const data = await response.json()
+    const updatedTableData = tableData.map(rowData => (
+      rowData?.id === row?.id ? 
+        { ...rowData, subRows: [{ id : `${parseInt(tableData?.length) + 1}`, firstName: data?.name, lastName: data?.name, age: 40  }]} :
+        { ...rowData }
+    ))
+    setTableListData(updatedTableData)
+  }
+
+  const handleAllowExpandRow = (row) => {
+    return row.id === 1
+  }
+
+  return (
+    <>
+      <Table
+        noDataMessage={'No data found!'}
+        resizableColumns
+        rows={tableListData}
+        columns={[
+          {
+            field: 'id',
+            headerName: 'Id',
+            sortable: false,
+            width: '100px',
+            allowExpand: (row) => handleAllowExpandRow(row),
+            onExpand: (row) => handleOnRowExpand(row)
+          },
+          {
+            field: 'firstName',
+            headerName: 'First Name',
+            sortable: false,
+            width: '100px'
+          },
+          {
+            field: 'lastName',
+            headerName: 'Last Name',
+            sortable: false,
+            width: '100px',
+          },
+          {
+            field: 'age',
+            headerName: 'Age',
+            sortable: false,
+            width: '100px'
+          }
+        ]}
+      />
+    </>
+  )
+}
+
+export const TableWithDynamicHeaderRender = () => {
+  const tableData = [
+    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
+    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
+    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
+    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
+    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: 455 },
+    { id: 6, lastName: 'Melisandre', firstName: 'Something', age: 50 },
+    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
+    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
+    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+    { id: 10, lastName: 'Stark', firstName: 'Arya', age: 16 },
+  ];
+
+  return (
+    <>
+      <Table
+        rows={tableData}
+        columns={[
+          {
+            renderHeader: () => {
+              <div style={{ color: 'green', fontWeight: 'bold' }}>
+              <span>👤</span> Last Name
+            </div>
+            },
+          },
+          {
+            field: 'id',
+            sortable: false,
+          },
+          {
+            field: 'firstName',
+            headerName: 'First Name',
+            sortable: false,
+          },
+          {
+            field: 'lastName',
+            headerName: 'Last Name',
+            sortable: false,
+          },
+          {
+            field: 'age',
+            headerName: 'Age',
+            sortable: false,
+          },
+        ]}
+      />
+    </>
+  );
+};
+
+export const TableWithCustomExpandedContent = () => {
+  const tableData = [
+    { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
+    { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
+    { id: 3, lastName: "Stark", firstName: "Arya", age: 16 },
+  ];
+
+  const columns = [
+    {
+      field: "id",
+      headerName: "Id",
+      sortable: false,
+      allowExpand: true, // important to show expand arrow
+    },
+    { field: "firstName", headerName: "First Name", sortable: false },
+    { field: "lastName", headerName: "Last Name", sortable: false },
+    { field: "age", headerName: "Age", sortable: false },
+  ];
+
+  const renderExpandedContent = (row) => (
+    <>
+      <h4>
+        Details for {row.firstName} {row.lastName}
+      </h4>
+      <p>Age: {row.age}</p>
+      <p>Additional info can go here, including any JSX.</p>
+      <button onClick={() => alert(`Clicked details for ${row.firstName}`)}>
+        Click me
+      </button>
+      <Accordion title="General" expanded>
+        <div>
+          Lorem Ipsum is simply dummy text of the printing and typesetting
+          industry. Lorem Ipsum has been the industry's standard dummy text ever
+          since the 1500s,
+          <br />
+          when an unknown printer took a galley of type and scrambled it to make
+          a type specimen book. <br />
+          It has survived not only five centuries, but also the leap into
+          electronic typesetting, remaining essentially unchanged.
+          <br />
+          It was popularised in the 1960s with the release of Letraset sheets
+          containing Lorem Ipsum passages, and more recently with desktop
+          publishing
+          <br />
+          software like Aldus PageMaker including versions of Lorem Ipsum.
+        </div>
+      </Accordion>
+      <Accordion title="General" expanded>
+        <div>
+          Lorem Ipsum is simply dummy text of the printing and typesetting
+          industry. Lorem Ipsum has been the industry's standard dummy text ever
+          since the 1500s,
+          <br />
+          when an unknown printer took a galley of type and scrambled it to make
+          a type specimen book. <br />
+          It has survived not only five centuries, but also the leap into
+          electronic typesetting, remaining essentially unchanged.
+          <br />
+          It was popularised in the 1960s with the release of Letraset sheets
+          containing Lorem Ipsum passages, and more recently with desktop
+          publishing
+          <br />
+          software like Aldus PageMaker including versions of Lorem Ipsum.
+        </div>
+      </Accordion>
+    </>
+  );
+
+  return (
+    <Table
+      rows={tableData}
+      columns={columns}
+      expandedContent={renderExpandedContent}
+    />
+  );
+};
+
+export const TableWithCollapsibleExpandedRowsOnSort = () => {
+  const columns = [
+    {
+      field: "id",
+      headerName: "ID",
+      sortable: true,
+      width: "100px",
+      allowExpand: true,
+    },
+    { field: "name", headerName: "Name", sortable: true, width: "200px" },
+    { field: "age", headerName: "Age", sortable: true, width: "100px" },
+  ];
+
+  const initialRows = [
+    { id: 1, name: "Alice", age: 30, details: "Details about Alice" },
+    { id: 2, name: "Bob", age: 25, details: "Details about Bob" },
+    { id: 3, name: "Charlie", age: 35, details: "Details about Charlie" },
+    { id: 4, name: "Diana", age: 28, details: "Details about Diana" },
+    { id: 5, name: "Ethan", age: 40, details: "Details about Ethan" },
+  ];
+
+  const [sortData, setSortData] = useState({ order: "unsorted", by: "" });
+  const [expandedRows, setExpandedRows] = useState([]);
+
+  // Simple sort function
+  const sortedRows = useMemo(() => {
+    if (!sortData.by || sortData.order === "unsorted") return initialRows;
+    const sorted = [...initialRows].sort((a, b) => {
+      const valA = a[sortData.by];
+      const valB = b[sortData.by];
+      if (typeof valA === "string")
+        return (
+          valA.localeCompare(valB) * (sortData.order === "ascending" ? 1 : -1)
+        );
+      if (typeof valA === "number")
+        return (valA - valB) * (sortData.order === "ascending" ? 1 : -1);
+      return 0;
+    });
+    return sorted;
+  }, [sortData]);
+
+  const handleSort = (order, by) => {
+    setSortData({ order, by });
+    setExpandedRows([]); // collapse all expanded rows on sort
+  };
+
+  const renderExpandedContent = (row) => (
+    <div style={{ padding: 10, backgroundColor: "#f0f0f0" }}>
+      <strong>Details:</strong> {row.details}
+    </div>
+  );
+
+  return (
+    <Table
+      columns={columns}
+      rows={sortedRows}
+      sortHandler={handleSort}
+      expandedRows={expandedRows}
+      onExpandedRowsChange={setExpandedRows}
+      expandedContent={renderExpandedContent}
+    />
+  );
+};
+
+export const DraggableTableWithCollapsibleExpandedRowsOnSort = () => {
+  const columns = [
+    {
+      field: "id",
+      headerName: "ID",
+      sortable: true,
+      width: "100px",
+      allowExpand: true,
+    },
+    { field: "name", headerName: "Name", sortable: true, width: "200px" },
+    { field: "age", headerName: "Age", sortable: true, width: "100px" },
+  ];
+
+  const initialRows = [
+    { id: 1, name: "Alice", age: 30, details: "Details about Alice" },
+    { id: 2, name: "Bob", age: 25, details: "Details about Bob" },
+    { id: 3, name: "Charlie", age: 35, details: "Details about Charlie" },
+    { id: 4, name: "Diana", age: 28, details: "Details about Diana" },
+    { id: 5, name: "Ethan", age: 40, details: "Details about Ethan" },
+  ];
+
+  const [sortData, setSortData] = useState({ order: "unsorted", by: "" });
+  const [expandedRows, setExpandedRows] = useState([]);
+
+  // State for rows order (for drag & drop)
+  const [rows, setRows] = useState(initialRows);
+
+  // Sort rows based on sortData
+  const sortedRows = useMemo(() => {
+    if (!sortData.by || sortData.order === "unsorted") return rows;
+    const sorted = [...rows].sort((a, b) => {
+      const valA = a[sortData.by];
+      const valB = b[sortData.by];
+      if (typeof valA === "string")
+        return (
+          valA.localeCompare(valB) * (sortData.order === "ascending" ? 1 : -1)
+        );
+      if (typeof valA === "number")
+        return (valA - valB) * (sortData.order === "ascending" ? 1 : -1);
+      return 0;
+    });
+    return sorted;
+  }, [rows, sortData]);
+
+  // Handle sorting change
+  const handleSort = (order, by) => {
+    setSortData({ order, by });
+    setExpandedRows([]); // collapse all expanded rows on sort
+  };
+
+  // Render expanded content for a row
+  const renderExpandedContent = (row) => (
+    <div style={{ padding: 10, backgroundColor: "#f0f0f0" }}>
+      <strong>Details:</strong> {row.details}
+    </div>
+  );
+
+  // Handle drag end to reorder rows
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const newRows = Array.from(rows);
+    const [movedRow] = newRows.splice(result.source.index, 1);
+    newRows.splice(result.destination.index, 0, movedRow);
+    setRows(newRows);
+  };
+
+  return (
+    <Table
+      columns={columns}
+      rows={sortedRows}
+      sortHandler={handleSort}
+      expandedRows={expandedRows}
+      onExpandedRowsChange={setExpandedRows}
+      expandedContent={renderExpandedContent}
+      onDragEnd={onDragEnd}
+      allowDraggableRow
+    />
+  );
+};
+

@@ -1,0 +1,154 @@
+@import '../../global-style/index.scss';
+
+$preview-image-container-width: getRem(120px);
+$preview-image-container-height: getRem(120px);
+$preview-filename-top-margin: getRem(16px);
+$preview-image-container-margin: getRem(16px);
+$file-name-font-size: getRem(14px);
+
+$preview-image-top-panel-height: 7.5vh;
+
+$fullscreen-image-container-height: 85vh;
+$fullscreen-image-container-width: 100vw;
+$preview-image-close-button-margin-left: getRem(32px);
+$preview-image-top-panel-padding-left-right: getRem(16px);
+
+$preview-image-zoom-between-margin: getRem(32px);
+$preview-file-left-margin: getRem(16px);
+$preview-file-name-width: getRem(135px);
+$preview-download-margin: getRem(8px);
+
+
+.bds-file-viewer-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: $preview-image-container-width;
+  height: fit-content;
+  margin: $preview-image-container-margin;
+  margin-left: 0;
+  box-sizing: border-box;
+
+  .bds-file-viewer-preview-image-container {
+    width: $preview-image-container-width;
+    overflow: scroll;
+    object-fit: cover;
+    cursor: pointer;
+  }
+
+  .bds-file-viewer-preview-non-image-files {
+    margin: auto;
+  }
+
+  .bds-file-viewer-preview-file-name {
+    margin-top: $preview-filename-top-margin;
+    cursor: pointer;
+    & > span {
+      width: $preview-file-name-width;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      text-align: center;
+    }
+    & > span:hover{
+      color: $blue-60-hover;
+    }
+  }
+  .bds-file-viewer-preview-download {
+    margin-top: $preview-download-margin;
+    &:hover {
+      color: $blue-60-hover;
+      cursor: pointer;
+    }
+  }
+}
+
+.bds-file-viewer-full-screen-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 5000;
+  background-color: $gray-80;
+  opacity: 0.96;
+
+  .bds-file-viewer-full-screen-top-panel {
+    display: flex;
+    width: 100%;
+    height: $preview-image-top-panel-height;
+    padding-left: $preview-image-top-panel-padding-left-right;
+    padding-right: $preview-image-top-panel-padding-left-right;
+    box-sizing: border-box;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%);
+    justify-content: space-between;
+
+    .bds-file-viewer-full-screen-top-panel--file-name {
+      display: flex;
+      align-items: center;
+      color: white;
+
+      .bds-file-viewer-full-screen-top-panel--file-name-text {
+        display: flex;
+      }
+
+      .bds-file-viewer-full-screen-top-panel--file-name-type-size {
+        display: flex;
+      }
+      .bds-file-viewer-full-screen-top-panel--file-name-size {
+        display: flex;
+      }
+    }
+    .bds-file-viewer-full-screen-top-panel--buttons {
+      display: flex;
+      width: max-content;
+      align-items: center;
+      justify-content: center;
+
+      .bds-file-viewer-full-screen-top-panel-close-file {
+        margin-left: $preview-image-close-button-margin-left;
+      }
+    }
+  }
+
+  .bds-file-viewer-full-screen-image {
+    display: flex;
+    width: $fullscreen-image-container-width;
+    height: $fullscreen-image-container-height;
+    overflow: scroll;
+
+    & > img {
+      margin: auto;
+    }
+  }
+
+  .bds-file-viewer-full-screen-bottom-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%);
+    height: $preview-image-top-panel-height;
+
+    .bds-file-viewer-full-screen-bottom-panel--zoom {
+      display: flex;
+      align-items: center;
+
+      .bds-file-viewer-full-screen-bottom-panel--zoom-in {
+        display: flex;
+        margin-right: $preview-image-zoom-between-margin;
+      }
+      .bds-file-viewer-full-screen-bottom-panel--zoom-out {
+        display: flex;
+        margin: auto;
+      }
+      .bds-file-viewer-full-screen-bottom-panel-zoom-percentage {
+        display: flex;
+        align-items: center;
+        color: white;
+        margin-left: $preview-image-zoom-between-margin;
+      }
+    }
+  }
+}

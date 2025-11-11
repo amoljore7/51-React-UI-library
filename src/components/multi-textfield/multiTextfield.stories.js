@@ -39,10 +39,10 @@ export const WithTooltip = () => {
     isAllFieldSaved: (flag) => console.log(flag),
   };
   return (
-    <div style={{ marginTop: '10%' }}>
+    <div style={{marginTop: '10%'}}>
       <MultiTextfield {...props} />
     </div>
-  )
+  ) 
 };
 
 export const withHeightWidth = () => {
@@ -58,9 +58,9 @@ export const withHeightWidth = () => {
     height: '26px',
   };
   return (
-    <div style={{ marginTop: '10%' }}>
+    <div style={{marginTop: '10%'}}>
       <MultiTextfield {...props} />
     </div>
-  )
+  ) 
 };
 

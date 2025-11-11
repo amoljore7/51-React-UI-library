@@ -5,8 +5,8 @@ $radio-label-margin-bottom: getRem(8px);
 $radio-label-height: getRem(19px);
 $radio-label-font-size: getRem(14px);
 $radio-label-letter-spacing: getRem(0.32px);
-$radio-icon-height: getRem(20px);
-$radio-icon-width: getRem(20px);
+$radio-icon-height: 20px;
+$radio-icon-width: 20px;
 $radio-button-opacity: 0;
 $radio-icon-opacity: 1;
 $radio-container-height: getRem(20px);
@@ -15,87 +15,132 @@ $radio-container-vertical-margin-bottom: getRem(8px);
 $radio-container-vertical-margin-right: getRem(0px);
 $radio-button-width: 100%;
 $radio-button-height: 100%;
-$radio-button-margin: getRem(0px);
-$radio-button-top: 0;
-$radio-button-left: 0;
-$radio-button-z-index: 1;
 $radio-container-last-child-margin-right: 0;
 $radio-icon-margin-right: getRem(8px);
-$radio-icon-img-top: 0;
-$radio-icon-img-left: 0;
+$radio-btn-border: getRem(1px);
+$radio-btn-border-hover: getRem(2.5px);
+$radio-btn-height: 14px;
+$radio-btn-width: 14px;
+$radio-btn-checked-before-height: 6px;
+$radio-btn-checked-before-width: 6px;
+$radio-btn-margin-right:8px;
+$radio-btn-margin-bottom: getRem(4px);
+$radio-btn-label-gap: getRem(2px);
+$main-label-font-weight: 600;
+$radio-btn-border-radius: 50%;
+$bds-radio-btn-margin-vertical: 1px;
 
-.main-label {
+// Main container for the entire radio group
+.bds-radio-group {
+  // Styles for the optional label above the group
+  .main-label {
+    display: flex;
+    height: $radio-label-height;
+    font-size: $radio-label-font-size;
+    letter-spacing: $radio-label-letter-spacing;
+    font-family: $font-type-01;
+    color: $primary-txt-color;
+    text-align: left;
+    margin-bottom: $radio-label-margin-bottom;
+    font-weight: $main-label-font-weight;
+  }
+
+  // Applies horizontal layout to the radio buttons
+  .horizontal-align {
+    display: flex;
+  }
+
+  // Applies vertical layout to the radio buttons
+  .vertical-align {
+    flex-direction: column;
+  }
+
+  // Wrapper for individual radio button and label
+  .radio-container {
+    display: flex;
+    height: $radio-container-height;
+    margin-right: $radio-container-margin-right;
+    margin-bottom: $radio-label-margin-bottom;
+
+    // Removes right margin from the last radio item in a row
+    &:last-child {
+      margin-right: $radio-container-last-child-margin-right;
+    }
+
+    // Adjusts margins for vertical layout alignment
+    .radio-container-vertical {
+      margin-bottom: $radio-container-vertical-margin-bottom;
+      margin-right: $radio-container-vertical-margin-right;
+    }
+
+    // Styles for the label associated with a radio button
+    .label-container {
+      font-size: $radio-label-font-size;
+      letter-spacing: $radio-label-letter-spacing;
+      font-family: $font-type-01;
+      color: $secondary-txt-color;
+      text-align: left;
+      margin: inherit;
+    }
+
+    // Styles applied to labels when the corresponding radio is disabled
+    .disable-label {
+      color: $ui-disabled-01;
+    }
+    // Custom radio button wrapper with icon and label alignment
+    .bds-radio-custom-btn {
+      display: flex;
+      align-items: center;
+      gap: $radio-btn-label-gap;
+    }
+  }
+}
+.bds-radio-btn {
   display: flex;
-  height: $radio-label-height;
-  font-size: $radio-label-font-size;
-  letter-spacing: $radio-label-letter-spacing;
-  font-family: $font-type-01;
-  color: $primary-txt-color;
-  text-align: left;
-  margin-bottom: $radio-label-margin-bottom;
-  font-weight: 600;
-}
-
-.horizontal-align {
-  display: flex;
-}
-
-.vertical-align {
-  flex-direction: column;
-}
-
-.radio-container {
-  display: flex;
-  height: $radio-container-height;
-  margin-right: $radio-container-margin-right;
-}
-
-.radio-container:last-child {
-  margin-right: $radio-container-last-child-margin-right;
-}
-
-.radio-container-vertical {
-  margin-bottom: $radio-container-vertical-margin-bottom;
-  margin-right: $radio-container-vertical-margin-right;
-}
-
-.label-container {
-  height: $radio-label-height;
-  font-size: $radio-label-font-size;
-  letter-spacing: $radio-label-letter-spacing;
-  font-family: $font-type-01;
-  color: $secondary-txt-color;
-  text-align: left;
+  justify-content: center;
+  align-items: center;
+  appearance: none;
+  -webkit-appearance: none;
+  width: $radio-btn-height;
+  height: $radio-btn-height;
+  border: $radio-btn-border solid $primary-txt-color;
+  border-radius: $radio-btn-border-radius;
+  cursor: pointer;
   vertical-align: middle;
-}
-
-.disable-label {
-  color: $ui-disabled-01;
-}
-
-.radio-btn {
-  opacity: $radio-button-opacity;
-  position: absolute;
-  width: $radio-button-width;
-  height: $radio-button-height;
-  margin: $radio-button-margin;
-  top: $radio-button-top;
-  left: $radio-button-left;
-  z-index: $radio-button-z-index;
-}
-
-.radio-icon {
+  background-color: $white;
+  margin-top: $bds-radio-btn-margin-vertical;
+  margin-bottom: $bds-radio-btn-margin-vertical;
+  margin-right: $radio-btn-margin-right;
   position: relative;
-  width: $radio-icon-width;
-  height: $radio-icon-height;
-  opacity: $radio-icon-opacity;
-  vertical-align: middle;
-  margin-right: $radio-icon-margin-right;
-  display: inline-block;
-}
 
-.radio-icon img {
-  position: absolute;
-  top: $radio-icon-img-top;
-  left: $radio-icon-img-left;
+  // Focus or hover effect on radio input
+  &:hover,
+  &:focus {
+    outline: $radio-btn-border-hover solid $blue-60-hover;
+  }
+
+  // Style when the radio is checked
+  &:checked {
+    border-color: $primary-txt-color;
+    background-color: $primary-txt-color;
+  }
+
+  // Inner white circle shown when checked
+  &:before {
+    content: '';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: $radio-btn-checked-before-width;
+    height: $radio-btn-checked-before-height;
+    background: $white;
+    border-radius: $radio-btn-border-radius;
+  }
+
+  // Styles when radio is disabled
+  &:disabled {
+    border: $radio-btn-border solid $gray-50;
+    cursor: default;
+    outline: none;
+  }
 }

@@ -1,0 +1,129 @@
+// Tint
+// Tint colors are hues that have been lightened by adjusting their opacity, creating a spectrum of shades.
+// These shades help designers establish hierarchy and make their designs more dynamic within an app.
+// By manipulating opacity, you can achieve effects that vary from subtle to bold, enhancing visual interest
+// and ensuring that colors blend seamlessly with the overall design.
+@function getOpacity($opacity) {
+  @return $opacity/100;
+}
+
+$tint-primary-100: #181143;
+$tint-primary-80: rgba($tint-primary-100, getOpacity(80));
+$tint-primary-60: rgba($tint-primary-100, getOpacity(60));
+$tint-primary-40: rgba($tint-primary-100, getOpacity(40));
+$tint-primary-20: rgba($tint-primary-100, getOpacity(20));
+$tint-primary-10: rgba($tint-primary-100, getOpacity(10));
+$tint-primary-5: rgba($tint-primary-100, getOpacity(5));
+
+// Neutral
+// The gray shades in these palettes serve a crucial role in maintaining a neutral backdrop,
+// allowing users to focus on the primary content without distraction.
+// It's advisable to integrate these colors into most UI elements. They are ideal for non-interactive
+// components and can also be applied to secondary or less significant interactive elements.
+
+// For text colors, it's best to select from Neutral 140, 120, 100, 80, or 60.
+// When it comes to backgrounds, opt for Material at 5% opacity or lighter.
+$neutral-140: #000000;
+$neutral-120: #01000b;
+$neutral-100: #040520;
+$neutral-80: #36374d;
+$neutral-60: #686979;
+$neutral-40: #9b9ba6;
+$neutral-20: #cdcdd2;
+$neutral-10: #e6e6e9;
+$neutral-5: #f2f2f4;
+$neutral-3: #f7f8f8;
+$neutral-2: #fafafb;
+$neutral-0: #ffffff;
+
+@function material-black($opacity) {
+  @return rgba($neutral-100, getOpacity($opacity));
+}
+
+@function material-white($opacity) {
+  @return rgba($neutral-0, getOpacity($opacity));
+}
+
+// Feedback
+// Feedback colors are carefully chosen and consistently applied across all products.
+// Each color conveys a specific meaning, helping users quickly understand the status
+// of their actions and set clear expectations. This thoughtful use of color enhances
+// user experience by providing intuitive visual cues.
+
+// Accent
+// Highlight important, non-urgent, or proactive messages effectively. 
+// Ensure to communicate the status clearly.
+// Use color minimally for emphasis.
+
+$feedback-accent-140: #2a0561;
+$feedback-accent-120: #3a0688;
+$feedback-accent-100: #4908aa;
+$feedback-accent-80: #640bea;
+$feedback-accent-60: #863cf6;
+$feedback-accent-40: #c39efa;
+$feedback-accent-20: #e8d8fd;
+$feedback-accent-10: #f0e7fe;
+$feedback-accent-5: #f6f0fe;
+$feedback-accent-2: #f9f5ff;
+
+// Information
+// Notification messaging
+// Instructions (in a Callouts)
+// Indication that something is New or Unread
+
+$feedback-information-140: #0d3b63;
+$feedback-information-120: #125087;
+$feedback-information-100: #005fb2;
+$feedback-information-80: #007be6;
+$feedback-information-60: #1a94ff;
+$feedback-information-40: #61b5ff;
+$feedback-information-20: #bde0ff;
+$feedback-information-10: #dbeeff;
+$feedback-information-5: #ebf5ff;
+$feedback-information-2: #f5faff;
+
+// Positive
+// Success messaging
+// Positive actions, when paired with a negative action (e.g. Approve/Deny)
+// To indicate progress
+
+$feedback-positive-140: #004d25;
+$feedback-positive-120: #006832;
+$feedback-positive-100: #00803e;
+$feedback-positive-80: #00a34f;
+$feedback-positive-60: #49c585;
+$feedback-positive-40: #8bdab1;
+$feedback-positive-20: #cdefdd;
+$feedback-positive-10: #e6f6ed;
+$feedback-positive-5: #f0faf5;
+$feedback-positive-2: #f7fcf9;
+
+// Warning
+// Medium priority warning messaging
+
+$feedback-warning-140: #854600;
+$feedback-warning-120: #b26300;
+$feedback-warning-100: #dd8c04;
+$feedback-warning-80: #fcb92d;
+$feedback-warning-60: #fcc654;
+$feedback-warning-40: #fedd9a;
+$feedback-warning-20: #ffedc7;
+$feedback-warning-10: #fff4db;
+$feedback-warning-5: #fff8eb;
+$feedback-warning-2: #fffcf5;
+
+// Negative
+// Destructive/irreversible actions
+// High priority warning messaging
+// Error messaging
+
+$feedback-negative-140: #6f0b06;
+$feedback-negative-120: #ac2720;
+$feedback-negative-100: #cf332b;
+$feedback-negative-80: #e2615a;
+$feedback-negative-60: #eb8e89;
+$feedback-negative-40: #efb2ae;
+$feedback-negative-20: #f6d2d0;
+$feedback-negative-10: #fbeeee;
+$feedback-negative-5: #fef7f6;
+$feedback-negative-2: #fffafa;

@@ -93,7 +93,7 @@ export const WithoutActionButtons = () => {
         Open Dialog
       </button>
       {openModal && (
-        <ModalPopup width={464} title={'Permission Details'} onCancel={cancelHandler}>
+        <ModalPopup width={464} title={'Permission Details'} onCancel={cancelHandler} classNamePrefix="without-action-buttons">
           <p>This row data contains details about Vault Permission</p>
         </ModalPopup>
       )}

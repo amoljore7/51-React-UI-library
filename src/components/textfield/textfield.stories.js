@@ -46,6 +46,27 @@ export const DefaultWithIcon = () => {
   return <Textfield {...props} />;
 };
 
+export const DefaultWithIconOnLeft = () => {
+  const [value, setValue] = useState('');
+
+  const onChangeHandler = (e) => {
+    const { value } = e.target.value;
+    setValue(value);
+  };
+  const props = {
+    label: 'Label',
+    helperText: 'Sub Label',
+    type: 'text',
+    value: value,
+    placeholder: 'Placeholder...',
+    width: '200px',
+    icon: <FiSquare size="24" />,
+    iconPosition: 'left',
+    onChange: onChangeHandler,
+  };
+  return <Textfield {...props} />;
+};
+
 export const Inline = () => {
   const [value, setValue] = useState('');
 
@@ -155,6 +176,7 @@ export const ReadonlyWithLongText = () => {
   };
   const props = {
     label: 'Label',
+    secondaryLabel: '(Required)',
     helperText: 'Sub Label',
     type: 'text',
     value: value,
@@ -291,6 +313,26 @@ export const height = () => {
     width: '140px',
     height: '26px',
     icon: <FiX size="16" />,
+    onChange: onChangeHandler,
+  };
+  return <Textfield {...props} />;
+};
+
+export const autoComplete = () => {
+  const [value, setValue] = useState('');
+
+  const onChangeHandler = (e) => {
+    const { value } = e.target.value;
+    setValue(value);
+  };
+  const props = {
+    label: 'Label',
+    helperText: 'Sub Label',
+    type: 'text',
+    value: value,
+    placeholder: 'Placeholder...',
+    width: '200px',
+    autoComplete: 'on', 
     onChange: onChangeHandler,
   };
   return <Textfield {...props} />;

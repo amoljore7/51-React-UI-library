@@ -1,4 +1,6 @@
 import React, { useEffect, useRef } from 'react';
+import ModalPopup from '../modal-popup/modal-popup';
+import Textfield from '../textfield';
 import BackToTop from './';
 
 export default {
@@ -65,5 +67,67 @@ export const BackToTopSimple = () => {
       {/*Pass the ref of dom element inside which button is to be used.*/}
       <BackToTop id="some-id" parentRef={parentContainer} />
     </>
+  );
+};
+
+export const BackToTopModalPopup = () => {
+  const parentContainer = useRef();
+  // hide the scroll bar for this story
+  useEffect(() => {
+    const earlier = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => (document.body.style.overflow = earlier);
+  }, []);
+  const buttons = [
+    {
+      text: "Ok",
+      variant: "primary",
+      onClick: () => console.log("Ok button clicked"),
+      size: "large",
+    },
+    {
+      text: "Cancel",
+      variant: "secondary",
+      onClick: () => console.log("Cancel button clicked"),
+      size: "large",
+    },
+  ];
+
+  return (
+    <div
+      className="testname"
+      style={{
+        width: "100vw",
+        height: "100vh",
+        marginRight: "200px",
+        backgroundColor: "red",
+      }}
+    >
+      <ModalPopup
+        ref={parentContainer}
+        width={464}
+        title={"Add Permission"}
+        buttons={buttons}
+        onCancel={() => console.log("Cancel button clicked")}
+      >
+        <>
+          <div>
+            {Array(50)
+              .fill()
+              .map((_, i) => (
+                <div style={{marginTop: 32}}>
+                  <Textfield
+                  label={`Value ${i}`}
+                  value={`Some values ${i}`}
+                  onChange={() => {}}
+                />
+                </div>
+                
+              ))}
+          </div>
+        </>
+      </ModalPopup>
+      <BackToTop id={"#123"} parentRef={parentContainer} />
+    </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './buttonGroup.scss';
 import classNames from 'classnames';
@@ -9,8 +9,16 @@ const ButtonGroup = ({
   type,
   onClick,
   size = defaultSize,
+  defaultValue,
 }) => {
   const [selected, setSelected] = useState('');
+
+  useEffect(() => {
+    if (defaultValue) {
+      setSelected(defaultValue)
+    }
+    // Not passing any dependencies because it needs to execute once after mounting.
+  }, [])
 
   const btnGroupParentClass = {
     [classes.buttonGroup]: true,
@@ -66,6 +74,10 @@ ButtonGroup.propTypes = {
   type: PropTypes.string,
   onClick: PropTypes.func,
   size: PropTypes.string,
+  defaultValue: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
+  ]),
 };
 
 export default ButtonGroup;

@@ -1,0 +1,55 @@
+@import '../../global-style/index.scss';
+
+$tree-view-scroll-background: $gray-30;
+$tree-view-scroll-background-hover: $gray-60;
+$tree-view-scroll-border-radius: getRem(10px);
+
+.tree-view-bounding-container {
+  position: relative;
+  height: 100%;
+}
+.tree-view-container {
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  // overflow: hidden;
+  // &:hover {
+  //   overflow: overlay;
+  // }
+}
+
+.tree-view-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tree-view-container::-webkit-scrollbar-thumb {
+  background: $tree-view-scroll-background;
+  border-radius: $tree-view-scroll-border-radius;
+}
+
+.tree-view-container::-webkit-scrollbar-thumb:hover {
+  background: $tree-view-scroll-background-hover;
+  border-radius: $tree-view-scroll-border-radius;
+}
+
+.tree-view-filter-container {
+  margin-bottom: getRem(16px);
+  display: flex;
+  justify-content: space-between;
+}
+
+.tree-view-node-icon {
+  height: getRem(20px);
+  width: getRem(20px);
+  object-fit: contain;
+
+  &-cursor-pointer {
+    cursor: pointer;
+  }
+}
+
+.tree-view-filter-container-without-dropdown {
+  margin-bottom: getRem(16px);
+  display: flex;
+  justify-content: flex-end;
+}
