@@ -277,7 +277,10 @@ const Tooltip = ({ title, children, position, zIndex = zIndexDefault, className 
 
   useLayoutEffect(() => {
     if (childRef && childRef.current && isHover) {
+      tooltipElement.style.display = 'block'
       changeTooltipPos(tooltipElement, childRef.current, position);
+    } else {
+      tooltipElement.style.display = 'none'
     }
   }, [isHover, title]);
 
