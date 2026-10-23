@@ -1,0 +1,96 @@
+@use './tokens/colors.scss' as colors;
+
+// ---------------------------------------------------------------------------
+// Global theme: canvas, color-scheme, and shared icon tokens
+// Apply with data-theme="light" | "dark" on <html> (or any ancestor).
+// ---------------------------------------------------------------------------
+:root {
+  // Custom-theme surface variables.
+  // Override both to adapt all component backgrounds, text, and derived borders.
+  --theme-content-bg: #{colors.$neutral-0};
+  --theme-text-primary: #161616;
+
+  // Derived so a custom theme repaints the canvas and muted icons without
+  // having to override them individually. The presets below pin exact values.
+  --bds-bg-canvas: var(--theme-content-bg);
+  --bds-bg-elevated: var(--theme-content-bg);
+  --bds-icon-secondary: var(--theme-text-placeholder);
+  --bds-icon-muted-opacity: 0.45;
+  color-scheme: light;
+}
+
+[data-theme='light'] {
+  --bds-bg-canvas: #{colors.$neutral-0};
+  --bds-bg-elevated: #{colors.$neutral-0};
+  --bds-icon-secondary: #{colors.$neutral-40};
+  --bds-icon-muted-opacity: 0.45;
+  color-scheme: light;
+
+  --theme-content-bg: #{colors.$neutral-0};
+  --theme-text-primary: #161616;
+}
+
+[data-theme='dark'] {
+  --bds-bg-canvas: #{colors.$neutral-100};
+  --bds-bg-elevated: #{colors.$neutral-80};
+  --bds-icon-secondary: #{colors.$neutral-60};
+  --bds-icon-muted-opacity: 0.55;
+  color-scheme: dark;
+
+  --theme-content-bg: #{colors.$neutral-80};
+  --theme-text-primary: #{colors.$neutral-0};
+}
+
+// ---------------------------------------------------------------------------
+// Derived tokens — computed lazily from --theme-text-primary and
+// --theme-content-bg so dark-theme and custom-theme overrides of the two
+// base vars automatically produce correct values everywhere.
+//
+// Visual hierarchy (light: #161616 text on #ffffff bg):
+//   --theme-hover-bg     13%  →  #e1e1e1  ≈ $gray-20  row/item hover tint
+//   --theme-separator    25%  →  #c5c5c5  ≈ $gray-30  row/cell/tab dividers
+//   --theme-border       37%  →  #a9a9a9  ≈ $gray-40  input/container borders
+//   --theme-border-strong 62% →  #6f6f6f  ≈ $gray-60  prominent borders
+//   --theme-border-subtle 13% →  #e1e1e1  (kept for very subtle outlines)
+//
+// Dark (white text on #0a0b2e bg):
+//   hover=#2a2b49  separator=#474862  border=#65657b  strong=#a0a0b0
+//
+// Text tiers (same formula values reused, kept separate for semantic overrideability):
+//   --theme-text-secondary   62%  light=#6f6f6f  dark=#a0a0b0
+//   --theme-text-placeholder 37%  light=#a9a9a9  dark=#61627b
+//
+// Declared for `:root` and for every themed element: var() inside a custom
+// property resolves at the element that declares it, so a nested
+// `[data-theme]` subtree needs its own declarations or it would inherit the
+// values already resolved against :root (i.e. light values inside a dark panel).
+//
+// A *custom* theme still has to override the two base vars on `:root`/<html>.
+// It sets no data-theme, so there is no selector that could re-declare these
+// deeper, and portals mount on <body> outside any subtree regardless.
+// ---------------------------------------------------------------------------
+:root,
+[data-theme] {
+  --theme-hover-bg:         color-mix(in srgb, var(--theme-text-primary) 13%, var(--theme-content-bg));
+  --theme-separator:        color-mix(in srgb, var(--theme-text-primary) 25%, var(--theme-content-bg));
+  --theme-border-subtle:    color-mix(in srgb, var(--theme-text-primary) 13%, var(--theme-content-bg));
+  --theme-border:           color-mix(in srgb, var(--theme-text-primary) 37%, var(--theme-content-bg));
+  --theme-border-strong:    color-mix(in srgb, var(--theme-text-primary) 62%, var(--theme-content-bg));
+
+  --theme-text-secondary:   color-mix(in srgb, var(--theme-text-primary) 62%, var(--theme-content-bg));
+  --theme-text-placeholder: color-mix(in srgb, var(--theme-text-primary) 55%, var(--theme-content-bg));
+}
+
+html {
+  background-color: var(--bds-bg-canvas);
+}
+
+html[data-theme='dark'],
+html[data-theme='dark'] body {
+  color: #{colors.$neutral-0};
+}
+
+// Sort / dual-tone icons: muted segment uses secondary token
+svg .bds-icon-muted {
+  opacity: var(--bds-icon-muted-opacity);
+}

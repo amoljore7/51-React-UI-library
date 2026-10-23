@@ -1,22 +1,25 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
-$preview-image-container-width: getRem(120px);
-$preview-image-container-height: getRem(120px);
-$preview-filename-top-margin: getRem(16px);
-$preview-image-container-margin: getRem(16px);
-$file-name-font-size: getRem(14px);
+$preview-image-container-width: global-style.getRem(120px);
+$preview-image-container-height: global-style.getRem(120px);
+$preview-filename-top-margin: global-style.getRem(16px);
+$preview-image-container-margin: global-style.getRem(16px);
+$file-name-font-size: global-style.getRem(14px);
 
 $preview-image-top-panel-height: 7.5vh;
 
 $fullscreen-image-container-height: 85vh;
 $fullscreen-image-container-width: 100vw;
-$preview-image-close-button-margin-left: getRem(32px);
-$preview-image-top-panel-padding-left-right: getRem(16px);
+$preview-image-close-button-margin-left: global-style.getRem(32px);
+$preview-image-top-panel-padding-left-right: global-style.getRem(16px);
 
-$preview-image-zoom-between-margin: getRem(32px);
-$preview-file-left-margin: getRem(16px);
-$preview-file-name-width: getRem(135px);
-$preview-download-margin: getRem(8px);
+$preview-image-zoom-between-margin: global-style.getRem(32px);
+$preview-file-left-margin: global-style.getRem(16px);
+$preview-file-name-width: global-style.getRem(135px);
+$preview-download-margin: global-style.getRem(8px);
 
 
 .bds-file-viewer-preview-container {
@@ -149,6 +152,28 @@ $preview-download-margin: getRem(8px);
         color: white;
         margin-left: $preview-image-zoom-between-margin;
       }
+    }
+  }
+}
+
+[data-theme='dark'] {
+  .bds-file-viewer-preview-container {
+    color: var(--theme-text-primary);
+
+    .bds-file-viewer-preview-file-name span:hover {
+      color: tokens.$feedback-information-60;
+    }
+
+    svg {
+      color: var(--theme-text-primary);
+    }
+  }
+
+  .bds-file-viewer-full-screen-container {
+    background-color: tokens.$neutral-100;
+
+    svg {
+      color: var(--theme-text-primary);
     }
   }
 }

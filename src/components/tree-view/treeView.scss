@@ -1,12 +1,34 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
-$tree-view-scroll-background: $gray-30;
-$tree-view-scroll-background-hover: $gray-60;
-$tree-view-scroll-border-radius: getRem(10px);
+$tree-view-scroll-background: var(--theme-border);
+$tree-view-scroll-background-hover: var(--theme-border-strong);
+$tree-view-scroll-border-radius: global-style.getRem(10px);
+
+// ─── Theme tokens ─────────────────────────────────────────────────────────────
+// :root provides custom-theme / unthemed defaults derived from surface variables.
+// Light mode sets no color on these elements, so `inherit` preserves that.
+:root {
+  --bds-tree-text: var(--theme-text-primary);
+  --bds-tree-node-icon: var(--theme-text-primary);
+}
+
+[data-theme='light'] {
+  --bds-tree-text: inherit;
+  --bds-tree-node-icon: inherit;
+}
+
+[data-theme='dark'] {
+  --bds-tree-text: var(--theme-text-primary);
+  --bds-tree-node-icon: var(--theme-text-primary);
+}
 
 .tree-view-bounding-container {
   position: relative;
   height: 100%;
+  color: var(--bds-tree-text);
 }
 .tree-view-container {
   display: inline-block;
@@ -33,23 +55,18 @@ $tree-view-scroll-border-radius: getRem(10px);
 }
 
 .tree-view-filter-container {
-  margin-bottom: getRem(16px);
+  margin-bottom: global-style.getRem(16px);
   display: flex;
   justify-content: space-between;
 }
 
 .tree-view-node-icon {
-  height: getRem(20px);
-  width: getRem(20px);
+  height: global-style.getRem(20px);
+  width: global-style.getRem(20px);
   object-fit: contain;
+  color: var(--bds-tree-node-icon);
 
   &-cursor-pointer {
     cursor: pointer;
   }
-}
-
-.tree-view-filter-container-without-dropdown {
-  margin-bottom: getRem(16px);
-  display: flex;
-  justify-content: flex-end;
 }

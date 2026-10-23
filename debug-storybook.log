@@ -1,0 +1,29 @@
+[12:33:19.041] [INFO] storybook v10.1.11
+[12:33:20.385] [INFO] Loading main config failed as the file does not seem to be valid ESM. Trying a temporary fix, please ensure the main config is valid ESM.
+[12:33:20.407] [ERROR] [38;2;241;97;97mReferenceError: module is not defined in ES module scope
+This file is being treated as an ES module because it has a '.js' file extension and './package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.[39m
+    at file://./.storybook/main.tmp..js:11:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:413:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:660:26)
+    at async importModule (file://./node_modules/storybook/dist/_node-chunks/chunk-O7UZQAUS.js:732:11)
+    at async loadMainConfig (file://./node_modules/storybook/dist/_node-chunks/chunk-Q4DOC7HF.js:11694:17)
+    at async buildDevStandalone (file://./node_modules/storybook/dist/core-server/index.js:7149:16)
+    at async withTelemetry (file://./node_modules/storybook/dist/_node-chunks/chunk-2372JZ52.js:209:12)
+    at async dev (file://./node_modules/storybook/dist/bin/core.js:2734:3)
+    at async _Command.<anonymous> (file://./node_modules/storybook/dist/bin/core.js:2801:92)
+[12:33:20.408] [WARN] Broken build, fix the error above.
+You may need to refresh the browser.
+[12:33:20.410] [WARN]   Failed to load preset: "/Users/amoljore/Documents/AJ/51-React-UI-library/.storybook/main.js"
+[12:33:20.410] [ERROR] [38;2;241;97;97mReferenceError: module is not defined in ES module scope
+This file is being treated as an ES module because it has a '.js' file extension and './package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.[39m
+    at file://./.storybook/main.js:1:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:413:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:660:26)
+    at async importModule (file://./node_modules/storybook/dist/_node-chunks/chunk-O7UZQAUS.js:732:11)
+    at async loadMainConfig (file://./node_modules/storybook/dist/_node-chunks/chunk-Q4DOC7HF.js:11670:12)
+    at async buildDevStandalone (file://./node_modules/storybook/dist/core-server/index.js:7149:16)
+    at async withTelemetry (file://./node_modules/storybook/dist/_node-chunks/chunk-2372JZ52.js:209:12)
+    at async dev (file://./node_modules/storybook/dist/bin/core.js:2734:3)
+    at async _Command.<anonymous> (file://./node_modules/storybook/dist/bin/core.js:2801:92)
+[12:34:07.929] [PROMPT] Would you like to send anonymous crash reports to improve Storybook and fix bugs faster? {"choice":false}
+[12:34:07.970] [INFO] Loading main config failed as the file does not seem to be valid ESM. Trying a temporary fix, please ensure the main config is valid ESM.

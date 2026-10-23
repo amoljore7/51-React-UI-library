@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "./textarea.scss";
 import PropTypes from "prop-types";
 import classNames from "classnames";
@@ -9,6 +9,7 @@ import {
   dataTestId,
   classes,
 } from "./constants";
+import InfoIcon from "../../assets/icons/info.svg?react";
 
 const Textarea = ({
   showCharLeftCount = false,
@@ -29,7 +30,6 @@ const Textarea = ({
   height = defaultHeight,
   name,
 }) => {
-  const [charLeftCount, setCharLeftCount] = useState(0);
   const textareaLabelClass = {
     [classes.textareaLabel]: true,
     [classes.textareaLabelDisabled]: disabled,
@@ -42,35 +42,31 @@ const Textarea = ({
     [classes.textareaContainer]: true,
     [classes.textareaContainerDisabled]: disabled,
     [classes.textareaContainerErrorBorder]: error,
-    [classes.variantNaked]: variant == variantNaked,
+    [classes.variantNaked]: variant === variantNaked,
     [classes.textareaContainerFocus]: !readOnly,
   };
   const textareaClass = {
     [classes.textareaBox]: true,
     [classes.textareaBoxDisabled]: disabled,
     [classes.textareaBoxReadOnly]: readOnly,
-    [classes.variantNaked]: variant == variantNaked,
+    [classes.variantNaked]: variant === variantNaked,
   };
 
-  useEffect(() => {
-    if (showCharLeftCount && parseInt(maxLength) > 0) {
-      const currentCharCount = value?.length;
-      const charLeftCount = parseInt(maxLength) - parseInt(currentCharCount);
-      setCharLeftCount(charLeftCount);
-    }
-  }, [value]);
+  const currentLength = value?.length ?? 0;
+  const hasMaxLength = maxLength != null && parseInt(maxLength, 10) > 0;
+  const showCharCount = hasMaxLength && showCharLeftCount;
 
   return (
     <div className={classes.container}>
-      <div className={classNames({ ...textareaLabelClass })}>{label}</div>
-      {helperText && (
-        <div className={classNames({ ...textareaHelperTextClass })}>
-          {helperText}
-        </div>
+      {label && (
+        <div className={classNames({ ...textareaLabelClass })}>{label}</div>
       )}
       <div
         className={classNames({ ...textareaWrapper })}
-        style={{ width: `${width}`, height: variant == variantNaked ? 'auto' : `${height}` }}
+        style={{
+          width: width ?? undefined,
+          height: variant === variantNaked ? "auto" : height,
+        }}
       >
         <textarea
           className={classNames({ ...textareaClass })}
@@ -83,18 +79,48 @@ const Textarea = ({
           disabled={disabled}
           readOnly={readOnly}
           data-testid={dataTestId}
-          {...(maxLength > 0 && {maxLength})}
+          {...(hasMaxLength && { maxLength })}
         />
       </div>
-      {error && <div className={classes.errorMsgText}>{errorMsg}</div>}
-      {showCharLeftCount && charLeftCount > 0 &&
-        <div data-testid={dataTestIdForCharCount} className={classes.charLeftCount}>
-          {`${charLeftCount} character(s) remaining`}
+      {error && errorMsg && (
+        <div className={classes.errorMsgText}>{errorMsg}</div>
+      )}
+      {helperText && (
+        <div
+          className={classes.helperRow}
+          style={width ? { width } : undefined}
+        >
+          <div className={classNames({ ...textareaHelperTextClass })}>
+            <InfoIcon className={classes.helperIcon} aria-hidden />
+            <span>{helperText}</span>
+          </div>
+          {showCharCount && (
+            <div
+              data-testid={dataTestIdForCharCount}
+              className={classes.charLeftCount}
+            >
+              {`${currentLength}/${maxLength}`}
+            </div>
+          )}
         </div>
-      }
+      )}
+      {showCharCount && !helperText && (
+        <div
+          className={classes.charCountOnly}
+          style={width ? { width } : undefined}
+        >
+          <span
+            data-testid={dataTestIdForCharCount}
+            className={classes.charLeftCount}
+          >
+            {`${currentLength}/${maxLength}`}
+          </span>
+        </div>
+      )}
     </div>
   );
 };
+
 Textarea.propTypes = {
   value: PropTypes.string.isRequired,
   label: PropTypes.string,
@@ -103,12 +129,16 @@ Textarea.propTypes = {
   error: PropTypes.bool,
   helperText: PropTypes.string,
   disabled: PropTypes.bool,
-  readonly: PropTypes.bool,
+  readOnly: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   name: PropTypes.string,
   onBlur: PropTypes.func,
   onFocus: PropTypes.func,
   showCharLeftCount: PropTypes.bool,
-  maxLength: PropTypes.number
+  maxLength: PropTypes.number,
+  variant: PropTypes.string,
+  width: PropTypes.string,
+  height: PropTypes.string,
 };
+
 export default Textarea;

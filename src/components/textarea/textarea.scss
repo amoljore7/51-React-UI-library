@@ -1,91 +1,187 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
-$font-size: getRem(14px);
-$font-size-helper-text: getRem(12px);
+/* Figma: textArea - border-radius 8px, padding 12px horizontal 8px vertical, label 14px SemiBold, input 16px/20px, assistive 13px, character count 11px */
+$font-size-label: global-style.getRem(14px);
+$font-size-input: global-style.getRem(16px);
+$font-size-helper-text: global-style.getRem(13px);
+$font-size-character-count: global-style.getRem(11px);
 $label-font-weight: 600;
-$label-font-color: $gray-80;
-$label-letter-spacing: getRem(0.32px);
+$label-letter-spacing: global-style.getRem(0.21px);
+$line-height-label: global-style.getRem(18px);
+$line-height-input: global-style.getRem(20px);
+$assistive-icon-size: global-style.getRem(16px);
+$assistive-gap: global-style.getRem(4px);
 
-$height-error-msg-text: getRem(17px);
-$width-scrollbar: getRem(8px);
+$height-error-msg-text: global-style.getRem(17px);
+$width-scrollbar: global-style.getRem(4px);
+$border-radius-scrollbar-track: global-style.getRem(4px);
+$border-radius-scrollbar-thumb: global-style.getRem(12px);
 
-$padding-bottom-label: getRem(8px);
-$padding-bottom-helper-text: getRem(4px);
-$padding-top-textarea-box: getRem(10px);
-$padding-top-textarea-box-naked-variant: getRem(6px);
-$padding-bottom-textarea-box: getRem(11px);
-$padding-left-textarea-box: getRem(16px);
-$padding-right-textarea-box: getRem(16px);
-$padding-top-textarea-container-focus: getRem(9px);
-$padding-left-textarea-container-focus: getRem(15px);
-$padding-top-error-border-focus: getRem(10px);
-$padding-left-error-border-focus: getRem(16px);
+$padding-bottom-label: global-style.getRem(8px);
+$padding-bottom-helper-text: global-style.getRem(4px);
+$padding-vertical-container: global-style.getRem(8px);
+$padding-horizontal-container: global-style.getRem(12px);
 
-$padding-top-textarea-box-focus: getRem(9px);
-$padding-bottom-textarea-box-focus: getRem(10px);
-$padding-left-textarea-box-focus: getRem(15px);
-$padding-right-textarea-box-focus: getRem(15px);
+$border-one-px: global-style.getRem(1px);
+$border-two-px: global-style.getRem(2px);
+$border-radius-container: global-style.getRem(8px);
 
-$border-textarea-container: getRem(1px);
-$border-radius-textarea-container: getRem(2px);
-$border-textarea-error: getRem(2px);
-$border-textarea-focus: getRem(2px);
-$border-radius-scrollbar: getRem(5px);
+// Focus: padding adjusts when border goes 1px -> 2px so content doesn't shift
+$padding-vertical-focus: global-style.getRem(7px);
+$padding-horizontal-focus: global-style.getRem(11px);
 
-$line-height-textarea-box: getRem(16px);
+// ---------------------------------------------------------------------------
+// Theme: CSS custom properties (light / dark)
+// ---------------------------------------------------------------------------
+// Custom theme / unthemed defaults.
+// [data-theme='light'] block below restores original light-mode hardcoded values.
+:root {
+  --bds-textarea-bg: var(--theme-content-bg);
+  --bds-textarea-border: var(--theme-border);
+  --bds-textarea-border-hover: var(--theme-border-strong);
+  --bds-textarea-border-focus: var(--theme-text-primary);
+  --bds-textarea-border-error: #{tokens.$feedback-negative-100};
+  --bds-textarea-border-disabled: var(--theme-border);
+  --bds-textarea-label: var(--theme-text-primary);
+  --bds-textarea-label-disabled: var(--theme-text-secondary);
+  --bds-textarea-helper: var(--theme-text-secondary);
+  --bds-textarea-helper-disabled: var(--theme-text-secondary);
+  --bds-textarea-input-text: var(--theme-text-primary);
+  --bds-textarea-input-placeholder: var(--theme-text-placeholder);
+  --bds-textarea-input-placeholder-focused: var(--theme-text-placeholder);
+  --bds-textarea-input-disabled: var(--theme-border);
+  --bds-textarea-input-readonly: var(--theme-text-secondary);
+  --bds-textarea-error-msg: #{tokens.$feedback-negative-100};
+  --bds-textarea-character-count: var(--theme-text-placeholder);
+  --bds-textarea-scrollbar-track: #{rgba(tokens.$neutral-100, 0.05)};
+  --bds-textarea-scrollbar-thumb: var(--theme-border);
+}
+
+// Light theme — restore original hardcoded values so light mode is unchanged.
+[data-theme='light'] {
+  --bds-textarea-bg: var(--theme-content-bg);
+  --bds-textarea-border: #{rgba(tokens.$neutral-100, 0.4)};
+  --bds-textarea-border-hover: #{rgba(tokens.$neutral-100, 0.4)};
+  --bds-textarea-border-focus: #{tokens.$tint-primary-100};
+  --bds-textarea-border-error: #{tokens.$feedback-negative-100};
+  --bds-textarea-border-disabled: #{rgba(tokens.$neutral-100, 0.2)};
+  --bds-textarea-label: var(--theme-text-primary);
+  --bds-textarea-label-disabled: #{tokens.$neutral-40};
+  --bds-textarea-helper: var(--theme-text-secondary);
+  --bds-textarea-helper-disabled: #{tokens.$neutral-40};
+  --bds-textarea-input-text: var(--theme-text-primary);
+  --bds-textarea-input-placeholder: var(--theme-text-placeholder);
+  --bds-textarea-input-placeholder-focused: #{tokens.$neutral-20};
+  --bds-textarea-input-disabled: #{tokens.$neutral-20};
+  --bds-textarea-input-readonly: var(--theme-text-secondary);
+  --bds-textarea-error-msg: #{tokens.$feedback-negative-100};
+  --bds-textarea-character-count: var(--theme-text-placeholder);
+  --bds-textarea-scrollbar-track: #{rgba(tokens.$neutral-100, 0.05)};
+  --bds-textarea-scrollbar-thumb: var(--theme-border);
+}
+
+[data-theme='dark'] {
+  --bds-textarea-bg: var(--theme-content-bg);
+  --bds-textarea-border: var(--theme-border);
+  --bds-textarea-border-hover: var(--theme-border-strong);
+  --bds-textarea-border-focus: var(--theme-text-primary);
+  --bds-textarea-border-error: #{tokens.$feedback-negative-80};
+  --bds-textarea-border-disabled: var(--theme-border);
+  --bds-textarea-label: var(--theme-text-primary);
+  --bds-textarea-label-disabled: #{tokens.$neutral-40};
+  --bds-textarea-helper: var(--theme-text-secondary);
+  --bds-textarea-helper-disabled: #{tokens.$neutral-40};
+  --bds-textarea-input-text: var(--theme-text-primary);
+  --bds-textarea-input-placeholder: var(--theme-text-placeholder);
+  --bds-textarea-input-placeholder-focused: #{tokens.$neutral-20};
+  --bds-textarea-input-disabled: #{tokens.$neutral-40};
+  --bds-textarea-input-readonly: var(--theme-text-secondary);
+  --bds-textarea-error-msg: #{tokens.$feedback-negative-80};
+  --bds-textarea-character-count: var(--theme-text-placeholder);
+  --bds-textarea-scrollbar-track: #{rgba(tokens.$neutral-0, 0.05)};
+  --bds-textarea-scrollbar-thumb: var(--theme-border);
+}
 
 .bds-textarea-main-container {
   font-family: $font-type-01;
 
   .bds-textarea-label {
     text-align: left;
-    font-size: $font-size;
+    font-size: $font-size-label;
+    line-height: $line-height-label;
     padding-bottom: $padding-bottom-label;
-    color: $label-font-color;
+    color: var(--bds-textarea-label);
     font-weight: $label-font-weight;
     letter-spacing: $label-letter-spacing;
   }
 
   .bds-textarea-label-disabled {
-    color: $ui-disabled-01;
+    color: var(--bds-textarea-label-disabled);
+  }
+
+  /* Figma: assistive text + character count in one row below the input; assistive left, count right */
+  .bds-textarea-helper-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: global-style.getRem(8px);
+    margin-top: $padding-bottom-helper-text;
+    padding-top: $padding-bottom-helper-text;
+    min-height: global-style.getRem(20px);
   }
 
   .bds-textarea-helper-text {
+    display: flex;
+    align-items: flex-start;
+    gap: $assistive-gap;
     text-align: left;
     font-size: $font-size-helper-text;
-    padding-bottom: $padding-bottom-helper-text;
-    color: $tertiary-txt-color;
+    line-height: $line-height-label;
+    color: var(--bds-textarea-helper);
   }
 
   .bds-textarea-helper-text-disabled {
-    color: $ui-disabled-01;
+    color: var(--bds-textarea-helper-disabled);
+  }
+
+  .bds-textarea-helper-icon {
+    flex-shrink: 0;
+    width: $assistive-icon-size;
+    height: $assistive-icon-size;
+    color: var(--bds-textarea-helper);
   }
 
   .bds-textarea-container {
     box-sizing: border-box;
     position: relative;
     display: flex;
-    border-radius: $border-radius-textarea-container;
-    border: $border-textarea-container solid $card-border;
+    border-radius: $border-radius-container;
+    border: $border-one-px solid var(--bds-textarea-border);
+    background: var(--bds-textarea-bg);
+    padding: $padding-vertical-container $padding-horizontal-container;
+    gap: global-style.getRem(8px);
   }
 
   .bds-textarea-container-disabled {
-    border: $border-textarea-container solid $ui-disabled-01;
+    border-color: var(--bds-textarea-border-disabled);
   }
+
   .bds-textarea-container-error-border {
-    border: $border-textarea-error solid $error-txt-color;
+    border-width: $border-one-px;
+    border-color: var(--bds-textarea-border-error);
   }
 
   .bds-textarea-box {
     font-family: $font-type-01;
     font-weight: 400;
     width: 100%;
-    padding-top: $padding-top-textarea-box;
-    padding-bottom: $padding-bottom-textarea-box;
-    padding-left: $padding-left-textarea-box;
-    padding-right: $padding-right-textarea-box;
-    font-size: $font-size;
-    line-height: $line-height-textarea-box;
+    min-height: $line-height-input;
+    padding: 0;
+    font-size: $font-size-input;
+    line-height: $line-height-input;
     resize: none;
     background: transparent;
     vertical-align: middle;
@@ -95,51 +191,92 @@ $line-height-textarea-box: getRem(16px);
     -ms-text-overflow: ellipsis;
     text-overflow: ellipsis;
     overflow-y: auto;
-    color: $secondary-txt-color;
+    color: var(--bds-textarea-input-text);
+
+    &::placeholder {
+      color: var(--bds-textarea-input-placeholder);
+    }
   }
 
   .bds-textarea-box-disabled {
-    color: $ui-disabled-01;
+    color: var(--bds-textarea-input-disabled);
+
+    &::placeholder {
+      color: var(--bds-textarea-input-disabled);
+    }
   }
 
   .bds-textarea-box-read-only {
-    color: $secondary-read-only-textarea-color;
+    color: var(--bds-textarea-input-readonly);
   }
 
   .bds-textarea-container-focus {
+    &:hover:not(.bds-textarea-container-disabled):not(.bds-textarea-container-error-border) {
+      border-width: $border-two-px;
+      border-color: var(--bds-textarea-border-hover);
+      padding: $padding-vertical-focus $padding-horizontal-focus;
+    }
+
     &:focus-within {
-      border: $border-textarea-focus solid $info-color;
-      .bds-textarea-box {
-        padding-top: $padding-top-textarea-box-focus;
-        padding-bottom: $padding-bottom-textarea-box-focus;
-        padding-left: $padding-left-textarea-box-focus;
-        padding-right: $padding-right-textarea-box-focus;
+      border-width: $border-two-px;
+      border-color: var(--bds-textarea-border-focus);
+      padding: $padding-vertical-focus $padding-horizontal-focus;
+
+      .bds-textarea-box::placeholder {
+        color: var(--bds-textarea-input-placeholder-focused);
       }
     }
   }
 
-  .bds-textarea-container-error-border:focus-within {
-    .bds-textarea-box {
-      padding-top: $padding-top-error-border-focus;
-      padding-left: $padding-left-error-border-focus;
+  .bds-textarea-container-error-border {
+    &:hover:not(.bds-textarea-container-disabled) {
+      border-width: $border-two-px;
+      padding: $padding-vertical-focus $padding-horizontal-focus;
+    }
+
+    &:focus-within {
+      border-width: $border-two-px;
+      padding: $padding-vertical-focus $padding-horizontal-focus;
     }
   }
 
   .bds-error-msg-text {
     text-align: left;
     font-size: $font-size-helper-text;
-    color: $error-txt-color;
-    height: $height-error-msg-text;
+    color: var(--bds-textarea-error-msg);
+    min-height: $height-error-msg-text;
   }
 
   .bds-naked {
     border: 0;
     outline: 0;
-    padding: $padding-top-textarea-box-naked-variant 0;
+    padding: $padding-vertical-container 0;
+    background: transparent;
   }
 
+  /* Character count when it's the only item below textarea (no helper row) */
+  .bds-textarea-char-count-only {
+    margin-top: $padding-bottom-helper-text;
+    padding-top: $padding-bottom-helper-text;
+    text-align: right;
+  }
+
+  .bds-textarea-character-count-left-text {
+    display: inline-block;
+    font-size: $font-size-character-count;
+    line-height: global-style.getRem(16px);
+    color: var(--bds-textarea-character-count, #{tokens.$neutral-60});
+    text-align: right;
+    flex-shrink: 0;
+    margin-left: auto;
+    min-width: fit-content;
+    letter-spacing: global-style.getRem(0.3px);
+  }
+
+  /* Scrollbar - Figma: 4px width, radius 4px track, radius 12px thumb */
   .bds-textarea-box::-webkit-scrollbar-track {
-    border-radius: $border-radius-scrollbar;
+    border-radius: $border-radius-scrollbar-track;
+    background: var(--bds-textarea-scrollbar-track);
   }
 
   .bds-textarea-box::-webkit-scrollbar {
@@ -147,13 +284,7 @@ $line-height-textarea-box: getRem(16px);
   }
 
   .bds-textarea-box::-webkit-scrollbar-thumb {
-    border-radius: $border-radius-scrollbar;
-    background-color: $scroll-bar-color;
+    border-radius: $border-radius-scrollbar-thumb;
+    background: var(--bds-textarea-scrollbar-thumb);
   }
-
-  .bds-textarea-character-count-left-text {
-    font-size: $font-size-helper-text;
-    margin-top: $padding-bottom-helper-text;
-    color: $secondary-txt-color;
-  } 
 }

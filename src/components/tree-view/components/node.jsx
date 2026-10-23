@@ -27,6 +27,11 @@ const Node = ({
   allowOnlyLeafSelection = false,
   allowRootSelection = true,
   removeNodePadding = false,
+  showTags = false,
+  tagIcon,
+  tagIconClassName,
+  tagIconTooltip,
+  onTagsClick,
 }) => {
   const isLeaf = node.type === 'leaf'
   const hasChildren = node?._children?.length > 0
@@ -41,6 +46,7 @@ const Node = ({
     [TreeNodeClasses.parentNodeContainerSingleEnvironmentSelectChecked]: allowOnlyLeafSelection ? shouldHighlightNode && node.checked : singleSelect && node.checked,
     [TreeNodeClasses.parentNodeContainerRemovePadding]: removeNodePadding,
     [TreeNodeClasses.disabledRow]: isRowDisable,
+    [TreeNodeClasses.restrictedRow]: node?.disabledIcon,
   };
   const textNodeClass = {
     [TreeNodeClasses.parentText]: true,
@@ -130,11 +136,24 @@ const Node = ({
               {node.label} {node.highlighted ? '*' : ''}
             </Typography>
           </div>
+          {node?.badge && <div className={TreeNodeClasses.nodeBadge}>{node.badge}</div>}
           <LabelIcon
             iconSource={node?.rightIcon?.icon}
             tooltip={node?.rightIcon?.tooltip}
             onClick={node?.rightIcon?.onClick}
           />
+          {showTags && node?.tagContent && (
+            <div style={{ display: 'flex', alignItems: 'center' }}
+              onClick={(e) => e.stopPropagation()}>
+              <LabelIcon
+                iconSource={tagIcon}
+                iconClassName={tagIconClassName}
+                tooltip={tagIconTooltip}
+                onClick={() => onTagsClick?.(node)}
+              />
+              {node?.disabledIcon}
+            </div>
+          )}
         </div>
       </div>
     </div>

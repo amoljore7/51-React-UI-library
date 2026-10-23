@@ -1,0 +1,225 @@
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/tokens/colors.scss' as tokens;
+
+// Figma: 1px dashed box, 12px radius, 12px vertical padding, 2px gap, centred content
+$dropzone-radius: global-style.getRem(12px);
+$dropzone-padding-vertical: global-style.getRem(12px);
+$dropzone-padding-horizontal: global-style.getRem(16px);
+$dropzone-border-width: global-style.getRem(1px);
+$content-gap: global-style.getRem(2px);
+$container-gap: global-style.getRem(8px);
+$selected-gap: global-style.getRem(8px);
+$actions-gap: global-style.getRem(8px);
+$thumbnail-size: global-style.getRem(24px);
+$thumbnail-radius: global-style.getRem(4px);
+$thumbnail-padding: global-style.getRem(1px);
+$prompt-font-size: global-style.getRem(14px);
+$hint-font-size: global-style.getRem(12px);
+$line-height: global-style.getRem(16px);
+$letter-spacing: 0.32px;
+// The empty state is the taller of the two, so it sets the height for both and the dropzone
+// doesn't shrink when a file is picked: 16px icon + two 2px gaps + prompt and hint lines.
+$dropzone-min-height: global-style.getRem(52px);
+
+// Custom-theme / unthemed default: derive everything from the surface vars so a custom theme
+// (which sets no data-theme) still resolves correctly.
+:root {
+  --bds-file-upload-v2-bg: var(--theme-content-bg);
+  --bds-file-upload-v2-border: var(--theme-border);
+  --bds-file-upload-v2-border-active: var(--theme-text-primary);
+  --bds-file-upload-v2-label: var(--theme-text-primary);
+  --bds-file-upload-v2-prompt: var(--theme-text-secondary);
+  --bds-file-upload-v2-hint: var(--theme-text-secondary);
+  --bds-file-upload-v2-filename: var(--theme-text-primary);
+  --bds-file-upload-v2-thumbnail-border: var(--theme-border-subtle);
+  --bds-file-upload-v2-hover-bg: var(--theme-hover-bg);
+  --bds-file-upload-v2-disabled-text: var(--theme-text-placeholder);
+  --bds-file-upload-v2-disabled-border: var(--theme-separator);
+  // Feedback colors signal meaning, so they stay pinned rather than dissolving into the surface.
+  --bds-file-upload-v2-error-border: #{tokens.$feedback-negative-100};
+  --bds-file-upload-v2-error-text: #{tokens.$feedback-negative-100};
+}
+
+// Light theme — preserve the Figma light values exactly.
+[data-theme='light'] {
+  --bds-file-upload-v2-bg: #{tokens.$neutral-0};
+  --bds-file-upload-v2-border: #{tokens.$neutral-20};
+  --bds-file-upload-v2-border-active: #{tokens.$tint-primary-100};
+  --bds-file-upload-v2-label: #{tokens.$neutral-100};
+  --bds-file-upload-v2-prompt: #{tokens.$neutral-60};
+  --bds-file-upload-v2-hint: #{tokens.$neutral-60};
+  --bds-file-upload-v2-filename: #{tokens.$neutral-100};
+  --bds-file-upload-v2-thumbnail-border: #{tokens.$neutral-10};
+  --bds-file-upload-v2-hover-bg: #{tokens.$neutral-3};
+  --bds-file-upload-v2-disabled-text: #{tokens.$neutral-40};
+  --bds-file-upload-v2-disabled-border: #{tokens.$neutral-10};
+  --bds-file-upload-v2-error-border: #{tokens.$feedback-negative-100};
+  --bds-file-upload-v2-error-text: #{tokens.$feedback-negative-100};
+}
+
+[data-theme='dark'] {
+  --bds-file-upload-v2-bg: transparent;
+  --bds-file-upload-v2-border: #{tokens.$neutral-60};
+  --bds-file-upload-v2-border-active: #{tokens.$neutral-0};
+  --bds-file-upload-v2-label: #{tokens.$neutral-0};
+  --bds-file-upload-v2-prompt: #{tokens.$neutral-20};
+  --bds-file-upload-v2-hint: #{tokens.$neutral-40};
+  --bds-file-upload-v2-filename: #{tokens.$neutral-0};
+  --bds-file-upload-v2-thumbnail-border: #{tokens.$neutral-60};
+  --bds-file-upload-v2-hover-bg: #{tokens.$neutral-80};
+  --bds-file-upload-v2-disabled-text: #{tokens.$neutral-60};
+  --bds-file-upload-v2-disabled-border: #{tokens.material-white(20)};
+  --bds-file-upload-v2-error-border: #{tokens.$feedback-negative-80};
+  --bds-file-upload-v2-error-text: #{tokens.$feedback-negative-60};
+}
+
+.bds-file-upload-v2 {
+  display: flex;
+  flex-direction: column;
+  gap: $container-gap;
+
+  &__label {
+    color: var(--bds-file-upload-v2-label);
+    cursor: pointer;
+  }
+
+  &__dropzone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: $dropzone-min-height;
+    padding: $dropzone-padding-vertical $dropzone-padding-horizontal;
+    background-color: var(--bds-file-upload-v2-bg);
+    border: $dropzone-border-width dashed var(--bds-file-upload-v2-border);
+    border-radius: $dropzone-radius;
+    cursor: pointer;
+    outline: none;
+
+    &:hover,
+    &:focus-visible {
+      background-color: var(--bds-file-upload-v2-hover-bg);
+      border-color: var(--bds-file-upload-v2-border-active);
+    }
+
+    &--drag-active {
+      background-color: var(--bds-file-upload-v2-hover-bg);
+      border-color: var(--bds-file-upload-v2-border-active);
+    }
+
+    &--error {
+      border-color: var(--bds-file-upload-v2-error-border);
+    }
+
+    // Muted via color tokens rather than opacity, which would stack with already-muted
+    // tokens and become unreadable on dark and custom surfaces.
+    &--disabled {
+      cursor: not-allowed;
+      border-color: var(--bds-file-upload-v2-disabled-border);
+
+      &:hover {
+        background-color: var(--bds-file-upload-v2-bg);
+        border-color: var(--bds-file-upload-v2-disabled-border);
+      }
+
+      // Recolors the containers too, so the currentColor icons mute along with the text.
+      .bds-file-upload-v2__content,
+      .bds-file-upload-v2__selected,
+      .bds-file-upload-v2__prompt,
+      .bds-file-upload-v2__hint {
+        color: var(--bds-file-upload-v2-disabled-text);
+      }
+
+      .bds-file-upload-v2__actions {
+        color: var(--bds-file-upload-v2-filename);
+      }
+    }
+  }
+
+  &__input {
+    display: none;
+  }
+
+  // The `currentColor` upload icon inherits this, so it needs no token of its own.
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $content-gap;
+    text-align: center;
+    color: var(--bds-file-upload-v2-prompt);
+  }
+
+  &__icon {
+    flex-shrink: 0;
+  }
+
+  &__prompt {
+    font-size: $prompt-font-size;
+    line-height: $line-height;
+    letter-spacing: $letter-spacing;
+    color: var(--bds-file-upload-v2-prompt);
+  }
+
+  &__hint {
+    font-size: $hint-font-size;
+    line-height: $line-height;
+    letter-spacing: $letter-spacing;
+    color: var(--bds-file-upload-v2-hint);
+  }
+
+  &__selected {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $selected-gap;
+    width: 100%;
+    color: var(--bds-file-upload-v2-filename);
+  }
+
+  // `contain` so a wide logo isn't cropped, and no background of its own so a transparent PNG
+  // reads correctly against the dropzone surface.
+  &__thumbnail {
+    flex-shrink: 0;
+    width: $thumbnail-size;
+    height: $thumbnail-size;
+    padding: $thumbnail-padding;
+    object-fit: contain;
+    border: $dropzone-border-width solid var(--bds-file-upload-v2-thumbnail-border);
+    border-radius: $thumbnail-radius;
+  }
+
+  // flex: 1 pins the remove button right once a thumbnail joins the row; min-width lets the
+  // name ellipsis instead of forcing the row wider.
+  &__selected-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__actions {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: $actions-gap;
+  }
+
+  // Inherits the filename color above via currentColor.
+  &__action {
+    flex-shrink: 0;
+    cursor: pointer;
+
+    &--disabled {
+      color: var(--bds-file-upload-v2-disabled-text);
+      cursor: not-allowed;
+    }
+  }
+
+  &__error-text {
+    font-size: $hint-font-size;
+    line-height: $line-height;
+    letter-spacing: $letter-spacing;
+    color: var(--bds-file-upload-v2-error-text);
+  }
+}

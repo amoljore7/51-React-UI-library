@@ -7,7 +7,7 @@ export const classes = {
   errorListContainer: 'error-list-container',
   detailsContainer: 'details-container',
   closeIcon: 'snackbar-close-icon',
-};
+}
 
-export const imageRole = 'imageIcon';
-export const errorRole = 'errorItem';
+export const imageRole = 'imageIcon'
+export const errorRole = 'errorItem'

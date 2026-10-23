@@ -1,37 +1,75 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
+
+$border-radius: global-style.getRem(8px);
+$border-two-px: global-style.getRem(2px);
+$padding-x: global-style.getRem(12px);
+$padding-y: global-style.getRem(8px);
+$font-size-input: global-style.getRem(16px);
+$height-error-msg-text: global-style.getRem(17px);
+$font-size-helper-text: global-style.getRem(13px);
 
 .bds-pill-input-wrapper {
   display: flex;
   flex-direction: row;
-  border: 0.0625rem solid #a8a8a8;
-  padding: 8px;
-  width: 470px;
   flex-wrap: wrap;
-  background-color: #FFFFFF;
-  gap: 5px;
+  align-items: center;
+  gap: global-style.getRem(6px);
+  min-height: global-style.getRem(40px);
+  padding: $padding-y $padding-x;
+  border: $border-two-px solid var(--bds-textfield-border);
+  border-radius: $border-radius;
+  box-sizing: border-box;
+  background-color: var(--bds-textfield-bg);
+  font-family: $font-type-01;
+  transition: border-color 0.15s ease;
 
-  input:disabled {
-    background-color: white;
+  &:not(.bds-pill-input-container-disabled):hover:not(:focus-within) {
+    border-color: var(--bds-textfield-border-hover);
   }
 
-  /* Style for the input field */
+  &:focus-within {
+    border-color: var(--bds-textfield-border-focus);
+  }
+
   .bds-pill-text-input {
     border: none;
     outline: none;
     flex: 1;
+    min-width: global-style.getRem(80px);
+    font-family: $font-type-01;
+    font-size: $font-size-input;
+    background: transparent;
+    color: var(--bds-textfield-input-text);
+
+    &::placeholder {
+      color: var(--bds-textfield-input-placeholder);
+    }
+
+    &:disabled {
+      background-color: transparent;
+      color: var(--bds-textfield-input-disabled);
+
+      &::placeholder {
+        color: var(--bds-textfield-input-disabled);
+      }
+    }
   }
 }
 
-.bds-pill-input-error-msg-text {
-  font-size: getRem(12px);
-  color: $error-txt-color;
-  height: getRem(17px);
-}
-
 .bds-pill-input-container-error-border {
-  border: 1px solid $error-txt-color;
+  border: $border-two-px solid var(--bds-textfield-border-error) !important;
 }
 
 .bds-pill-input-container-disabled {
-  border: 0.0625rem solid #c6c6c6;
+  border: $border-two-px solid var(--bds-textfield-border-disabled);
+  cursor: default;
+}
+
+.bds-pill-input-error-msg-text {
+  font-size: $font-size-helper-text;
+  color: var(--bds-textfield-error-msg);
+  height: $height-error-msg-text;
 }

@@ -1,17 +1,44 @@
-@import '../../../global-style/index.scss';
+@use '../../../global-style/index.scss' as global-style;
+@use '../../../global-style/color.scss' as *;
+@use '../../../global-style/font-family.scss' as *;
+@use '../../../global-style/tokens/colors.scss' as tokens;
 
-$tree-view-node-text-color: $gray-80;
-$tree-view-node-icon-color: $gray-60;
-$tree-view-node-hover-color: $subtle-border;
-$tree-view-node-node-elements-margin-right: getRem(8px);
-$tree-view-node-text-font-size: getRem(14px);
-$tree-view-node-text-letter-spacing: getRem(0.32px);
+$tree-view-node-text-color: var(--theme-text-primary);
+$tree-view-node-icon-color: var(--theme-border-strong);
 
-$parent-container-left-right-padding: getRem(16px);
-$parent-container-top-bottom-padding: getRem(12px);
-$parent-container-width: getRem(304px);
+// ─── Theme tokens ─────────────────────────────────────────────────────────────
+// :root provides custom-theme / unthemed defaults derived from surface variables.
+// [data-theme='light'] preserves the original light-mode value.
+// [data-theme='dark'] uses the dark palette token.
+// The expand/collapse icon has no color of its own in light mode, so `inherit`
+// keeps that behaviour rather than pinning it to a border token.
+:root {
+  --bds-tree-disabled-text: var(--theme-text-secondary);
+  --bds-tree-node-select-bg: var(--theme-border-subtle);
+  --bds-tree-dir-icon: var(--theme-border-strong);
+}
 
-$tree-view-node-box-height: getRem(48px);
+[data-theme='light'] {
+  --bds-tree-disabled-text: #{$gray-40};
+  --bds-tree-node-select-bg: var(--theme-border-subtle);
+  --bds-tree-dir-icon: inherit;
+}
+
+[data-theme='dark'] {
+  --bds-tree-disabled-text: #{tokens.$neutral-60};
+  --bds-tree-node-select-bg: var(--theme-content-bg);
+  --bds-tree-dir-icon: var(--theme-border-strong);
+}
+
+$tree-view-node-node-elements-margin-right: global-style.getRem(8px);
+$tree-view-node-text-font-size: global-style.getRem(14px);
+$tree-view-node-text-letter-spacing: global-style.getRem(0.32px);
+
+$parent-container-left-right-padding: global-style.getRem(16px);
+$parent-container-top-bottom-padding: global-style.getRem(12px);
+$parent-container-width: global-style.getRem(304px);
+
+$tree-view-node-box-height: global-style.getRem(48px);
 
 .tree-view-node-parent-node-container {
   height: $tree-view-node-box-height;
@@ -24,11 +51,11 @@ $tree-view-node-box-height: getRem(48px);
     width: 100%;
 
     &-checked {
-      background-color: $tree-view-node-hover-color;
+      background-color: var(--bds-tree-node-select-bg);
     }
 
     &:hover {
-      background-color: $tree-view-node-hover-color;
+      background-color: var(--bds-tree-node-select-bg);
       cursor: pointer;
     }
   }
@@ -67,6 +94,7 @@ $tree-view-node-box-height: getRem(48px);
   margin-right: $tree-view-node-node-elements-margin-right;
   display: flex;
   align-items: center;
+  gap: global-style.getRem(8px);
 }
 .tree-view-node-parent-text {
   overflow: hidden;
@@ -85,25 +113,47 @@ $tree-view-node-box-height: getRem(48px);
 }
 
 .tree-view-node-left-empty-padding {
-  margin-left: getRem(24px);
+  margin-left: global-style.getRem(24px);
 }
 
 .tree-view-table-name-cell-content {
   display: flex;
-  gap: getRem(6px);
+  gap: global-style.getRem(6px);
+  align-items: center;
 }
 .tree-view-node-disabled {
 
   .tree-view-node-parent-text {
-    color: $gray-40;
+    color: var(--bds-tree-disabled-text);
   }
 
   .tree-view-node-dir-icon {
-    color: $gray-40;
+    color: var(--bds-tree-disabled-text);
   }
   
   &:hover {
     background-color: transparent;
     cursor: not-allowed;
   }
+}
+
+.tree-view-node-restricted {
+  opacity: 0.5;
+
+  &:hover {
+    background-color: transparent;
+    cursor: not-allowed;
+  }
+}
+
+// Consumer-supplied content (usually a pill or tag), so only spacing is set here.
+.tree-view-node-badge {
+  display: flex;
+  align-items: center;
+  margin-right: $tree-view-node-node-elements-margin-right;
+  min-width: 0;
+}
+
+.tree-view-node-dir-icon {
+  color: var(--bds-tree-dir-icon);
 }

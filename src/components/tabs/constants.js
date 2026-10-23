@@ -8,12 +8,12 @@ export const classes = {
   variantAuto: 'bds-variant-auto',
   variantFixed: 'bds-variant-fixed',
   variantAutoWidthLeftAligned: 'bds-variant-auto-width-left-aligned',
-};
-export const selected = 'selected';
-export const variantAutoProp = 'auto';
-export const variantFixedProp = 'fixed';
-export const tabTestId = 'tab-test-id';
-export const defaultTabIndex = 0;
-export const iconStart = 'start';
-export const iconEnd = 'end';
-export const iconTop = 'top';
+}
+export const selected = 'selected'
+export const variantAutoProp = 'auto'
+export const variantFixedProp = 'fixed'
+export const tabTestId = 'tab-test-id'
+export const defaultTabIndex = 0
+export const iconStart = 'start'
+export const iconEnd = 'end'
+export const iconTop = 'top'

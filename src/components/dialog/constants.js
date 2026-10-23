@@ -9,18 +9,18 @@ export const classes = {
   buttonContainer: 'button-container',
   buttonWrapper: 'button-wrapper',
   dialogChildrenWrapper: 'dialog-children-wrapper',
-};
+}
 
 export const dialogType = {
   general: 'general',
   alert: 'alert',
   error: 'error',
-};
+}
 
-export const alertColor = '#F1C21B';
-export const errorColor = '#E15C5C';
-export const iconColor = '#393939';
-export const iconSize = 24;
-export const zIndex = 200;
-export const defaultHeight = 278;
-export const defaultWidth = 464;
+export const alertColor = '#F1C21B'
+export const errorColor = '#E15C5C'
+export const iconColor = '#393939'
+export const iconSize = 24
+export const zIndex = 200
+export const defaultHeight = 278
+export const defaultWidth = 464

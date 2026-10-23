@@ -1,2 +1,2 @@
-import TextfieldInlineEdit from './textfieldInlineEdit';
-export default TextfieldInlineEdit;
+import TextfieldInlineEdit from './textfieldInlineEdit'
+export default TextfieldInlineEdit

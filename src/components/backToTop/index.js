@@ -1,2 +1,2 @@
-import BackToTop from './backToTop';
-export default BackToTop;
+import BackToTop from './backToTop'
+export default BackToTop

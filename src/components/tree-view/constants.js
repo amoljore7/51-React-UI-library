@@ -12,25 +12,26 @@ export const TreeNodeClasses = {
   nodeIcon: 'tree-view-node-icon',
   nodeIconCursor: 'tree-view-node-icon-cursor-pointer',
   nodeLeftemptyPadding: 'tree-view-node-left-empty-padding',
+  nodeBadge: 'tree-view-node-badge',
   tableNameCellContent: 'tree-view-table-name-cell-content',
   dirIconContainer: 'tree-view-node-dir-icon',
-  disabledRow: 'tree-view-node-disabled'
-};
+  disabledRow: 'tree-view-node-disabled',
+  restrictedRow: 'tree-view-node-restricted',
+}
 
 export const TreeClass = {
   boundingContainer: 'tree-view-bounding-container',
   container: 'tree-view-container',
   filterContainer: 'tree-view-filter-container',
-  filterContainerWithoutDropdown: 'tree-view-filter-container-without-dropdown',
-};
+}
 
 export const tooltipText = {
   list: 'List View',
   tree: 'Tree View',
 }
 
-export const defaultIconSize = 24;
-export const recursivePropName = 'nodes';
+export const defaultIconSize = 24
+export const recursivePropName = 'nodes'
 
 export const SHOW_ALL = 'Show All'
 export const SHOW_SELECTED = 'Show Selected'

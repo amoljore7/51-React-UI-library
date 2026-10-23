@@ -1,8 +1,8 @@
-@import '../../global-style/index.scss';
-
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
 @mixin headerCommon {
-  padding-bottom: getRem(8px);
+  padding-bottom: global-style.getRem(8px);
   cursor: pointer;
   display: flex;
   user-select: none;
@@ -12,24 +12,26 @@
   .header {
     &-with-underline {
       @include headerCommon();
-      border-bottom: 1px solid #a8a8a8;
+      border-bottom: 1px solid var(--theme-border);
     }
 
     &-without-underline {
       @include headerCommon();
     }
 
-    img {
+    svg {
       display: inline;
-      margin-right: getRem(5px);
+      margin-right: global-style.getRem(5px);
+      vertical-align: middle;
+      color: var(--theme-text-primary);
     }
   
     .margin-top-32 {
-      margin-top: getRem(32px);
+      margin-top: global-style.getRem(32px);
     }
   
     .margin-top-8 {
-      margin-top: getRem(8px);
+      margin-top: global-style.getRem(8px);
     }
   }
 
@@ -40,8 +42,8 @@
       transition: 0.2s ease-out;
 
       &-with-padding {
-        padding-top: getRem(24px);
-        padding-bottom: getRem(24px);
+        padding-top: global-style.getRem(24px);
+        padding-bottom: global-style.getRem(24px);
       }
     }
 
@@ -51,5 +53,15 @@
       transition: 0.2s ease-in;
       height: 0;
     }
+  }
+}
+
+[data-theme='dark'] .accordion-container {
+  .header-with-underline {
+    border-bottom-color: var(--theme-border);
+  }
+
+  .header svg {
+    color: var(--theme-text-primary);
   }
 }

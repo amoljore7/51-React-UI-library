@@ -4,7 +4,7 @@ export const classes = {
   imgStyle: 'img-style',
   titleStyle: 'card-title-style',
   containerDisabled: 'container-disabled',
-};
+}
 
-export const defaultTabIndex = 0;
-export const imageRole = 'img';
+export const defaultTabIndex = 0
+export const imageRole = 'img'

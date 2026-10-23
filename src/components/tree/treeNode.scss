@@ -1,29 +1,32 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
-$tree-node-container-left-margin: getRem(28px);
+$tree-node-container-left-margin: global-style.getRem(28px);
 $tree-node-selected-color: $blue-20;
 
-$tree-node-text-color: $gray-80;
-$tree-node-icon-color: $gray-60;
-$tree-node-tracking-line-color: $gray-30;
-$tree-node-icon-margin-right: getRem(8px);
-$tree-node-tracking-line-width: getRem(1px);
-$tree-node-tracking-line-pos-top: getRem(48px);
+$tree-node-text-color: var(--theme-text-primary);
+$tree-node-icon-color: var(--theme-border-strong);
+$tree-node-tracking-line-color: var(--theme-border);
+$tree-node-icon-margin-right: global-style.getRem(8px);
+$tree-node-tracking-line-width: global-style.getRem(1px);
+$tree-node-tracking-line-pos-top: global-style.getRem(48px);
 $tree-node-tracking-line-z-index: 100;
-$tree-node-content-box-margin-left: getRem(56px);
-$tree-node-text-font-size: getRem(14px);
-$tree-node-text-letter-spacing: getRem(0.32px);
+$tree-node-content-box-margin-left: global-style.getRem(56px);
+$tree-node-text-font-size: global-style.getRem(14px);
+$tree-node-text-letter-spacing: global-style.getRem(0.32px);
 
-$parent-container-left-right-padding: getRem(16px);
-$parent-container-top-bottom-padding: getRem(12px);
-$parent-container-width: getRem(304px);
+$parent-container-left-right-padding: global-style.getRem(16px);
+$parent-container-top-bottom-padding: global-style.getRem(12px);
+$parent-container-width: global-style.getRem(304px);
 
 $tracking-line-height: calc(100% - 48px);
-$element-hover-color: $gray-20;
+$element-hover-color: var(--theme-hover-bg);
 
-$tree-node-box-height: getRem(48px);
-$tree-node-leaf-left-padding: getRem(52px);
-$tree-node-icon-size: getRem(24px);
+$tree-node-box-height: global-style.getRem(48px);
+$tree-node-leaf-left-padding: global-style.getRem(52px);
+$tree-node-icon-size: global-style.getRem(24px);
 
 .tree-node-parent-node-container:hover {
   background-color: $element-hover-color;
@@ -121,10 +124,10 @@ $tree-node-icon-size: getRem(24px);
 }
 .tree-node-content-box-select,
 .tree-node-parent-node-container-select {
-  background-color: $blue-20;
+  background-color: var(--theme-hover-bg);
   &:hover,
   :active {
-    background-color: $blue-20;
+    background-color: var(--theme-hover-bg);
   }
 }
 .tree-node-content-box-icon,
@@ -140,4 +143,35 @@ $tree-node-icon-size: getRem(24px);
   font-family: $font-type-01;
   font-size: $tree-node-text-font-size;
   letter-spacing: $tree-node-text-letter-spacing;
+}
+
+[data-theme='dark'] {
+  .tree-node-parent-node-container:hover {
+    background-color: rgba(tokens.$feedback-information-100, 0.25);
+  }
+
+  .tree-node-tracking-line-container {
+    border-left-color: var(--theme-border);
+  }
+
+  .tree-node-content-box-icon,
+  .tree-node-dir-icon,
+  .tree-node-parent-icon {
+    color: var(--theme-border-strong);
+  }
+
+  .tree-node-content-box-text,
+  .tree-node-parent-text {
+    color: var(--theme-text-primary);
+  }
+
+  .tree-node-content-box-select,
+  .tree-node-parent-node-container-select {
+    background-color: rgba(tokens.$feedback-information-100, 0.25);
+
+    &:hover,
+    &:active {
+      background-color: rgba(tokens.$feedback-information-100, 0.25);
+    }
+  }
 }

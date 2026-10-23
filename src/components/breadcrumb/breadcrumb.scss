@@ -1,9 +1,26 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
+@use '../../global-style/font-family.scss' as *;
 
-$font-size: getRem(14px);
+// ---------------------------------------------------------------------------
+// Theme: CSS custom properties (light / dark)
+// ---------------------------------------------------------------------------
+:root,
+[data-theme='light'] {
+  --bds-breadcrumb-link: #{$info-color};
+  --bds-breadcrumb-current: var(--theme-text-primary);
+}
+
+[data-theme='dark'] {
+  --bds-breadcrumb-link: var(--theme-text-primary);
+  --bds-breadcrumb-current: var(--theme-text-primary);
+}
+
+$font-size: global-style.getRem(14px);
 $font-weight: 400;
-$letter-spacing: getRem(0.45px);
-$separator-left-right-margin: getRem(16px);
+$letter-spacing: global-style.getRem(0.45px);
+$separator-left-right-margin: global-style.getRem(16px);
 $margin-0: 0;
 
 .bds-breadcrumb-container {
@@ -12,6 +29,7 @@ $margin-0: 0;
   margin: 0;
   padding: 0;
 }
+
 .bds-breadcrumb-item {
   display: inline-block;
   font-size: $font-size;
@@ -27,7 +45,7 @@ $margin-0: 0;
 .bds-breadcrumb-item a:focus,
 .bds-breadcrumb-item a:hover {
   text-decoration: none;
-  color: $info-color;
+  color: var(--bds-breadcrumb-link);
 }
 
 .bds-breadcrumb-item a:hover,
@@ -41,7 +59,7 @@ $margin-0: 0;
 .bds-breadcrumb-item-last a:focus,
 .bds-breadcrumb-item-last a:hover {
   text-decoration: none;
-  color: $primary-txt-color;
+  color: var(--theme-text-secondary);
 }
 
 .bds-breadcrumb-item-separator {
@@ -53,5 +71,5 @@ $margin-0: 0;
 }
 
 .bds-breadcrumb-overflow-item {
-  color: $info-color;
+  color: var(--bds-breadcrumb-link);
 }

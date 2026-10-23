@@ -1,35 +1,84 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
-$pill-container-width: getRem(117px);
-$pill-container-height: getRem(32px);
-$pill-container-read-only-width: getRem(93px);
-$pill-container-border-color: $gray-30;
-$pill-container-error-border-color: $error-color;
-$pill-container-disabled-border-color: $gray-30;
-$pill-container-readOnly-border-color: $gray-30;
-$pill-container-border-width: getRem(1px);
-$pill-container-error-border-width: getRem(2px);
-$pill-container-border-radius: getRem(16px);
-$pill-label-width: getRem(61px);
-$pill-label-height: getRem(19px);
-$pill-icon-width: getRem(16px);
-$pill-icon-height: getRem(16px);
-$pill-label-margin-top: getRem(5px);
-$pill-label-margin-right: getRem(8px);
-$pill-label-read-only-margin-right: getRem(15px);
-$pill-label-margin-bottom: getRem(6px);
-$pill-label-margin-left: getRem(15px);
-$pill-icon-margin-right: getRem(7px);
-$pill-icon-margin-left: getRem(0px);
-$pill-icon-margin-top-bottom: getRem(3px);
-$pill-label-font-size: getRem(14px);
-$pill-label-letter-spacing: getRem(0.32px);
-$pill-hover-background-color: $gray-20;
-$pill-background-color: $default-page-bg;
-$pill-label-text-color: $gray-80;
-$pill-label-disabled-color: $gray-30;
-$pill-label-read-only-color: $unselected-tab-txt-color;
-$pill-label-max-width: getRem(384px);
+// ─── Theme tokens ─────────────────────────────────────────────────────────────
+// :root provides custom-theme / unthemed defaults derived from surface variables.
+// [data-theme='light'] preserves the original light-mode values.
+// [data-theme='dark'] uses the dark palette tokens.
+// Error and interactive-hover keep their semantic palette values in every theme.
+:root {
+  --bds-pill-bg: var(--theme-content-bg);
+  --bds-pill-hover-bg: var(--theme-hover-bg);
+  --bds-pill-text: var(--theme-text-primary);
+  --bds-pill-label: var(--theme-text-primary);
+  --bds-pill-label-disabled: var(--theme-text-placeholder);
+  --bds-pill-label-readonly: var(--theme-text-secondary);
+  --bds-pill-icon: var(--theme-text-secondary);
+  --bds-pill-icon-hover: #{$focus-border};
+  --bds-pill-icon-disabled: var(--theme-text-placeholder);
+  --bds-pill-error-border: #{$error-color};
+}
+
+[data-theme='light'] {
+  // Light never painted the container or set a color on it, so it stays
+  // see-through and keeps inheriting text color.
+  --bds-pill-bg: transparent;
+  --bds-pill-hover-bg: #{$gray-20};
+  --bds-pill-text: inherit;
+  --bds-pill-label: var(--theme-text-primary);
+  --bds-pill-label-disabled: #{$gray-30};
+  --bds-pill-label-readonly: #{$unselected-tab-txt-color};
+  --bds-pill-icon: #{$gray-60};
+  --bds-pill-icon-hover: #{$focus-border};
+  --bds-pill-icon-disabled: #{$gray-30};
+  --bds-pill-error-border: #{$error-color};
+}
+
+[data-theme='dark'] {
+  --bds-pill-bg: var(--theme-content-bg);
+  --bds-pill-hover-bg: #{tokens.$neutral-60};
+  --bds-pill-text: var(--theme-text-primary);
+  --bds-pill-label: var(--theme-text-primary);
+  --bds-pill-label-disabled: #{tokens.$neutral-60};
+  --bds-pill-label-readonly: #{tokens.$neutral-40};
+  --bds-pill-icon: #{tokens.$neutral-40};
+  --bds-pill-icon-hover: #{tokens.$feedback-information-60};
+  --bds-pill-icon-disabled: #{tokens.$neutral-60};
+  --bds-pill-error-border: #{$error-color};
+}
+
+$pill-container-width: global-style.getRem(117px);
+$pill-container-height: global-style.getRem(32px);
+$pill-container-read-only-width: global-style.getRem(93px);
+$pill-container-border-color: var(--theme-border);
+$pill-container-error-border-color: var(--bds-pill-error-border);
+$pill-container-disabled-border-color: var(--theme-border);
+$pill-container-readOnly-border-color: var(--theme-border);
+$pill-container-border-width: global-style.getRem(1px);
+$pill-container-error-border-width: global-style.getRem(2px);
+$pill-container-border-radius: global-style.getRem(16px);
+$pill-label-width: global-style.getRem(61px);
+$pill-label-height: global-style.getRem(19px);
+$pill-icon-width: global-style.getRem(16px);
+$pill-icon-height: global-style.getRem(16px);
+$pill-label-margin-top: global-style.getRem(5px);
+$pill-label-margin-right: global-style.getRem(8px);
+$pill-label-read-only-margin-right: global-style.getRem(15px);
+$pill-label-margin-bottom: global-style.getRem(6px);
+$pill-label-margin-left: global-style.getRem(15px);
+$pill-icon-margin-right: global-style.getRem(7px);
+$pill-icon-margin-left: global-style.getRem(0px);
+$pill-icon-margin-top-bottom: global-style.getRem(3px);
+$pill-label-font-size: global-style.getRem(14px);
+$pill-label-letter-spacing: global-style.getRem(0.32px);
+$pill-hover-background-color: var(--bds-pill-hover-bg);
+$pill-background-color: var(--theme-content-bg);
+$pill-label-text-color: var(--bds-pill-label);
+$pill-label-disabled-color: var(--bds-pill-label-disabled);
+$pill-label-read-only-color: var(--bds-pill-label-readonly);
+$pill-label-max-width: global-style.getRem(384px);
 
 .bds-pill-container {
   width: fit-content;
@@ -39,6 +88,8 @@ $pill-label-max-width: getRem(384px);
   border-radius: $pill-container-border-radius;
   border: $pill-container-border-width solid $pill-container-border-color;
   box-sizing: border-box;
+  background-color: var(--bds-pill-bg);
+  color: var(--bds-pill-text);
   &:hover {
     background: $pill-hover-background-color;
   }
@@ -84,7 +135,6 @@ $pill-label-max-width: getRem(384px);
 
 .bds-pill-label-read-only {
   margin-right: $pill-label-read-only-margin-right;
-  color: $pill-label-read-only-color;
 }
 
 .bds-pill-icon-container {
@@ -113,15 +163,15 @@ $pill-label-max-width: getRem(384px);
   height: $pill-icon-height;
   margin: $pill-icon-margin-top-bottom $pill-icon-margin-right $pill-icon-margin-top-bottom
     $pill-icon-margin-left;
-  color: $gray-60;
+  color: var(--bds-pill-icon);
   &:hover {
-    color: $focus-border;
+    color: var(--bds-pill-icon-hover);
   }
 }
 
 .bds-pill-icon-disabled {
-  color: $gray-30;
+  color: var(--bds-pill-icon-disabled);
   &:hover {
-    color: $gray-30;
+    color: var(--bds-pill-icon-disabled);
   }
 }

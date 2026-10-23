@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { FiDownloadCloud } from 'react-icons/fi';
-import FileUploadTextIcon from '../../../assets/icons/file-upload-text.svg';
+import FileUploadTextIcon from '../../../assets/icons/file-upload-text.svg?react';
 import Typography from '../../typography';
 import Tooltip from '../../tooltip';
 import { classes, nonImageAltText } from '../constants';
@@ -40,11 +40,10 @@ const Preview = ({ file, setIsOpen }) => {
         )}
         {
           !file.type.includes('image') && 
-          <img
+          <FileUploadTextIcon
             className={classes.previewNonImageContainer}
-            role='img'
-            alt={nonImageAltText}
-            src={FileUploadTextIcon}
+            role="img"
+            aria-label={nonImageAltText}
           />
         }
         <Tooltip title={file.name} position='top'>

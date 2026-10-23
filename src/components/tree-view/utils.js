@@ -1,13 +1,13 @@
-import clone from "lodash/clone";
-import isEmpty from "lodash/isEmpty";
-import { SHOW_SELECTED } from "./constants";
+import clone from 'lodash/clone'
+import isEmpty from 'lodash/isEmpty'
+import { SHOW_SELECTED } from './constants'
 
-export const flattenTree = (tree) => {
-  const treeArr = Array.isArray(tree) ? tree : [tree];
+export const flattenTree = tree => {
+  const treeArr = Array.isArray(tree) ? tree : [tree]
 
   return traverseNodes({
     nodes: treeArr,
-  });
+  })
 }
 
 const traverseNodes = ({
@@ -18,47 +18,65 @@ const traverseNodes = ({
   path = '',
 }) => {
   nodes.forEach((node, i) => {
-    node._depth = depth;
+    node._depth = depth
     node.path = `${path}${path.length ? '/' : ''}${node?.label}`
     if (parent) {
-      node._id = node.id || `${parent._id}-${i}`;
-      node._parent = parent._id;
-      parent._children.push(node._id);
+      node._id = node.id || `${parent._id}-${i}`
+      node._parent = parent._id
+      parent._children.push(node._id)
     } else {
-      node._id = node.id || `${i}`;
+      node._id = node.id || `${i}`
     }
 
     flattennedList.push(node)
 
     if (node.nodes) {
-      node._children = [];
+      node._children = []
       traverseNodes({
         nodes: node.nodes,
         parent: node,
         depth: depth + 1,
         flattennedList,
         path: node.path,
-      });
+      })
 
     }
-  });
+  })
 
-  return flattennedList;
+  return flattennedList
 }
 
-export const getNodesToRender = (allNodes, singleSelect = false, rootLeafNodesFirst = false, toBeTraversedNodes = [], traversedNode = [], nodesToRender = []) => {
+export const getNodesToRender = (
+  allNodes,
+  singleSelect = false,
+  rootLeafNodesFirst = false,
+  toBeTraversedNodes = [],
+  traversedNode = [],
+  nodesToRender = [],
+) => {
   if (toBeTraversedNodes.length === 0) {
     toBeTraversedNodes = allNodes
   }
 
-  toBeTraversedNodes?.forEach((node) => {
+  toBeTraversedNodes?.forEach(node => {
     if (!traversedNode.includes(node._id)) {
       traversedNode.push(node._id)
       nodesToRender.push(node)
       if (node?._children?.length > 0) {
         if (node?.expanded) {
-          const childrenNodes = allNodes.filter(child => node?._children.includes(child._id))
-          getNodesToRender(allNodes, singleSelect, rootLeafNodesFirst, childrenNodes, traversedNode, nodesToRender)
+          const childrenNodes = allNodes.filter(
+            child => node?._children.includes(
+              child._id,
+            ),
+          )
+          getNodesToRender(
+            allNodes,
+            singleSelect,
+            rootLeafNodesFirst,
+            childrenNodes,
+            traversedNode,
+            nodesToRender,
+          )
         } else {
           traversedNode.push(...getAllTheChildren(allNodes, node._id))
         }
@@ -77,13 +95,17 @@ export const getNodesToRender = (allNodes, singleSelect = false, rootLeafNodesFi
     /**
      * When the root level leaf nodes are to be moved up,
      * 1. Find the index from where the lead nodes are present.
-     * 2. Keep the items from that index to the last in a variable. i.e. slice the array.
-     * 3. Remove the root leaf nodes from the original array.
-     * 4. Add the items from #2 to the index 1 of the array. 0th index is alway going to be the root.
+     * 2. Keep the items from that index to the last
+     *    in a variable. i.e. slice the array.
+     * 3. Remove the root leaf nodes from the
+     *    original array.
+     * 4. Add the items from #2 to the index 1 of
+     *    the array. 0th index is alway going to
+     *    be the root.
      */
     const allNodesWithLeavesAtTop = clone(nodesToRender)
     const fromIndexToRemove = allNodesWithLeavesAtTop.findIndex(
-      node => node._depth === 1 && node.type === 'leaf' && node._parent === '0'
+      node => node._depth === 1 && node.type === 'leaf' && node._parent === '0',
     )
     if (fromIndexToRemove !== -1) {
       const rootLevelLeaves = allNodesWithLeavesAtTop.slice(fromIndexToRemove)
@@ -108,19 +130,25 @@ export const getAllTheChildren = (nodes, parentNodeId, childrenIds = []) => {
   return childrenIds
 }
 
-export const findAndUpdateCheckedStatus = (nodeId, isChecked, nodes, singleSelect = false) => {
+export const findAndUpdateCheckedStatus = (
+  nodeId,
+  isChecked,
+  nodes,
+  singleSelect = false,
+) => {
   const updatedNodes = [ ...nodes ]
   const nodeIndex = nodes.findIndex(node => node._id === nodeId)
 
   if (singleSelect) {
-    // If the single environment select is true, uncheck the any prechecked environment(s).
+    // If the single environment select is true,
+    // uncheck any prechecked environment(s).
     const existingSelectedNodes = nodes.reduce((accumulator, node, index) => {
       if (node.checked) {
-        accumulator.push(index);
+        accumulator.push(index)
       }
 
-      return accumulator;
-    }, []);
+      return accumulator
+    }, [])
 
     existingSelectedNodes.forEach(existingNodeIndex => {
       updatedNodes[existingNodeIndex].checked = false
@@ -135,8 +163,16 @@ export const findAndUpdateCheckedStatus = (nodeId, isChecked, nodes, singleSelec
     if (updatedNodes[nodeIndex].checked) {
       isCurrentNodeChecked = false
       isCurrentNodeIndeterminate = nodes[nodeIndex]?._children?.length > 0
-    } else if (!updatedNodes[nodeIndex].checked && updatedNodes[nodeIndex].indeterminate) {
-      isCurrentNodeChecked = false
+    } else if (
+      !updatedNodes[nodeIndex].checked &&
+      updatedNodes[nodeIndex].indeterminate
+    ) {
+      const allDescendantIds = getAllTheChildren(nodes, nodeId)
+      const hasDisabledDescendant = allDescendantIds.some(id => {
+        const idx = nodes.findIndex(n => n._id === id)
+        return idx !== -1 && nodes[idx].restricted
+      })
+      isCurrentNodeChecked = hasDisabledDescendant
       isCurrentNodeIndeterminate = false
     } else {
       isCurrentNodeChecked = true
@@ -147,7 +183,12 @@ export const findAndUpdateCheckedStatus = (nodeId, isChecked, nodes, singleSelec
     updatedNodes[nodeIndex].indeterminate = isCurrentNodeIndeterminate
 
     if (nodes[nodeIndex]?._children?.length > 0) {
-      updateAllChildren(updatedNodes, nodes[nodeIndex]?._children, isCurrentNodeChecked, isCurrentNodeIndeterminate)
+      updateAllChildren(
+        updatedNodes,
+        nodes[nodeIndex]?._children,
+        isCurrentNodeChecked,
+        isCurrentNodeIndeterminate,
+      )
     }
   
     updateParents(updatedNodes, nodes[nodeIndex]?._parent)
@@ -156,15 +197,23 @@ export const findAndUpdateCheckedStatus = (nodeId, isChecked, nodes, singleSelec
   return updatedNodes
 }
 
-const updateAllChildren = (nodes, childrenIds = [], isChecked, isParentIndeterminate = false) => {
+const updateAllChildren = (
+  nodes,
+  childrenIds = [],
+  isChecked,
+  isParentIndeterminate = false,
+) => {
   childrenIds.forEach(id => {
     const nodeIndex = nodes.findIndex(node => node._id === id)
     if (nodeIndex === -1) {
       return
     }
-    nodes[nodeIndex].checked = isChecked || isParentIndeterminate
+    nodes[nodeIndex].checked = nodes[nodeIndex].restricted
+      ? true
+      : (isChecked || isParentIndeterminate)
     nodes[nodeIndex].indeterminate = false
     nodes[nodeIndex].disabled = isChecked
+    
 
     if (nodes[nodeIndex]?._children?.length > 0) {
       updateAllChildren(nodes, nodes[nodeIndex]._children, isChecked)
@@ -180,7 +229,10 @@ const updateParents = (nodes, parentNodeId) => {
 
     if (areAllChildrenChecked(children) && !nodes[nodeIndex].checked) {
       nodes[nodeIndex].indeterminate = true
-    } else if (!areAllChildrenChecked(children) && isAnyOneCheckedOrIndeterminate(children)) {
+    } else if (
+      !areAllChildrenChecked(children) &&
+      isAnyOneCheckedOrIndeterminate(children)
+    ) {
       nodes[nodeIndex].checked = false
       nodes[nodeIndex].indeterminate = true
     } else if (!areAllChildrenChecked(children)) {
@@ -207,7 +259,7 @@ export const toggleNodeExpansion = (nodes, nodeId) => {
   const updatedNodes = [ ...nodes ]
   updatedNodes[nodeIndex] = {
     ...updatedNodes[nodeIndex],
-    expanded: !nodes[nodeIndex].expanded
+    expanded: !nodes[nodeIndex].expanded,
   }
 
   return updatedNodes
@@ -221,27 +273,51 @@ export const prepareDataForTable = (nodes, showSelected, searchText) => {
   }
 
   if (searchText) {
-    updatedNodes = updatedNodes.filter(node => node.label?.toLowerCase()?.includes(searchText))
+    updatedNodes = updatedNodes.filter(
+      node => node.label
+        ?.toLowerCase()
+        ?.includes(searchText),
+    )
   }
 
   return updatedNodes
 }
 
-export const getFilteredNodes = (nodes, filter, searchText, singleSelect = false, rootLeafNodesFirst = false) => {
+export const getFilteredNodes = (
+  nodes,
+  filter,
+  searchText,
+  singleSelect = false,
+  rootLeafNodesFirst = false,
+) => {
   let filteredNodes = [ ...nodes ]
   if (filter === SHOW_SELECTED) {
     filteredNodes = nodes.filter(node => node.checked || node.indeterminate)
   }
 
   if (searchText) {
-    filteredNodes = filterByText(filteredNodes, searchText, singleSelect, rootLeafNodesFirst)
+    filteredNodes = filterByText(
+      filteredNodes,
+      searchText,
+      singleSelect,
+      rootLeafNodesFirst,
+    )
   }
 
   return filteredNodes
 }
 
-const filterByText = (nodes, searchText, singleSelect, rootLeafNodesFirst) => {
-  const nodesWithMachingText = nodes.filter(node => node.label?.toLowerCase()?.includes(searchText))
+const filterByText = (
+  nodes,
+  searchText,
+  singleSelect,
+  rootLeafNodesFirst,
+) => {
+  const nodesWithMachingText = nodes.filter(
+    node => node.label
+      ?.toLowerCase()
+      ?.includes(searchText),
+  )
   const filteredNodes = []
   const traversedNodes = []
   nodesWithMachingText.forEach(node => {
@@ -253,8 +329,13 @@ const filterByText = (nodes, searchText, singleSelect, rootLeafNodesFirst) => {
     filteredNodes.push(node)
   })
 
-  // Sorting the nodes by depth to start the rendering in the corect order.
-  return getNodesToRender([...sortNodesByDepth(filteredNodes)], singleSelect, rootLeafNodesFirst)
+  // Sorting the nodes by depth to start
+  // the rendering in the corect order.
+  return getNodesToRender(
+    [...sortNodesByDepth(filteredNodes)],
+    singleSelect,
+    rootLeafNodesFirst,
+  )
 }
 
 const getParentsForANode = (nodes, selectedNode, traversedNodes, parents = []) => {
@@ -279,12 +360,14 @@ export const getSelectedItems = (nodes, traversedNodes = []) => {
 
   checkedNodes.forEach(checkedNode => {
     if (!traversedNodes.includes(checkedNode._id)) {
-      // Find all the nodes matching the current node's path, or if the current node path is a substring.
+      // Find all the nodes matching the current
+      // node's path, or if the current node path
+      // is a substring.
       // This gives us the parent and all the associated children.
       let nodesMatchingCurrentPath = checkedNodes.filter(
         node =>
           node.path === checkedNode.path ||
-          node.path.includes(`${checkedNode.path}/`)
+          node.path.includes(`${checkedNode.path}/`),
       )
       if (nodesMatchingCurrentPath[0].type === 'node') {
         // The first element is always going to be the top most parent.
@@ -300,14 +383,15 @@ export const getSelectedItems = (nodes, traversedNodes = []) => {
     }
   })
 
-  // Filter the unnecessary data from the nodes before passing it to the onChange function.
+  // Filter the unnecessary data from the nodes
+  // before passing it to the onChange function.
   return selectedItems.map(node => ({
     label: node.label,
     value: node.value,
   }))
 }
 
-export const sortNodesByDepth = (nodes) => {
+export const sortNodesByDepth = nodes => {
   const sortedNodes = [ ...nodes ]
   sortedNodes.sort((a, b) => {
     if (a._depth > b._depth) {
@@ -324,7 +408,7 @@ export const sortNodesByDepth = (nodes) => {
   return sortedNodes
 }
 
-export const getDisplayDate = (dateTime) => {
+export const getDisplayDate = dateTime => {
   if (!dateTime) {
     return ''
   }

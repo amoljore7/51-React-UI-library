@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import './snackbar.scss';
-import errorIcon from '../../assets/icons/formError.svg';
-import closeError from '../../assets/icons/close-error.svg';
+import ErrorIcon from '../../assets/icons/formError.svg?react';
+import CloseError from '../../assets/icons/close-error.svg?react';
 import { imageRole, errorRole } from './constants';
 import { classes } from './constants';
 
@@ -33,7 +33,7 @@ const Snackbar = ({
     <div className={classes.snackbarContainer} data-testid={classes.snackbarContainer}>
       <div className={classes.snackbar}>
         <div className={classes.imageTitle}>
-          <img role={imageRole} src={errorIcon} alt={title} />
+          <ErrorIcon role={imageRole} aria-label={title} />
         </div>
         <div className={classes.detailsContainer}>
           {title && <span className={classes.title}>{title}</span>}
@@ -51,8 +51,8 @@ const Snackbar = ({
           </div>
         </div>
         {allowClosing && (
-          <button className={classes.closeIcon} onClick={handleClose}>
-            <img role={'close-snackbar'} src={closeError} alt={'Close'} />
+          <button type="button" className={classes.closeIcon} onClick={handleClose} aria-label="Close">
+            <CloseError aria-hidden focusable="false" />
           </button>
         )}
       </div>

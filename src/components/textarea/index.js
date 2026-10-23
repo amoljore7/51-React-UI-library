@@ -1,2 +1,2 @@
-import Textarea from './textarea';
-export default Textarea;
+import Textarea from './textarea'
+export default Textarea

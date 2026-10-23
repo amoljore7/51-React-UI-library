@@ -1,2 +1,2 @@
-import VerticalTabs from './verticaltabs';
-export default VerticalTabs;
+import VerticalTabs from './verticaltabs'
+export default VerticalTabs

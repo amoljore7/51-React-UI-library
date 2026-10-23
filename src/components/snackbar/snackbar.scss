@@ -1,17 +1,20 @@
-@import "../../global-style/index.scss";
+@use "../../global-style/index.scss" as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
-$font-size: getRem(14px);
+$font-size: global-style.getRem(14px);
 $font-weight-title: 700;
 
-$icon-width: getRem(24px);
-$icon-height: getRem(24px);
+$icon-width: global-style.getRem(24px);
+$icon-height: global-style.getRem(24px);
 
-$padding-l: getRem(16px);
-$padding-m: getRem(8px);
-$padding-s: getRem(4px);
+$padding-l: global-style.getRem(16px);
+$padding-m: global-style.getRem(8px);
+$padding-s: global-style.getRem(4px);
 
 $width-snackbar: 100%;
-$border-width-snackbar: getRem(1px);
+$border-width-snackbar: global-style.getRem(1px);
 
 .snackbar-container {
   font-family: $font-type-01;
@@ -60,7 +63,8 @@ $border-width-snackbar: getRem(1px);
   align-self: flex-start;
 }
 
-.snackbar-image-title img {
+.snackbar-image-title img,
+.snackbar-image-title svg {
   width: $icon-width;
   height: $icon-height;
 }
@@ -72,4 +76,16 @@ $border-width-snackbar: getRem(1px);
   display: flex;
   flex-direction: column;
   gap: $padding-s;
+}
+
+[data-theme='dark'] {
+  .snackbar {
+    background-color: rgba(tokens.$neutral-100, 0.95);
+    border-color: tokens.$feedback-negative-80;
+    color: tokens.$neutral-0;
+  }
+
+  .snackbar-image-title svg {
+    color: tokens.$feedback-negative-80;
+  }
 }

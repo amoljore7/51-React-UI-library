@@ -1,7 +1,49 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss';
+@use '../../global-style/tokens/colors.scss' as tokens;
+
+// ─── Theme tokens ─────────────────────────────────────────────────────────────
+// :root provides custom-theme / unthemed defaults derived from surface variables.
+// [data-theme='light'] preserves the original light-mode values.
+// [data-theme='dark'] uses the dark palette tokens.
+:root {
+  --bds-overflow-menu-icon: var(--theme-text-primary);
+  --bds-overflow-menu-icon-disabled: var(--theme-text-placeholder);
+}
+
+[data-theme='light'] {
+  --bds-overflow-menu-icon: #{tokens.$neutral-100};
+  --bds-overflow-menu-icon-disabled: #{tokens.$neutral-40};
+}
+
+[data-theme='dark'] {
+  --bds-overflow-menu-icon: var(--theme-text-primary);
+  --bds-overflow-menu-icon-disabled: #{tokens.$neutral-60};
+}
 
 .icon-wrapper {
   width: fit-content;
   height: fit-content;
   cursor: pointer;
+  // The trigger is usually a currentColor icon; without this it would inherit
+  // whatever text color the host application happens to apply.
+  color: var(--bds-overflow-menu-icon);
+}
+
+.disable-menu {
+  cursor: not-allowed;
+  color: var(--bds-overflow-menu-icon-disabled);
+}
+
+#overflow-menu-options {
+  .option{
+    gap:0;
+    &-icon{
+      margin-right: 0.8rem;
+
+      &-small {
+        width: auto;
+        height: auto;
+      }
+    }
+  }
 }

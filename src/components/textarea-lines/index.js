@@ -1,2 +1,2 @@
-import TextareaLines from "./textarea-lines";
-export default TextareaLines;
+import TextareaLines from './textarea-lines'
+export default TextareaLines

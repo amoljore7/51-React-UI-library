@@ -1,4 +1,5 @@
-@import "../../global-style/index.scss";
+@use "../../global-style/index.scss";
+@use '../../global-style/tokens/colors.scss' as tokens;
 
 .bds-multi-textfield-container {
   .wrapper {
@@ -14,5 +15,15 @@
   }
   .bds-multi-textfield-cross-btn-wrapper{
     display: flex;
+  }
+}
+
+[data-theme='dark'] {
+  .bds-multi-textfield-container {
+    color: var(--theme-text-primary);
+
+    svg {
+      color: var(--theme-text-primary);
+    }
   }
 }

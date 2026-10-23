@@ -1,273 +1,254 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
-$select-container-height: getRem(40px);
-$select-container-border-width: getRem(1px);
-$select-container-border-color: $gray-40;
-$select-container-border-radius: getRem(2px);
-$select-container-padding-top-bottom: getRem(7px);
-$select-container-padding-left-right: getRem(15px);
-$select-container-border-disabled-color: $gray-30;
-$select-container-focus-padding-top: getRem(6px);
-$select-container-focus-padding-left: getRem(14px);
-$select-container-error-padding-top-bottom: getRem(6px);
-$select-container-error-padding-left-right: getRem(14px);
-$option-padding-left: getRem(16px);
-$option-padding-top: getRem(8px);
-$option-padding-bottom: getRem(8px);
-$options-container-border-width: getRem(1px);
-$options-container-border-color: $blue-70;
-$options-container-max-height: getRem(320px);
-$select-label-height: getRem(19px);
-$select-label-color: $gray-80;
-$select-label-color-disabled: $gray-30;
-$select-helper-text-disabled-color: $gray-30;
-$select-label-letter-spacing: getRem(0.32px);
-$select-label-font-size: getRem(14px);
-$select-label-margin-bottom: getRem(8px);
-$select-label-font-weight: 600;
-$select-helper-text-height: getRem(17px);
-$select-helper-text-color: $gray-60;
-$select-helper-text-letter-spacing: getRem(0.32px);
-$select-helper-text-font-size: getRem(12px);
-$select-helper-text-margin-bottom: getRem(4px);
-$actions-container-margin-bottom: getRem(20px);
-$actions-container-margin-left: getRem(16px);
-$select-focus-border-width: getRem(2px);
-$select-focus-border-color: $blue-70;
-$select-height: getRem(19px);
-$select-input-padding: getRem(0px);
-$option-hover-color: $subtle-border;
-$select-container-error-border-width: getRem(2px);
-$select-container-error-border-color: $error-color;
-$select-container-error-text-color: $error-color;
-$select-error-margin-top: getRem(1px);
-$select-error-letter-spacing: getRem(1px);
-$select-container-read-only-height: 19px;
-$select-value-leter-spacing: getRem(0.32px);
-$select-value-color: $gray-80;
-$select-value-disabled-color: $gray-30;
-$select-value-placeholder-color: $gray-50;
-$select-value-placeholder-color-disabled: $gray-30;
-$select-value-font-size: getRem(14px);
-$select-value-read-only-color: $unselected-tab-txt-color;
-$select-value-read-only-font-size: getRem(14px);
-$select-label-read-only-margin-bottom: getRem(8px);
-$select-option-label-height: getRem(19px);
-$select-option-label-letter-spacing: getRem(0.32px);
-$select-option-label-color: $gray-80;
-$select-option-label-font-size: getRem(14px);
-$select-option-height: getRem(40px);
-$select-small-container-height: getRem(32px);
-$select-small-container-border-color: $unselected-tab-border-color;
-$select-small-container-padding-top: getRem(5px);
-$select-small-container-padding-right: getRem(7px);
-$select-small-container-padding-bottom: getRem(6px);
-$select-small-container-padding-left: getRem(7px);
-$select-small-container-focus-padding-top: getRem(4px);
-$select-small-container-focus-padding-right: getRem(6px);
-$select-small-container-focus-padding-bottom: getRem(5px);
-$select-small-container-focus-padding-left: getRem(6px);
-$select-small-value-wrapper-height: getRem(19px);
-$select-actions-small-container-item-margin-left: getRem(8px);
-$select-icon-color: $gray-60;
-$select-icon-disabled-color: $gray-30;
+/* Figma comboBox: 40px height, 12px/8px padding, 8px radius, border-rest/focus/error/disabled */
+$height: global-style.getRem(40px);
+$padding-h: global-style.getRem(12px);
+$padding-v: global-style.getRem(8px);
+$radius: global-style.getRem(8px);
+$gap: global-style.getRem(8px);
+$border-1: global-style.getRem(1px);
+$border-2: global-style.getRem(2px);
+
+$label-font-size: global-style.getRem(14px);
+$label-line-height: global-style.getRem(18px);
+$label-letter-spacing: global-style.getRem(0.21px);
+$label-margin-bottom: global-style.getRem(8px);
+$helper-font-size: global-style.getRem(13px);
+$helper-line-height: global-style.getRem(18px);
+$helper-letter-spacing: global-style.getRem(0.24px);
+$helper-margin-bottom: global-style.getRem(4px);
+$value-font-size: global-style.getRem(16px);
+$value-line-height: global-style.getRem(20px);
+$value-letter-spacing: global-style.getRem(0.15px);
+$icon-size: global-style.getRem(24px);
+$error-font-size: global-style.getRem(12px);
+$error-margin-top: global-style.getRem(1px);
+
+/* Small size */
+$height-small: global-style.getRem(32px);
+$padding-small-v: global-style.getRem(6px);
+$padding-small-h: global-style.getRem(8px);
+$icon-size-small: global-style.getRem(16px);
+
+// ---------------------------------------------------------------------------
+// Theme: CSS custom properties (light / dark) – aligned with Figma comboBox
+// ---------------------------------------------------------------------------
+// Custom theme / unthemed defaults — borders and icons derive from surface variables.
+// [data-theme='light'] block below restores original light-mode hardcoded values.
+:root {
+  --bds-select-bg: var(--theme-content-bg);
+  --bds-select-border: var(--theme-border);
+  --bds-select-border-hover: var(--theme-border-strong);
+  --bds-select-border-focus: var(--theme-text-primary);
+  --bds-select-border-error: #{tokens.$feedback-negative-100};
+  --bds-select-border-disabled: var(--theme-border);
+  --bds-select-label: var(--theme-text-primary);
+  --bds-select-label-disabled: var(--theme-text-secondary);
+  --bds-select-helper: var(--theme-text-secondary);
+  --bds-select-helper-disabled: var(--theme-text-secondary);
+  --bds-select-value: var(--theme-text-primary);
+  --bds-select-placeholder: var(--theme-text-placeholder);
+  --bds-select-value-disabled: var(--theme-border);
+  --bds-select-value-readonly: var(--theme-text-secondary);
+  --bds-select-icon: var(--theme-text-secondary);
+  --bds-select-icon-disabled: var(--theme-border);
+  --bds-select-error: #{tokens.$feedback-negative-100};
+}
+
+// Light theme — restore original hardcoded values so light mode is unchanged.
+[data-theme='light'] {
+  --bds-select-bg: var(--theme-content-bg);
+  --bds-select-border: #{rgba(tokens.$neutral-100, 0.4)};
+  --bds-select-border-hover: #{rgba(tokens.$neutral-100, 0.4)};
+  --bds-select-border-focus: #{tokens.$tint-primary-100};
+  --bds-select-border-error: #{tokens.$feedback-negative-100};
+  --bds-select-border-disabled: #{rgba(tokens.$neutral-100, 0.2)};
+  --bds-select-label: var(--theme-text-primary);
+  --bds-select-label-disabled: #{tokens.$neutral-40};
+  --bds-select-helper: var(--theme-text-secondary);
+  --bds-select-helper-disabled: #{tokens.$neutral-40};
+  --bds-select-value: var(--theme-text-primary);
+  --bds-select-placeholder: var(--theme-text-placeholder);
+  --bds-select-value-disabled: #{tokens.$neutral-20};
+  --bds-select-value-readonly: var(--theme-text-secondary);
+  --bds-select-icon: #{tokens.$neutral-60};
+  --bds-select-icon-disabled: #{tokens.$neutral-40};
+  --bds-select-error: #{tokens.$feedback-negative-100};
+}
+
+[data-theme='dark'] {
+  --bds-select-bg: var(--theme-content-bg);
+  --bds-select-border: var(--theme-border);
+  --bds-select-border-hover: var(--theme-border-strong);
+  --bds-select-border-focus: var(--theme-text-primary);
+  --bds-select-border-error: #{tokens.$feedback-negative-80};
+  --bds-select-border-disabled: var(--theme-border);
+  --bds-select-label: var(--theme-text-primary);
+  --bds-select-label-disabled: #{tokens.$neutral-40};
+  --bds-select-helper: var(--theme-text-secondary);
+  --bds-select-helper-disabled: #{tokens.$neutral-40};
+  --bds-select-value: var(--theme-text-primary);
+  --bds-select-placeholder: var(--theme-text-placeholder);
+  --bds-select-value-disabled: #{tokens.$neutral-40};
+  --bds-select-value-readonly: var(--theme-text-secondary);
+  --bds-select-icon: #{tokens.$neutral-40};
+  --bds-select-icon-disabled: #{tokens.$neutral-60};
+  --bds-select-error: #{tokens.$feedback-negative-80};
+}
 
 .bds-select-container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  height: $select-container-height;
-  border: $select-container-border-width solid $select-container-border-color;
-  border-radius: $select-container-border-radius;
-  padding: $select-container-padding-top-bottom $select-container-padding-left-right;
-  box-sizing: border-box;
-  background-color: $white;
-}
-
-.bds-select-container-focus {
-  &:focus-within {
-    border: $select-focus-border-width solid $select-focus-border-color;
-    padding: $select-container-focus-padding-top $select-container-focus-padding-left;
-  }
-}
-
-.bds-select-small-container {
-  height: $select-small-container-height;
-  border: $select-container-border-width solid $select-small-container-border-color;
-  padding: $select-small-container-padding-top $select-small-container-padding-right
-    $select-small-container-padding-bottom $select-small-container-padding-left;
+  gap: $gap;
+  min-height: $height;
+  padding: $padding-v $padding-h;
+  border: $border-1 solid var(--bds-select-border);
+  border-radius: $radius;
+  background-color: var(--bds-select-bg);
   box-sizing: border-box;
 }
 
-.bds-select-small-container-focus {
-  &:focus-within {
-    border: $select-focus-border-width solid $select-focus-border-color;
-    padding: $select-small-container-focus-padding-top $select-small-container-focus-padding-right
-      $select-small-container-focus-padding-bottom $select-small-container-focus-padding-left;
-  }
+.bds-select-container-focus:focus-within {
+  border-width: $border-2;
+  border-color: var(--bds-select-border-focus);
+  padding: $padding-v - 1px $padding-h - 2px;
 }
 
-.bds-select-small-value-wrapper {
-  display: flex;
-  height: $select-small-value-wrapper-height;
-  align-items: center;
+.bds-select-container-disabled {
+  border-color: var(--bds-select-border-disabled);
 }
 
-.bds-select-small-actions-container {
-  display: flex;
-  align-items: center;
+.bds-select-container-error {
+  border-width: $border-2;
+  border-color: var(--bds-select-border-error);
+  padding: $padding-v - 1px $padding-h - 2px;
 }
 
 .bds-select-container-inline {
   border: none;
-}
-
-.bds-select-container-disabled {
-  border: $select-container-border-width solid $select-container-border-disabled-color;
-  .bds-select-placeholder {
-    color: $select-value-placeholder-color-disabled;
-  }
-}
-
-.bds-select-container-error {
-  border: $select-container-error-border-width solid $select-container-error-border-color;
-  padding: $select-container-padding-top-bottom $select-container-padding-left-right;
-}
-
-.bds-select-container-read-only {
-  border: none;
   padding: 0;
-  height: $select-container-read-only-height;
 }
 
 .bds-select-container-disabled-inline {
   border: none;
 }
 
-.bds-select-error-message {
-  text-align: left;
-  font-size: 12px;
-  font-family: $font-type-01;
-  letter-spacing: $select-error-letter-spacing;
-  margin-top: $select-error-margin-top;
-  color: $select-container-error-text-color;
+.bds-select-container-read-only {
+  border: none;
+  padding: 0;
+  min-height: unset;
+  background: transparent;
 }
 
-.bds-select-actions-container {
-  display: flex;
+/* Small size */
+.bds-select-small-container {
+  min-height: $height-small;
+  padding: $padding-small-v $padding-small-h;
 }
 
-.bds-select-actions-container-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  margin-left: $actions-container-margin-left;
-}
-
-.bds-select-actions-small-container-item {
-  display: flex;
-  align-items: center;
-  margin-left: $select-actions-small-container-item-margin-left;
+.bds-select-small-container-focus:focus-within {
+  padding: $padding-small-v - 1px $padding-small-h - 2px;
 }
 
 .bds-select-label {
-  height: $select-label-height;
   font-family: $font-type-01;
-  letter-spacing: $select-label-letter-spacing;
-  color: $select-label-color;
-  font-size: $select-label-font-size;
-  margin-bottom: $select-label-margin-bottom;
-  font-weight: $select-label-font-weight;
-}
-
-.bds-select-label-read-only {
-  margin-bottom: $select-label-read-only-margin-bottom;
+  font-size: $label-font-size;
+  font-weight: 600;
+  line-height: $label-line-height;
+  letter-spacing: $label-letter-spacing;
+  color: var(--bds-select-label);
+  margin-bottom: $label-margin-bottom;
 }
 
 .bds-select-label-disabled {
-  color: $select-label-color-disabled;
+  color: var(--bds-select-label-disabled);
 }
 
 .bds-select-helper-text {
-  height: $select-helper-text-height;
   font-family: $font-type-01;
-  letter-spacing: $select-helper-text-letter-spacing;
-  color: $select-helper-text-color;
-  font-size: $select-helper-text-font-size;
-  margin-bottom: $select-helper-text-margin-bottom;
+  font-size: $helper-font-size;
+  line-height: $helper-line-height;
+  letter-spacing: $helper-letter-spacing;
+  color: var(--bds-select-helper);
+  margin-bottom: $helper-margin-bottom;
 }
 
 .bds-select-helper-text-disabled {
-  color: $select-helper-text-disabled-color;
+  color: var(--bds-select-helper-disabled);
 }
 
 .bds-select-value {
-  width: 100%;
-  height: $select-height;
-  text-align: left;
-  font-size: $select-value-font-size;
+  flex: 1;
+  min-width: 0;
   font-family: $font-type-01;
-  letter-spacing: $select-value-leter-spacing;
-  color: $select-value-color;
-  margin-bottom: 1px;
+  font-size: $value-font-size;
+  line-height: $value-line-height;
+  letter-spacing: $value-letter-spacing;
+  color: var(--bds-select-value);
+  text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.bds-select-placeholder {
+  color: var(--bds-select-placeholder);
+}
+
 .bds-select-value-disabled {
-  color: $select-value-disabled-color;
+  color: var(--bds-select-value-disabled);
 }
 
 .bds-select-value-read-only {
-  text-align: left;
-  font-size: $select-value-read-only-font-size;
-  font-family: $font-type-01;
-  letter-spacing: $select-value-leter-spacing;
-  color: $select-value-read-only-color;
+  color: var(--bds-select-value-readonly);
 }
 
-.bds-select-placeholder {
-  color: $select-value-placeholder-color;
-}
-
-.bds-select-options-container {
-  max-height: $options-container-max-height;
-  border: $options-container-border-width solid $options-container-border-color;
-  box-sizing: border-box;
-  overflow: auto;
-}
-
-.bds-select-option {
+.bds-select-small-value-wrapper {
   display: flex;
   align-items: center;
-  padding-left: $option-padding-left;
-  padding-top: $option-padding-top;
-  padding-bottom: $option-padding-bottom;
-  box-sizing: border-box;
-  height: $select-option-height;
+  min-height: $height-small - $padding-small-v - $padding-small-v;
+}
+
+.bds-select-actions-container {
+  display: flex;
+  align-items: center;
+  gap: $gap;
+  flex-shrink: 0;
+}
+
+.bds-select-actions-container-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  &:hover {
-    background: $option-hover-color;
-  }
+  width: $icon-size;
+  height: $icon-size;
 }
 
-.bds-select-option-label {
-  display: flex;
-  align-items: center;
-  height: $select-option-label-height;
-  font-family: $font-type-01;
-  letter-spacing: $select-option-label-letter-spacing;
-  color: $select-option-label-color;
-  font-size: $select-option-label-font-size;
+.bds-select-actions-small-container-item {
+  width: $icon-size-small;
+  height: $icon-size-small;
+}
+
+.bds-select-icon,
+.bds-select-icon-disabled {
+  flex-shrink: 0;
 }
 
 .bds-select-icon {
-  color: $select-icon-color;
+  color: var(--bds-select-icon);
 }
 
 .bds-select-icon-disabled {
-  color: $select-icon-disabled-color;
+  color: var(--bds-select-icon-disabled);
+}
+
+.bds-select-error-message {
+  font-family: $font-type-01;
+  font-size: $error-font-size;
+  letter-spacing: 0.5px;
+  margin-top: $error-margin-top;
+  color: var(--bds-select-error);
 }

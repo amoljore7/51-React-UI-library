@@ -1,0 +1,128 @@
+@use '../../../global-style/index.scss' as global-style;
+@use '../../../global-style/tokens/colors.scss' as tokens;
+@use '../../../global-style/tokens/elevations.scss' as elevations;
+
+// Figma: 380px dialog, 12px radius, 16px header padding, 24px body padding,
+// 260px preview tile with an 8px radius.
+$dialog-width: global-style.getRem(380px);
+$dialog-radius: global-style.getRem(12px);
+$header-padding: global-style.getRem(16px);
+$header-gap: global-style.getRem(16px);
+$body-padding: global-style.getRem(24px);
+$tile-height: global-style.getRem(260px);
+$tile-padding: global-style.getRem(16px);
+$tile-radius: global-style.getRem(8px);
+$border-width: global-style.getRem(1px);
+// Keeps the dialog clear of the viewport edge on a short or narrow screen.
+$viewport-margin: global-style.getRem(48px);
+$overlay-z-index: 1000;
+
+// Declared for `[data-theme]` as well, since the light and dark blocks below are partial and
+// a nested preset theme has to be able to re-resolve the structural tokens.
+:root,
+[data-theme] {
+  // The scrim is a scrim in every theme, so it stays pinned rather than dissolving into
+  // a light custom surface.
+  --bds-file-preview-overlay: #{tokens.material-black(60)};
+  --bds-file-preview-bg: var(--theme-content-bg);
+  // A dark dialog sits on a dark scrim with nothing to separate the two, so it needs an edge
+  // of its own. Light draws none, and pinning one there would change it.
+  --bds-file-preview-border: var(--theme-border-subtle);
+  --bds-file-preview-title: var(--theme-text-primary);
+  --bds-file-preview-tile-bg: var(--theme-hover-bg);
+  --bds-file-preview-tile-border: var(--theme-border);
+}
+
+[data-theme='light'] {
+  --bds-file-preview-bg: #{tokens.$neutral-0};
+  --bds-file-preview-border: transparent;
+  --bds-file-preview-title: #{tokens.$neutral-100};
+  --bds-file-preview-tile-bg: #{tokens.$neutral-10};
+  --bds-file-preview-tile-border: #{tokens.$neutral-20};
+}
+
+[data-theme='dark'] {
+  --bds-file-preview-bg: #{tokens.$neutral-80};
+  --bds-file-preview-border: #{tokens.$neutral-60};
+  --bds-file-preview-title: #{tokens.$neutral-0};
+  --bds-file-preview-tile-bg: #{tokens.$neutral-100};
+  --bds-file-preview-tile-border: #{tokens.$neutral-60};
+}
+
+// The portal host sits on `document.body`, so it carries the theme's foreground itself —
+// otherwise `currentColor` descendants would inherit the host application's body color.
+.bds-file-preview-portal {
+  position: fixed;
+  z-index: $overlay-z-index;
+  color: var(--bds-file-preview-title);
+}
+
+.bds-file-preview {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  width: $dialog-width;
+  max-width: calc(100vw - #{$viewport-margin});
+  max-height: calc(100vh - #{$viewport-margin});
+  overflow: hidden;
+  background-color: var(--bds-file-preview-bg);
+  border: $border-width solid var(--bds-file-preview-border);
+  border-radius: $dialog-radius;
+
+  @include elevations.elevation-8;
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    background-color: var(--bds-file-preview-overlay);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: $header-gap;
+    padding: $header-padding;
+  }
+
+  &__title {
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
+    color: var(--bds-file-preview-title);
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-height: 0;
+    padding: $body-padding;
+  }
+
+  // Shrinks rather than scrolls on a short viewport, so the 24px gap to the dialog edge stays
+  // the same on all three sides.
+  &__tile {
+    display: flex;
+    flex: 0 1 $tile-height;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: $tile-padding;
+    overflow: hidden;
+    background-color: var(--bds-file-preview-tile-bg);
+    border: $border-width solid var(--bds-file-preview-tile-border);
+    border-radius: $tile-radius;
+  }
+
+  // `contain` so neither a wide wordmark nor a tall favicon is cropped or upscaled past
+  // its natural size.
+  &__image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+}

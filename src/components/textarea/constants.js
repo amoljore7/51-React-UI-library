@@ -13,10 +13,13 @@ export const classes = {
   textareaBoxReadOnly: 'bds-textarea-box-read-only',
   errorMsgText: 'bds-error-msg-text',
   variantNaked: 'bds-naked',
-  charLeftCount: 'bds-textarea-character-count-left-text'
-};
+  charLeftCount: 'bds-textarea-character-count-left-text',
+  charCountOnly: 'bds-textarea-char-count-only',
+  helperIcon: 'bds-textarea-helper-icon',
+  helperRow: 'bds-textarea-helper-row',
+}
 
-export const dataTestIdForCharCount = 'character-left-count-test-id';
-export const variantNaked = 'naked';
-export const dataTestId = 'textarea-test-id';
-export const defaultHeight = '104px';
+export const dataTestIdForCharCount = 'character-left-count-test-id'
+export const variantNaked = 'naked'
+export const dataTestId = 'textarea-test-id'
+export const defaultHeight = '104px'

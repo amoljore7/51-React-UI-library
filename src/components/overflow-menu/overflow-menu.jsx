@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import MenuOptions from '../../utils/common-portal/menu-options-container';
 import { FiMoreVertical } from 'react-icons/fi';
 import { classes, defaultTabIndex, defaultIconSize, defaultWidth } from './constants';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import './overflow-menu.scss';
 
@@ -11,8 +12,11 @@ const OverflowMenu = ({
   onChange,
   width = defaultWidth,
   getOptionLabel,
+  getOptionIcon,
   icon,
-  onClick = () => {},
+  iconSize = defaultIconSize,
+  onClick = () => { },
+  disabled = false,
 }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [containerDimension, setContainerDimension] = useState(null);
@@ -35,8 +39,10 @@ const OverflowMenu = ({
   };
 
   const clickHandler = (e) => {
-    onClick && onClick(e);
-    showAllOptions();
+    if (!disabled) {
+      onClick && onClick(e);
+      showAllOptions();
+    }
   };
 
   const blurHandler = () => {
@@ -52,7 +58,7 @@ const OverflowMenu = ({
   };
 
   const iconKeyDownHandler = (event) => {
-    if (event.code === 'Enter') {
+    if (event.code === 'Enter' && !disabled) {
       showAllOptions();
     }
   };
@@ -61,23 +67,27 @@ const OverflowMenu = ({
     <>
       <div
         data-testid={'icon-wrapper'}
-        className={classes.iconWrapper}
+        className={classNames(classes.iconWrapper, {
+          [classes.disableMenu]: disabled,
+        })}
         ref={iconRef}
         onBlur={blurHandler}
         onClick={clickHandler}
         onKeyDown={iconKeyDownHandler}
         tabIndex={defaultTabIndex}
       >
-        {Boolean(icon) ? icon : <FiMoreVertical size={defaultIconSize} />}
+        {Boolean(icon) ? icon : <FiMoreVertical size={iconSize} />}
       </div>
       {showOptions && (
         <MenuOptions
           portalContainerId={'overflow-menu-options'}
           options={options}
           getOptionLabel={getOptionLabel}
+          getOptionIcon={getOptionIcon}
           containerDimension={containerDimension}
           onChange={selectOption}
           width={width}
+          themeSourceRef={iconRef}
         />
       )}
     </>
@@ -88,9 +98,12 @@ OverflowMenu.propTypes = {
   options: PropTypes.array.isRequired,
   onChange: PropTypes.func.isRequired,
   getOptionLabel: PropTypes.func.isRequired,
+  getOptionIcon: PropTypes.func,
   icon: PropTypes.elementType,
+  iconSize: PropTypes.number,
   width: PropTypes.string,
   onClick: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 export default OverflowMenu;

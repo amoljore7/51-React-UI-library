@@ -1,1 +1,1 @@
-export const OBJECT_TYPE = 'object';
+export const OBJECT_TYPE = 'object'

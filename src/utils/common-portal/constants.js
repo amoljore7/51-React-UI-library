@@ -13,12 +13,13 @@ export const classes = {
   optionWithLabel: 'option-with-label',
   optionLabelWithSublabel: 'option-label-with-sublabel',
   optionLabelAlone: 'option-label-alone',
+  disabledOption: 'disabled-option',
   separator: 'separator',
   selectedOption: 'selected-option',
   highlightOption: 'highlight-option',
   highlightOptionLabel: 'highlight-option-label',
-  grouped: 'grouped'
-};
+  grouped: 'grouped',
+}
 
-export const optionRole = 'option';
-export const defaultTabIndex = '0';
+export const optionRole = 'option'
+export const defaultTabIndex = '0'

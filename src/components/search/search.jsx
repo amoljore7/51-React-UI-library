@@ -5,13 +5,11 @@ import {
   classes,
   inputType,
   inputPlaceholder,
-  searchIconSize,
-  clearIconSize,
   searchRole,
   searchInputRole,
 } from './constants';
-import { FiX } from 'react-icons/fi';
-import { GoSearch } from 'react-icons/go';
+import SearchIcon from '../../assets/icons/search.svg?react';
+import CloseXIcon from '../../assets/icons/close-x.svg?react';
 
 import './search.scss';
 
@@ -20,6 +18,7 @@ const SearchInput = ({
   onChange,
   disabled = false,
   width,
+  height,
   placeholder = inputPlaceholder,
 }) => {
   const searchMainClass = {
@@ -36,66 +35,52 @@ const SearchInput = ({
     [classes.searchIconDisabled]: disabled,
   };
   const clearIconClass = {
-    [classes.searchIconBox]: true,
     [classes.clearIcon]: true,
     [classes.clearIconDisabled]: disabled,
   };
 
-  const searchRef = useRef();
+  const inputRef = useRef(null);
 
-  const getSearchIcon = () => {
-    return (
-      <div className={classNames({ ...searchIconClass })}>
-        <GoSearch size={searchIconSize} />
-      </div>
-    );
-  };
-
-  const getInputField = () => {
-    return (
-      <input
-        ref={searchRef}
-        className={classNames({ ...searchBoxClass })}
-        type={inputType}
-        value={value}
-        placeholder={placeholder}
-        onChange={onChange}
-        disabled={disabled}
-        role={searchInputRole}
-      />
-    );
-  };
-
-  const handleOnClear = () => {
-    searchRef.current.value = null;
-    const e = new Event('change', { bubbles: true });
-    searchRef.current.dispatchEvent(e);
-  };
-
-  const getClearIcon = () => {
-    return (
-      <div
-        className={classNames({ ...clearIconClass })}
-        style={{
-          cursor: disabled ? 'default' : 'pointer',
-        }}
-        onClick={!disabled ? handleOnClear : null}
-      >
-        <FiX size={clearIconSize} />
-      </div>
-    );
+  const handleOnClear = (e) => {
+    e.preventDefault();
+    if (disabled) return;
+    const syntheticEvent = { target: { value: '' } };
+    onChange(syntheticEvent);
+    inputRef.current?.focus();
   };
 
   return (
     <div className={classes.container}>
       <div
         role={searchRole}
-        className={classNames({ ...searchMainClass })}
-        style={{ width: `${width}` }}
+        className={classNames(searchMainClass)}
+        style={{ width: width ? `${width}` : undefined, height: height ? `${height}` : undefined, }}
       >
-        {getSearchIcon()}
-        {getInputField()}
-        {value !== '' && getClearIcon()}
+        <div className={classNames(searchIconClass)} aria-hidden>
+          <SearchIcon />
+        </div>
+        <input
+          ref={inputRef}
+          className={classNames(searchBoxClass)}
+          type={inputType}
+          value={value}
+          placeholder={placeholder}
+          onChange={onChange}
+          disabled={disabled}
+          role={searchInputRole}
+          aria-label={placeholder}
+        />
+        {value !== '' && (
+          <button
+            type="button"
+            className={classNames(clearIconClass)}
+            onClick={handleOnClear}
+            disabled={disabled}
+            aria-label="Clear search"
+          >
+            <CloseXIcon />
+          </button>
+        )}
       </div>
     </div>
   );
@@ -105,6 +90,7 @@ SearchInput.propTypes = {
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   width: PropTypes.string,
+  height: PropTypes.string,
   disabled: PropTypes.bool,
   placeholder: PropTypes.string,
 };

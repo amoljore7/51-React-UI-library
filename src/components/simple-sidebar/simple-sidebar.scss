@@ -1,17 +1,20 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
-$font-size: getRem(14px);
-$font-size-menu-title: getRem(20px);
+$font-size: global-style.getRem(14px);
+$font-size-menu-title: global-style.getRem(20px);
 
-$drawer-width: getRem(328px);
-$closed-drawer-width: getRem(8px);
-$border-right-drawer: getRem(2px);
+$drawer-width: global-style.getRem(328px);
+$closed-drawer-width: global-style.getRem(8px);
+$border-right-drawer: global-style.getRem(2px);
 
-$icon-width: getRem(24px);
-$icon-height: getRem(24px);
-$icon-position-top: getRem(16px);
-$icon-position-right-closed: getRem(-32px);
-$icon-position-right-open: getRem(8px);
+$icon-width: global-style.getRem(24px);
+$icon-height: global-style.getRem(24px);
+$icon-position-top: global-style.getRem(16px);
+$icon-position-right-closed: global-style.getRem(-32px);
+$icon-position-right-open: global-style.getRem(8px);
 
 
 @mixin nav-list {
@@ -29,7 +32,7 @@ $icon-position-right-open: getRem(8px);
 
 .simple-sidebar-container {
   font-family: $font-type-01;
-  border-right: $border-right-drawer solid $med-contrast-border;
+  border-right: $border-right-drawer solid var(--theme-border);
   position: relative;
   width: $closed-drawer-width;
 
@@ -40,6 +43,7 @@ $icon-position-right-open: getRem(8px);
     cursor: pointer;
     height: $icon-height;
     width: $icon-width;
+    max-width: $icon-width;
   }
 }
 
@@ -48,5 +52,16 @@ $icon-position-right-open: getRem(8px);
 
   & .sidebar-toggle-arrow {
     right: $icon-position-right-open;
+  }
+}
+
+[data-theme='dark'] {
+  .simple-sidebar-container {
+    border-right-color: var(--theme-border);
+    background-color: transparent;
+
+    .sidebar-toggle-arrow {
+      color: var(--theme-text-primary);
+    }
   }
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { defaultContainerWidth, enterKeyValue, classes } from './constants';
+import { defaultContainerWidth, enterKeyValue, backspaceKeyValue, classes } from './constants';
 import Pill from '../pill';
 import './pillInput.scss';
 
@@ -15,7 +15,7 @@ const PillInput = ({
   isValid,
   setError,
   disabled = false,
-  placeholder = ''
+  placeholder = '',
 }) => {
 
   const pillInputContainer = {
@@ -32,9 +32,13 @@ const PillInput = ({
     if (e.keyCode === enterKeyValue && e.target.value.trim()) {
       onBlur(e)
     }
+    // Remove the last pill on Backspace
+    if (e.keyCode === backspaceKeyValue && !e.target.value && pillListData.length > 0) {
+      handleDeletePill(pillListData[pillListData.length - 1])
+    }
   }
 
-  const onBlur = (e) => {  
+  const onBlur = (e) => {
     const trimmedValue = e.target.value.trim()
     if (isValid && !isValid(trimmedValue)) return
     trimmedValue && handleUpdatePillList(trimmedValue)
@@ -51,7 +55,7 @@ const PillInput = ({
             data-testid="pill-list-input"
             className={classes.textInput}
             placeholder={placeholder}
-            value={pillValue.trim()}
+            value={pillValue}
             type="text"
             onChange={(e) => {
               setPillValue(e.target.value)

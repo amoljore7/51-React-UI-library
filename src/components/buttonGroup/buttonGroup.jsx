@@ -2,11 +2,21 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './buttonGroup.scss';
 import classNames from 'classnames';
-import { classes, defaultSize } from './constants';
+import {
+  classes,
+  defaultSize,
+  defaultType,
+  typeStandard,
+  typeToggle,
+  defaultColor,
+  colorTint,
+  colorNeutral,
+} from './constants';
 
 const ButtonGroup = ({
   children,
-  type,
+  type = defaultType,
+  color = defaultColor,
   onClick,
   size = defaultSize,
   defaultValue,
@@ -14,70 +24,61 @@ const ButtonGroup = ({
   const [selected, setSelected] = useState('');
 
   useEffect(() => {
-    if (defaultValue) {
-      setSelected(defaultValue)
+    if (defaultValue !== undefined && defaultValue !== null) {
+      setSelected(String(defaultValue));
     }
-    // Not passing any dependencies because it needs to execute once after mounting.
-  }, [])
+  }, [defaultValue]);
 
-  const btnGroupParentClass = {
-    [classes.buttonGroup]: true,
-  };
+  const isToggle = type === typeToggle;
 
-  const isRadioType = type === "radio";
+  const btnGroupClass = classNames(classes.buttonGroup, {
+    [classes.standard]: type === typeStandard,
+    [classes.toggle]: isToggle,
+    [classes.colorTint]: color === colorTint,
+    [classes.colorNeutral]: color === colorNeutral,
+  });
 
   const handleClick = (event) => {
     const { value } = event.currentTarget;
     setSelected(value);
-    onClick && onClick(value);
-  }
+    onClick?.(value);
+  };
 
-  const getButtonVariant = (value, index) => {
-    if (!selected) {
-      return index === 0 ? 'primary' : 'secondary';
-    } else {
-      return selected === value ? 'primary' : 'secondary';
-    }
-  }
+  const childArray = React.Children.toArray(children);
+  const firstValue = childArray[0] && React.isValidElement(childArray[0])
+    ? (childArray[0].props.value ?? 0)
+    : null;
+  const effectiveSelected = selected !== '' ? selected : firstValue;
+  const getToggled = (value) => effectiveSelected != null && effectiveSelected === value;
 
   return (
-    <div
-      data-test-id="button-group"
-      className={classNames({ ...btnGroupParentClass })}
-    >
+    <div data-test-id="button-group" className={btnGroupClass}>
       {React.Children.map(children, (child, index) => {
-        if (React.isValidElement(child)) {
-          let newProps = {
-            key: `${index}-${child.props.value}`,
-            size,
-          };
-
-          if (isRadioType) {
-            newProps = {
-              ...newProps,
-              onClick: handleClick,
-              variant: getButtonVariant(child.props.value, index),
-            };
-          }
-
-          return React.cloneElement(child, newProps);
+        if (!React.isValidElement(child)) return null;
+        const value = child.props.value ?? String(index);
+        const baseProps = {
+          key: child.key ?? `btn-${index}-${value}`,
+          size,
+          color,
+        };
+        if (isToggle) {
+          baseProps.toggled = getToggled(value);
+          baseProps.onClick = handleClick;
+          baseProps.value = value;
         }
-        return null;
+        return React.cloneElement(child, baseProps);
       })}
     </div>
   );
-
 };
 
 ButtonGroup.propTypes = {
   children: PropTypes.node.isRequired,
-  type: PropTypes.string,
+  type: PropTypes.oneOf(['standard', 'radio']),
+  color: PropTypes.oneOf(['tint', 'neutral']),
   onClick: PropTypes.func,
   size: PropTypes.string,
-  defaultValue: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number
-  ]),
+  defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 export default ButtonGroup;

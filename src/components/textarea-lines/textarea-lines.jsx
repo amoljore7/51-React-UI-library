@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import {
@@ -8,12 +8,12 @@ import {
   messageSymbols,
   variantNaked,
 } from "./constants";
-import "./textarea-lines.scss";
-import { useEffect, useRef } from "react";
 import Tooltip from "../tooltip";
+import InfoIcon from "../../assets/icons/info.svg?react";
+import "./textarea-lines.scss";
 
 const TextareaLines = ({
-  value,
+  value = "",
   label,
   placeholder,
   error = false,
@@ -42,38 +42,35 @@ const TextareaLines = ({
     [classes.textareaContainer]: true,
     [classes.textareaContainerDisabled]: disabled,
     [classes.textareaContainerErrorBorder]: error,
-    [classes.variantNaked]: variant == variantNaked,
+    [classes.variantNaked]: variant === variantNaked,
     [classes.textareaContainerFocus]: !readOnly,
   };
   const textareaClass = {
     [classes.textareaBox]: true,
     [classes.textareaBoxDisabled]: disabled,
     [classes.textareaBoxReadOnly]: readOnly,
-    [classes.variantNaked]: variant == variantNaked,
+    [classes.variantNaked]: variant === variantNaked,
   };
-  const [numberOfLines, setNumberOfLines] = useState(
-    value?.split("\n").length || 1,
-  );
+
+  const lineCount = value?.split("\n").length || 1;
+  const [numberOfLines, setNumberOfLines] = useState(lineCount);
   const [lineMessageMap, setLineMessageMap] = useState({});
-  const lineNumberRef = useRef(null);
-  const textArea = useRef(null);
+  const textAreaRef = useRef(null);
 
   useEffect(() => {
-    setNumberOfLines(value?.split("\n").length);
+    setNumberOfLines(value?.split("\n").length || 1);
   }, [value]);
 
   useEffect(() => {
     if (lineMessages?.length) {
       setLineMessageMap(
         Object.fromEntries(
-          lineMessages?.map((lineMessage) =>
-            lineMessage
-              ? [
-                  lineMessage.line,
-                  { type: lineMessage.type, message: lineMessage.message },
-                ]
-              : [],
-          ),
+          lineMessages
+            .filter(Boolean)
+            .map((lineMessage) => [
+              lineMessage.line,
+              { type: lineMessage.type, message: lineMessage.message },
+            ]),
         ),
       );
     } else {
@@ -82,25 +79,21 @@ const TextareaLines = ({
   }, [lineMessages]);
 
   useEffect(() => {
+    const el = textAreaRef.current;
+    if (!el) return;
     const handleInput = () => {
-      textArea.current.style.height = "auto";
-      textArea.current.style.height = textArea.current.scrollHeight + 8 + "px";
+      el.style.height = "auto";
+      el.style.height = `${el.scrollHeight + 8}px`;
     };
-    textArea.current.addEventListener("input", handleInput);
-
-    return () => {
-      textArea?.current &&
-        textArea.current.removeEventListener("input", handleInput);
-    };
+    el.addEventListener("input", handleInput);
+    return () => el.removeEventListener("input", handleInput);
   }, []);
 
   const LineNumber = ({ lineNumber }) => {
     const messageType = lineMessageMap[lineNumber]?.type;
-    return lineMessageMap[lineNumber] ? (
-      <Tooltip
-        title={lineMessageMap[lineNumber].message || null}
-        position="bottom-right"
-      >
+    const message = lineMessageMap[lineNumber]?.message;
+    return message ? (
+      <Tooltip title={message || null} position="bottom-right">
         <div>
           {messageType && (
             <span className={messageType}>{messageSymbols[messageType]}</span>
@@ -110,7 +103,7 @@ const TextareaLines = ({
       </Tooltip>
     ) : (
       <div>
-        <span></span>
+        <span />
         <span>{lineNumber}</span>
       </div>
     );
@@ -118,25 +111,21 @@ const TextareaLines = ({
 
   return (
     <div className={classes.container}>
-      <div className={classNames({ ...textareaLabelClass })}>{label}</div>
-      {helperText && (
-        <div className={classNames({ ...textareaHelperTextClass })}>
-          {helperText}
-        </div>
+      {label && (
+        <div className={classNames({ ...textareaLabelClass })}>{label}</div>
       )}
-      <div style={{ width: `${width}`, height: `${height}` }}>
+      <div style={{ width: width ?? undefined, height: height ?? undefined }}>
         <div className={classNames({ ...textareaWrapper })}>
           <div
             className="line-number"
-            ref={lineNumberRef}
             data-testid="line-number"
           >
-            {new Array(numberOfLines).fill(null).map((d, i) => (
+            {Array.from({ length: numberOfLines }, (_, i) => (
               <LineNumber lineNumber={i + 1} key={i} />
             ))}
           </div>
           <textarea
-            ref={textArea}
+            ref={textAreaRef}
             className={classNames({ ...textareaClass })}
             onBlur={onBlur}
             onFocus={onFocus}
@@ -150,28 +139,45 @@ const TextareaLines = ({
             wrap="off"
           />
         </div>
-        {error && <div className={classes.errorMsgText}>{errorMsg}</div>}
+        {error && errorMsg && (
+          <div className={classes.errorMsgText}>{errorMsg}</div>
+        )}
       </div>
+      {helperText && (
+        <div className={classes.helperRow}>
+          <div className={classNames({ ...textareaHelperTextClass })}>
+            <InfoIcon className={classes.helperIcon} aria-hidden />
+            <span>{helperText}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
 TextareaLines.propTypes = {
-  value: PropTypes.string.isRequired,
+  value: PropTypes.string,
   label: PropTypes.string,
   errorMsg: PropTypes.string,
   placeholder: PropTypes.string,
   error: PropTypes.bool,
   helperText: PropTypes.string,
   disabled: PropTypes.bool,
-  readonly: PropTypes.bool,
+  readOnly: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   name: PropTypes.string,
   onBlur: PropTypes.func,
   onFocus: PropTypes.func,
-  lineMessages: PropTypes.arrayOf({
-    line: PropTypes.number,
-    message: PropTypes.string,
-    type: PropTypes.string,
-  }),
+  variant: PropTypes.string,
+  width: PropTypes.string,
+  height: PropTypes.string,
+  lineMessages: PropTypes.arrayOf(
+    PropTypes.shape({
+      line: PropTypes.number.isRequired,
+      message: PropTypes.string,
+      type: PropTypes.string,
+    }),
+  ),
 };
+
 export default TextareaLines;

@@ -18,14 +18,23 @@ const Card = ({ title, image, clickHandler, disabled = false }) => {
       tabIndex={defaultTabIndex}
     >
       <div className={classes.imgContainer}>
-        <img
-          tabIndex={defaultTabIndex}
-          role={imageRole}
-          className={classes.imgStyle}
-          src={image}
-          alt={title}
-          aria-label={title}
-        />
+        {typeof image === 'function' ? (
+          React.createElement(image, {
+            tabIndex: defaultTabIndex,
+            role: imageRole,
+            className: classes.imgStyle,
+            'aria-label': title,
+          })
+        ) : (
+          <img
+            tabIndex={defaultTabIndex}
+            role={imageRole}
+            className={classes.imgStyle}
+            src={image}
+            alt={title}
+            aria-label={title}
+          />
+        )}
       </div>
       <div className={classes.titleStyle}>{title}</div>
     </div>
@@ -34,7 +43,7 @@ const Card = ({ title, image, clickHandler, disabled = false }) => {
 
 Card.propTypes = {
   title: PropTypes.string.isRequired,
-  image: PropTypes.string.isRequired,
+  image: PropTypes.oneOfType([PropTypes.string, PropTypes.elementType]).isRequired,
   clickHandler: PropTypes.func.isRequired,
 };
 

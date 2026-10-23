@@ -1,38 +1,39 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
 $gray-30: #c6c6c6;
 $gray-60: #6f6f6f;
 $gray-80: #393939;
 $gray-100: #161616;
 
-$modal-container-border: getRem(1px);
+$modal-container-border: global-style.getRem(1px);
 $modal-container-opacity: 1;
-$modal-container-min-width: getRem(464px);
-$modal-container-background-color: #ffffff;
-$modal-strap-height: getRem(8px);
-$modal-strap-min-width: getRem(462px);
-$modal-title-container-margin-left: getRem(32px);
-$modal-title-container-margin-top: getRem(32px);
-$modal-title-container-margin-bottom: getRem(24px);
-$modal-icon-container-margin-right: getRem(32px);
-$modal-icon-container-margin-top: getRem(39px);
-$modal-icon-container-margin-bottom: getRem(24px);
-$modal-icon-container-height: getRem(24px);
-$modal-button-container-margin-right: getRem(32px);
-$modal-button-wrapper-margin-bottom: getRem(16px);
-$modal-button-wrapper-margin-right: getRem(16px);
+$modal-container-min-width: global-style.getRem(464px);
+$modal-container-background-color: var(--theme-content-bg);
+$modal-strap-height: global-style.getRem(8px);
+$modal-strap-min-width: global-style.getRem(462px);
+$modal-title-container-margin-left: global-style.getRem(32px);
+$modal-title-container-margin-top: global-style.getRem(32px);
+$modal-title-container-margin-bottom: global-style.getRem(24px);
+$modal-icon-container-margin-right: global-style.getRem(32px);
+$modal-icon-container-margin-top: global-style.getRem(39px);
+$modal-icon-container-margin-bottom: global-style.getRem(24px);
+$modal-icon-container-height: global-style.getRem(24px);
+$modal-button-container-margin-right: global-style.getRem(32px);
+$modal-button-wrapper-margin-bottom: global-style.getRem(16px);
+$modal-button-wrapper-margin-right: global-style.getRem(16px);
 $overlay-container-opacity: 0.3;
-$scrollbar-width: getRem(8px);
-$scrollbar-border-radius: getRem(8px);
-$scrollbar-margin-top: getRem(2px);
-$modal-button-container-margin-left: getRem(32px);
-$modal-children-margin: getRem(32px);
-$modal-button-container-gap: getRem(1px);
+$scrollbar-width: global-style.getRem(8px);
+$scrollbar-border-radius: global-style.getRem(8px);
+$scrollbar-margin-top: global-style.getRem(2px);
+$modal-button-container-margin-left: global-style.getRem(32px);
+$modal-children-margin: global-style.getRem(32px);
+$modal-button-container-gap: global-style.getRem(1px);
 
 .modal-container {
   display: flex;
   flex-direction: column;
-  border: $modal-container-border solid $gray-60;
+  border: $modal-container-border solid var(--theme-border-strong);
   box-sizing: border-box;
   opacity: $modal-container-opacity;
   position: fixed;
@@ -57,7 +58,7 @@ $modal-button-container-gap: getRem(1px);
       margin-left: $modal-title-container-margin-left;
       margin-top: $modal-title-container-margin-top;
       margin-bottom: $modal-title-container-margin-bottom;
-      color: $gray-80;
+      color: var(--theme-text-primary);
     }
 
     .icon-container {
@@ -68,7 +69,7 @@ $modal-button-container-gap: getRem(1px);
 
       .icon {
         cursor: pointer;
-        color: #393939;
+        color: var(--theme-text-primary);
       }
     }
   }
@@ -90,6 +91,8 @@ $modal-button-container-gap: getRem(1px);
   .content-separator {
     width: 100%;
     margin: 0;
+    border: none;
+    border-top: 1px solid color-mix(in srgb, var(--theme-text-primary) 25%, var(--theme-content-bg));
   }
 
   .modal-children-container {
@@ -111,4 +114,24 @@ $modal-button-container-gap: getRem(1px);
   right: 0;
   bottom: 0;
   z-index: 20;
+}
+
+[data-theme='dark'] {
+  .modal-container {
+    background-color: var(--theme-content-bg);
+    border-color: var(--theme-border-strong);
+
+    .title-container {
+      color: var(--theme-text-primary);
+    }
+
+    .icon-container .icon {
+      color: var(--theme-text-primary);
+    }
+  }
+
+  .modal-overlay-container {
+    background-color: tokens.$neutral-100;
+    opacity: 0.65;
+  }
 }

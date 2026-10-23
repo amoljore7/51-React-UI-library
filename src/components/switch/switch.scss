@@ -1,7 +1,71 @@
-@import "../../global-style/index.scss";
+@use "../../global-style/index.scss" as global-style;
+@use "../../global-style/color.scss" as *;
+@use "../../global-style/tokens/colors.scss" as colors;
+@use "../../global-style/font-family.scss" as *;
 
-//tokens
-$gap: getRem(8px);
+// Figma: 44×24 outer, track 40×20, knob 16px, 4px inset
+$gap: global-style.getRem(8px);
+$track-width: global-style.getRem(40px);
+$track-height: global-style.getRem(20px);
+$knob-size: global-style.getRem(16px);
+$inset: global-style.getRem(4px);
+$transition-duration: 0.2s;
+
+// Theme variables for track and knob.
+// Custom theme / unthemed defaults: all colors derived from --theme-text-primary
+// and --theme-content-bg so any custom theme gets correct values automatically.
+// [data-theme='light'] restores original brand colors; [data-theme='dark'] is unchanged.
+:root {
+  // ON (checked): text-primary is the accent fill; content-bg is the knob
+  --bds-switch-track-on:          var(--theme-text-primary);
+  --bds-switch-track-on-hover:    color-mix(in srgb, var(--theme-text-primary) 85%, var(--theme-content-bg));
+  --bds-switch-track-on-active:   color-mix(in srgb, var(--theme-text-primary) 70%, var(--theme-content-bg));
+  --bds-switch-track-on-disabled: color-mix(in srgb, var(--theme-text-primary) 20%, var(--theme-content-bg));
+  // OFF (unchecked): muted track steps derived from text-primary mix
+  --bds-switch-track-off:         var(--theme-separator);
+  --bds-switch-track-off-hover:   var(--theme-border);
+  --bds-switch-track-off-active:  var(--theme-border-strong);
+  --bds-switch-track-disabled:    var(--theme-hover-bg);
+  // Knob: always content-bg so it's visible on any track color
+  --bds-switch-knob-on:           var(--theme-content-bg);
+  --bds-switch-knob-off:          var(--theme-content-bg);
+  --bds-switch-knob-disabled:     var(--theme-separator);
+  --bds-switch-focus-ring:        var(--theme-text-primary);
+  --bds-switch-track-border:      transparent;
+}
+
+// Light theme — restore original brand values so light mode is unchanged.
+[data-theme="light"] {
+  --bds-switch-track-on:          #{colors.$tint-primary-80};
+  --bds-switch-track-on-hover:    #{colors.$tint-primary-100};
+  --bds-switch-track-on-active:   #{colors.$tint-primary-100};
+  --bds-switch-track-on-disabled: #{rgba(colors.$tint-primary-80, 0.5)};
+  --bds-switch-track-off:         #{colors.$neutral-20};
+  --bds-switch-track-off-hover:   #{colors.$neutral-40};
+  --bds-switch-track-off-active:  #{colors.$neutral-40};
+  --bds-switch-track-disabled:    #{colors.$neutral-10};
+  --bds-switch-knob-on:           #{colors.$neutral-0};
+  --bds-switch-knob-off:          #{colors.$neutral-0};
+  --bds-switch-knob-disabled:     #{colors.$neutral-20};
+  --bds-switch-focus-ring:        #{colors.$tint-primary-80};
+  --bds-switch-track-border:      transparent;
+}
+
+[data-theme="dark"] {
+  --bds-switch-track-on: #{colors.$neutral-0};
+  --bds-switch-track-on-hover: #{colors.$neutral-10};
+  --bds-switch-track-on-active: #{colors.$neutral-20};
+  --bds-switch-track-on-disabled: #{rgba(colors.$neutral-0, 0.4)};
+  --bds-switch-track-off: #{colors.$neutral-80};
+  --bds-switch-track-off-hover: #{colors.$neutral-60};
+  --bds-switch-track-off-active: #{colors.$neutral-40};
+  --bds-switch-track-disabled: #{colors.$neutral-80};
+  --bds-switch-knob-on: #{colors.$tint-primary-100};
+  --bds-switch-knob-off: #{colors.$neutral-0};
+  --bds-switch-knob-disabled: #{colors.$neutral-40};
+  --bds-switch-focus-ring: #{colors.$neutral-0};
+  --bds-switch-track-border: #{colors.$neutral-40};
+}
 
 .bds-switch-container {
   display: flex;
@@ -13,11 +77,86 @@ $gap: getRem(8px);
     gap: $gap;
     align-items: center;
     cursor: pointer;
+    width: fit-content;
 
     &.disabled {
       pointer-events: none;
-      opacity: 0.3;
+      cursor: default;
+
+      .bds-switch-track {
+        cursor: default;
+      }
     }
+  }
+
+  .bds-switch-track {
+    position: relative;
+    flex-shrink: 0;
+    width: $track-width;
+    height: $track-height;
+    padding: 0;
+    border: none;
+    border: 1px solid var(--bds-switch-track-border);
+    border-radius: calc($track-height / 2);
+    cursor: pointer;
+    background-color: var(--bds-switch-track-off);
+    transition: background-color $transition-duration ease;
+
+    &:hover:not(:disabled) {
+      background-color: var(--bds-switch-track-off-hover);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--bds-switch-focus-ring);
+      outline-offset: 2px;
+    }
+
+    &:active:not(:disabled) {
+      background-color: var(--bds-switch-track-off-active);
+    }
+  }
+
+  .bds-switch-knob {
+    position: absolute;
+    top: 50%;
+    left: $inset;
+    width: $knob-size;
+    height: $knob-size;
+    border-radius: 50%;
+    background-color: var(--bds-switch-knob-off);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transform: translateY(-50%);
+    transition: left $transition-duration ease, background-color $transition-duration ease;
+    pointer-events: none;
+  }
+
+  .bds-switch--checked .bds-switch-track {
+    background-color: var(--bds-switch-track-on);
+
+    &:hover:not(:disabled) {
+      background-color: var(--bds-switch-track-on-hover);
+    }
+
+    &:active:not(:disabled) {
+      background-color: var(--bds-switch-track-on-active);
+    }
+  }
+
+  .bds-switch--checked .bds-switch-knob {
+    left: calc(100% - $knob-size - $inset);
+    background-color: var(--bds-switch-knob-on);
+  }
+
+  .bds-switch.disabled .bds-switch-track {
+    background-color: var(--bds-switch-track-disabled);
+  }
+
+  .bds-switch.disabled.bds-switch--checked .bds-switch-track {
+    background-color: var(--bds-switch-track-on-disabled);
+  }
+
+  .bds-switch.disabled .bds-switch-knob {
+    background-color: var(--bds-switch-knob-disabled);
   }
 
   .bds-switch-error-message {

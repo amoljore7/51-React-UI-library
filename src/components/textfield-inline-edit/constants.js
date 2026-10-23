@@ -1,5 +1,6 @@
 export const rawTextClasses = {
   container: 'bds-textfield-container',
+  inputAndAssistiveWrapper: 'bds-textfield-input-assistive-wrapper',
   label: 'bds-label',
   secondaryLabel: 'bds-secondary-label',
   labelDisabled: 'bds-label-disabled',
@@ -19,12 +20,18 @@ export const rawTextClasses = {
   inputContainerDisabled: 'bds-inline-edit-input-container-disabled',
   inputBoxDisabled: 'bds-input-box-disabled',
   inputBoxReadOnly: 'bds-input-box-read-only',
-};
+  characterCount: 'bds-textfield-character-count',
+  assistiveRow: 'bds-textfield-assistive-row',
+  assistiveRowLeft: 'bds-textfield-assistive-row-left',
+  assistiveTextBlock: 'bds-textfield-assistive-text-block',
+  assistiveTextIcon: 'bds-textfield-assistive-text-icon',
+}
 
 export const inlineEditClasses = {
   inputBoxReadOnly: 'bds-inline-edit-input-box-box-read-only',
   inputBoxError: 'bds-inline-edit-input-box-box-error',
   inlineEditButtons: 'bds-inline-edit-input-box-buttons',
+  inlineEditButtonsVisible: 'bds-inline-edit-input-box-buttons--visible',
   inputContainerReadOnly: 'bds-inline-edit-input-container-read-only',
   variantNakedEmpty: 'bds-inline-edit-naked-empty',
   variantNakedError: 'bds-inline-edit-naked-error',
@@ -32,4 +39,4 @@ export const inlineEditClasses = {
 
 export const confirmButtonName = 'inline-edit-confirm'
 export const cancelButtonName = 'inline-edit-cancel'
-export const escapeKey = 'Escape';
+export const escapeKey = 'Escape'

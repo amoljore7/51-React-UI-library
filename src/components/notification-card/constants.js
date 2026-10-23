@@ -8,7 +8,7 @@ export const classes = {
   cardActionFooter: 'bds-card-action-footer',
   secondaryButtonSpacing: 'secondary-button-spacing',
   notificationCardWithSpinnerOverlay: 'bds-notification-card-with-spinner-overlay',
-};
+}
 
-export const Yesterday = 'Yesterday';
-export const days = 'days';
+export const Yesterday = 'Yesterday'
+export const days = 'days'

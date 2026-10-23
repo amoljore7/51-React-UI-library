@@ -6,13 +6,13 @@ import {
   classes,
   variantNaked,
   variantInline,
-  inputRole,
   inputTestId,
   defaultType,
   autoCompleteOff,
   iconPositionLeft,
   iconPositionRight,
 } from './constants';
+import InfoIcon from '../../assets/icons/info.svg?react';
 
 const Textfield = ({
   type = defaultType,
@@ -37,8 +37,13 @@ const Textfield = ({
   styleClasses = classes,
   onKeyUp,
   iconPosition = iconPositionRight,
-  autoComplete = autoCompleteOff
+  autoComplete = autoCompleteOff,
+  maxLength,
+  testId = inputTestId,
 }) => {
+  const valueLength = typeof value === 'string' ? value.length : String(value).length;
+  const showCharacterCount = maxLength != null && maxLength > 0;
+  const hasAssistiveRow = helperText || showCharacterCount;
   const labelClass = {
     [styleClasses.label]: true,
     [styleClasses.labelDisabled]: disabled,
@@ -68,41 +73,63 @@ const Textfield = ({
   return (
     <div className={styleClasses.container}>
       {label && <div className={classNames({ ...labelClass })}>{label}{secondaryLabel && <span className={classNames({ ...secondaryLabelClass })}> {secondaryLabel}</span>}</div>}
-      {helperText && <div className={classNames({ ...helperTextClass })}>{helperText}</div>}
-      <div className={classNames({ ...inputClass })} style={{ width: width, height: height }}>
-        {icon && iconPosition === iconPositionLeft && (
-          <div
-            data-testid="icon-textfield"
-            className={styleClasses.iconBoxLeft}
-            onClick={onIconClick}
-          >
-            {icon}
-          </div>
-        )}
-        <input
-          className={classNames({ ...inputBox })}
-          onBlur={onBlur}
-          onFocus={onFocus}
-          readOnly={readOnly}
-          name={name}
-          type={type}
-          value={value}
-          placeholder={placeholder}
-          onChange={onChange}
-          disabled={disabled}
-          roles={inputRole}
-          data-testid={inputTestId}
-          autoComplete={autoComplete}
-          onKeyUp={onKeyUp}
-        />
+      <div className={styleClasses.inputAndAssistiveWrapper} style={{ width: width || undefined }}>
+        <div className={classNames({ ...inputClass })} style={{ width: width, height: height }}>
+          {icon && iconPosition === iconPositionLeft && (
+            <div
+              data-testid="icon-textfield"
+              className={styleClasses.iconBoxLeft}
+              onClick={onIconClick}
+            >
+              {icon}
+            </div>
+          )}
+          <input
+            className={classNames({ ...inputBox })}
+            onBlur={onBlur}
+            onFocus={onFocus}
+            readOnly={readOnly}
+            name={name}
+            type={type}
+            value={value}
+            placeholder={placeholder}
+            onChange={onChange}
+            disabled={disabled}
+            data-testid={testId}
+            autoComplete={autoComplete}
+            onKeyUp={onKeyUp}
+            maxLength={maxLength}
+          />
 
-        {icon && iconPosition === iconPositionRight && (
-          <div
-            data-testid="icon-textfield"
-            className={styleClasses.iconBoxRight}
-            onClick={onIconClick}
-          >
-            {icon}
+          {icon && iconPosition === iconPositionRight && (
+            <div
+              data-testid="icon-textfield"
+              className={styleClasses.iconBoxRight}
+              onClick={onIconClick}
+            >
+              {icon}
+            </div>
+          )}
+        </div>
+        {hasAssistiveRow && (
+          <div className={styleClasses.assistiveRow}>
+            <div className={styleClasses.assistiveRowLeft}>
+              {helperText && (
+                <div className={classNames(styleClasses.assistiveTextBlock, { [styleClasses.helperTextDisabled]: disabled })}>
+                  <InfoIcon className={styleClasses.assistiveTextIcon} aria-hidden />
+                  <span className={classNames({ ...helperTextClass })}>{helperText}</span>
+                </div>
+              )}
+            </div>
+            {showCharacterCount && (
+              <span
+                className={styleClasses.characterCount || classes.characterCount}
+                aria-live="polite"
+                data-testid="textfield-character-count"
+              >
+                {valueLength}/{maxLength}
+              </span>
+            )}
           </div>
         )}
       </div>
@@ -133,8 +160,11 @@ Textfield.propTypes = {
   height: PropTypes.string,
   onKeyUp: PropTypes.func,
   iconPosition: PropTypes.oneOf([ iconPositionLeft, iconPositionRight ]),
+  maxLength: PropTypes.number,
+  testId: PropTypes.string,
   styleClasses: PropTypes.shape({
     container: PropTypes.string,
+    inputAndAssistiveWrapper: PropTypes.string,
     label: PropTypes.string,
     labelDisabled: PropTypes.string,
     helperText: PropTypes.string,
@@ -142,17 +172,21 @@ Textfield.propTypes = {
     inputContainer: PropTypes.string,
     inputContainerErrorBorder: PropTypes.string,
     inputBox: PropTypes.string,
-    inputIcon: PropTypes.string,
     errorMsgText: PropTypes.string,
     variantNaked: PropTypes.string,
     variantInline: PropTypes.string,
     inputContainerFocus: PropTypes.string,
-    inputBoxWrapper: PropTypes.string,
-    iconBox: PropTypes.string,
+    iconBoxRight: PropTypes.string,
+    iconBoxLeft: PropTypes.string,
     inputWithIcon: PropTypes.string,
     inputContainerDisabled: PropTypes.string,
     inputBoxDisabled: PropTypes.string,
     inputBoxReadOnly: PropTypes.string,
+    characterCount: PropTypes.string,
+    assistiveRow: PropTypes.string,
+    assistiveRowLeft: PropTypes.string,
+    assistiveTextBlock: PropTypes.string,
+    assistiveTextIcon: PropTypes.string,
   })
 };
 

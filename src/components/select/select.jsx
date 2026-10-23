@@ -26,6 +26,7 @@ const Select = ({
   disablePortal = false,
   showTooltip = true,
   height,
+  testId = 'select-value',
 }) => {
   let optionSelected = Boolean(value) ? value : null;
   const [selectedValue, setSelectedValue] = useState(optionSelected);
@@ -131,7 +132,7 @@ const Select = ({
 
   const renderSelectedValue = () => (
     <div
-      data-testid="select-value"
+      data-testid={testId}
       className={classNames({ ...selectValueClasses })}
       onClick={selectedValueClickHandler}
       onKeyDown={selectedValueKeyDownHandler}
@@ -196,6 +197,7 @@ const Select = ({
             onChange={selectOption}
             getOptionLabel={getOptionLabel}
             disablePortal={disablePortal}
+            themeSourceRef={selectRef}
           />
         )}
         {error ? (
@@ -223,6 +225,8 @@ Select.propTypes = {
   errorMessage: PropTypes.string,
   onBlur: PropTypes.func,
   height: PropTypes.string,
+  showTooltip: PropTypes.bool,
+  testId: PropTypes.string,
 };
 
 export default Select;

@@ -1,4 +1,7 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
 $gray-20: #e0e0e0;
 $gray-40: #a8a8a8;
@@ -8,27 +11,27 @@ $gray-80: #393939;
 $blue-20: #d0e2ff;
 $blue-70: #067fdb;
 
-$vertical-tab-title-font-size: getRem(16px);
+$vertical-tab-title-font-size: global-style.getRem(16px);
 $vertical-tab-title-font-weight: 600;
-$scrollbar-height: getRem(8px);
-$selected-vertical-tab-text-color: $gray-80;
-$vertical-tab-icon-padding-right: getRem(8px);
-$vertical-tab-text-color: $gray-70;
-$selected-vertical-li-with-icon-padding-left: getRem(14px);
-$vertical-li-with-icon-padding-top-bottom: getRem(15px);
-$vertical-li-with-icon-padding-left: getRem(16px);
+$scrollbar-height: global-style.getRem(8px);
+$selected-vertical-tab-text-color: var(--theme-text-primary);
+$vertical-tab-icon-padding-right: global-style.getRem(8px);
+$vertical-tab-text-color: var(--theme-text-primary);
+$selected-vertical-li-with-icon-padding-left: global-style.getRem(14px);
+$vertical-li-with-icon-padding-top-bottom: global-style.getRem(15px);
+$vertical-li-with-icon-padding-left: global-style.getRem(16px);
 $selected-li-background-color: $blue-20;
-$vertical-selected-li-padding-left: getRem(22px);
+$vertical-selected-li-padding-left: global-style.getRem(22px);
 $selected-vertical-tab-border-color: var(--brand);
-$vertical-li-hover-background-color: $gray-20;
-$vertical-li-padding-top-bottom: getRem(16px);
-$vertical-li-padding-left: getRem(24px);
-$vertical-li-padding-right: getRem(16px);
-$vertical-tab-border-right: getRem(2px);
-$vertical-tab-border-color: $gray-40;
-$selected-tab-border-bottom: getRem(2px);
-$verticalTabIconColor: $gray-60;
-$scrollbar-border-radius: getRem(8px);
+$vertical-li-hover-background-color: var(--theme-hover-bg);
+$vertical-li-padding-top-bottom: global-style.getRem(16px);
+$vertical-li-padding-left: global-style.getRem(24px);
+$vertical-li-padding-right: global-style.getRem(16px);
+$vertical-tab-border-right: global-style.getRem(2px);
+$vertical-tab-border-color: var(--theme-separator);
+$selected-tab-border-bottom: global-style.getRem(2px);
+$verticalTabIconColor: var(--theme-border-strong);
+$scrollbar-border-radius: global-style.getRem(8px);
 
 .bds-vertical-tabs-ul-list {
   display: flex;
@@ -59,8 +62,8 @@ $scrollbar-border-radius: getRem(8px);
 
 .bds-selected-vertical-li {
   padding-left: $vertical-selected-li-padding-left;
-  background-color: $selected-li-background-color;
-  border-left: $selected-tab-border-bottom solid $selected-vertical-tab-border-color;
+  background-color: var(--theme-hover-bg);
+  border-left: $selected-tab-border-bottom solid var(--theme-text-primary);
 }
 
 .bds-vertical-li-with-icon {
@@ -120,11 +123,11 @@ $scrollbar-border-radius: getRem(8px);
 
 .bds-vertical-tabs-ul-list::-webkit-scrollbar-thumb {
   border-radius: $scrollbar-border-radius;
-  background-color: $scroll-bar-color;
+  background-color: var(--theme-border);
 }
 
 .bds-vertical-tabs-ul-list::-webkit-scrollbar-thumb:hover {
-  background-color: $scroll-bar-hover-color;
+  background-color: var(--theme-border-strong);
 }
 
 .bds-vertical-tabs-ul-list::-webkit-scrollbar-track-piece:start {
@@ -133,4 +136,40 @@ $scrollbar-border-radius: getRem(8px);
 
 .bds-vertical-tabs-ul-list::-webkit-scrollbar-track-piece:end {
   background: transparent;
+}
+
+[data-theme='dark'] {
+  .bds-vertical-tabs-ul-list {
+    border-right-color: var(--theme-separator);
+  }
+
+  .bds-vertical-li:hover,
+  .bds-vertical-li-with-icon:hover {
+    background-color: rgba(tokens.$feedback-information-100, 0.25);
+  }
+
+  .bds-selected-vertical-li,
+  .bds-selected-vertical-li-with-icon {
+    background-color: rgba(tokens.$feedback-information-100, 0.25);
+  }
+
+  .bds-vertical-tab-title {
+    color: var(--theme-text-primary);
+  }
+
+  .bds-selected-vertical-tab-title {
+    color: var(--theme-text-primary);
+  }
+
+  .bds-vertical-tab-icon-container {
+    color: var(--theme-border-strong);
+  }
+
+  .bds-vertical-tabs-ul-list::-webkit-scrollbar-thumb {
+    background-color: var(--theme-border);
+  }
+
+  .bds-vertical-tabs-ul-list::-webkit-scrollbar-thumb:hover {
+    background-color: var(--theme-border-strong);
+  }
 }

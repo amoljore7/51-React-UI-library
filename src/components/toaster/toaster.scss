@@ -1,0 +1,275 @@
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
+@use '../../global-style/tokens/elevations.scss' as elevations;
+
+// ─── Design tokens ───────────────────────────────────────────────────────────
+// Sits above everything else in the stacking context so toasts are never clipped
+$z-index-toaster: 9999;
+// Min keeps short messages readable; max prevents toasts from spanning wide screens
+$toast-min-width: global-style.getRem(280px);
+$toast-max-width: global-style.getRem(480px);
+$toast-padding-v: global-style.getRem(12px);
+$toast-padding-h: global-style.getRem(16px);
+$toast-border-radius: global-style.getRem(4px);
+
+// Single gap value shared by flex containers and spacing within the card
+$toast-gap: global-style.getRem(8px);
+$toast-font-size: global-style.getRem(14px);
+$toast-line-height: global-style.getRem(20px);
+$toast-icon-size: global-style.getRem(18px);
+$toast-close-size: global-style.getRem(16px);
+$toast-accent-width: global-style.getRem(4px);
+
+// Uniform edge clearance used for all six position modifiers
+$toast-position-offset: global-style.getRem(16px);
+
+// ─── Theme tokens ─────────────────────────────────────────────────────────────
+// :root provides custom-theme / unthemed defaults derived from surface variables.
+// [data-theme='light'] restores original hardcoded light-mode values.
+// [data-theme='dark'] block at the bottom of the file handles the dark overrides.
+:root {
+  --bds-toast-bg:         var(--theme-content-bg);
+  --bds-toast-border:     var(--theme-border);
+  --bds-toast-text:       var(--theme-text-primary);
+  --bds-toast-text-muted: var(--theme-text-secondary);
+}
+
+[data-theme='light'] {
+  --bds-toast-bg:         #{tokens.$neutral-0};
+  --bds-toast-border:     var(--theme-border);
+  --bds-toast-text:       #161616;
+  --bds-toast-text-muted: #393939;
+}
+
+// ─── Portal container ─────────────────────────────────────────────────────────
+// Fixed so it stays in the viewport regardless of page scroll
+.bds-toaster {
+  position: fixed;
+  z-index: $z-index-toaster;
+  display: flex;
+  flex-direction: column;
+  gap: $toast-gap;
+  pointer-events: none;
+  width: $toast-max-width;
+
+  // Subtracts both side offsets so the container never touches the viewport edges
+  max-width: calc(100vw - (#{$toast-position-offset} * 2));
+
+  // ─── Position modifiers ───────────────────────────────────────────────────
+  // translateX(-50%) centers the container when anchored to left: 50%
+  &--top-center {
+    top: $toast-position-offset;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &--top-right {
+    top: $toast-position-offset;
+    right: $toast-position-offset;
+  }
+
+  &--top-left {
+    top: $toast-position-offset;
+    left: $toast-position-offset;
+  }
+
+  // column-reverse makes new toasts stack upward so the latest is closest to the edge
+  &--bottom-center {
+    bottom: $toast-position-offset;
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: column-reverse;
+  }
+
+  &--bottom-right {
+    bottom: $toast-position-offset;
+    right: $toast-position-offset;
+    flex-direction: column-reverse;
+  }
+
+  &--bottom-left {
+    bottom: $toast-position-offset;
+    left: $toast-position-offset;
+    flex-direction: column-reverse;
+  }
+}
+
+// ─── Enter animation ──────────────────────────────────────────────────────────
+// Slides in from slightly above; reduced-motion disables it inside .bds-toast
+@keyframes bds-toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ─── Individual toast card ────────────────────────────────────────────────────
+.bds-toast {
+  pointer-events: all;
+  display: flex;
+  align-items: flex-start;
+  background-color: var(--bds-toast-bg);
+  border: 1px solid var(--bds-toast-border);
+  border-radius: $toast-border-radius;
+  font-family: $font-type-01;
+  font-size: $toast-font-size;
+  line-height: $toast-line-height;
+  color: var(--bds-toast-text);
+  min-width: $toast-min-width;
+  max-width: 100%;
+  box-sizing: border-box;
+  animation: bds-toast-enter 200ms ease-out;
+  @include elevations.elevation-2;
+
+  // Respect the OS-level reduced-motion preference
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+
+  // ─── Left accent bar ───────────────────────────────────────────────────────
+  // align-self: stretch makes it fill the full card height regardless of content
+  &__accent {
+    align-self: stretch;
+    width: $toast-accent-width;
+    flex-shrink: 0;
+    border-radius: $toast-border-radius 0 0 $toast-border-radius;
+  }
+
+  // ─── Content area ──────────────────────────────────────────────────────────
+  &__content {
+    flex: 1;
+    min-width: 0;
+    padding: $toast-padding-v $toast-padding-h;
+  }
+
+  // ─── Head row ──────────────────────────────────────────────────────────────
+  // Holds icon + title + optional inline buttons + close button in a single line
+  &__head-row {
+    display: flex;
+    align-items: flex-start;
+    gap: $toast-gap;
+  }
+
+  // flex: 1 pushes the close button to the far right
+  &__title {
+    flex: 1;
+    font-size: $toast-font-size;
+    line-height: $toast-line-height;
+    font-weight: 500;
+    text-align: left;
+    align-self: center;
+  }
+
+  // ─── Description ───────────────────────────────────────────────────────────
+  // padding-left aligns text with title start (skips icon + gap)
+  // padding-right aligns text with title end (skips close button + gap)
+  &__description {
+    font-size: global-style.getRem(12px);
+    line-height: global-style.getRem(16px);
+    margin-top: global-style.getRem(4px);
+    padding-left: calc(#{$toast-icon-size} + #{$toast-gap});
+    padding-right: calc(#{$toast-close-size} + #{$toast-gap});
+    text-align: left;
+    color: var(--bds-toast-text-muted);
+  }
+
+  // ─── Stacked buttons row ───────────────────────────────────────────────────
+  &__buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: $toast-gap;
+    margin-top: $toast-gap;
+  }
+
+  // ─── Icon slot ─────────────────────────────────────────────────────────────
+  // line-height: 1 removes extra space below inline SVGs
+  &__icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    width: $toast-icon-size;
+    font-size: $toast-icon-size;
+    line-height: 1;
+  }
+
+  // ─── Close button ──────────────────────────────────────────────────────────
+  // Resets browser button defaults; uses flex to center the SVG inside
+  &__close {
+    flex-shrink: 0;
+    cursor: pointer;
+    font-size: $toast-close-size;
+    color: var(--bds-toast-text-muted);
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    padding: 0;
+
+    svg {
+      width: $toast-close-size;
+      height: $toast-close-size;
+    }
+
+    &:hover {
+      color: var(--bds-toast-text);
+    }
+
+    // focus-visible targets keyboard navigation only, not mouse clicks
+    &:focus-visible {
+      outline: 2px solid var(--bds-toast-text);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+  }
+
+  // ─── Type variants ─────────────────────────────────────────────────────────
+  // Each variant sets the border color and propagates the same color to accent + icon
+  &--success {
+    border-color: $success-color;
+
+    .bds-toast__accent { background-color: $success-color; }
+    .bds-toast__icon   { color: $success-color; }
+  }
+
+  &--error {
+    border-color: $error-color;
+
+    .bds-toast__accent { background-color: $error-color; }
+    .bds-toast__icon   { color: $error-color; }
+  }
+
+  &--warning {
+    border-color: $warning-color;
+
+    .bds-toast__accent { background-color: $warning-color; }
+    .bds-toast__icon   { color: $warning-color; }
+  }
+
+  &--info {
+    border-color: tokens.$feedback-information-80;
+
+    .bds-toast__accent { background-color: tokens.$feedback-information-80; }
+    .bds-toast__icon   { color: tokens.$feedback-information-80; }
+  }
+}
+
+// ─── Dark mode ────────────────────────────────────────────────────────────────
+// Overrides surface and text tokens; box-shadow replaces elevation-2
+// since dark backgrounds need a white-tinted glow rather than a dark drop shadow
+[data-theme='dark'] {
+  --bds-toast-bg:         #{tokens.$neutral-80};
+  --bds-toast-border:     var(--theme-border);
+  --bds-toast-text:       #{tokens.$neutral-0};
+  --bds-toast-text-muted: #{tokens.$neutral-20};
+
+  .bds-toast {
+    box-shadow: 0 4px 20px tokens.material-white(20), 0 0 0 1px tokens.material-white(15);
+  }
+}

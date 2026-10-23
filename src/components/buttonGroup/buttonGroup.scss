@@ -1,31 +1,114 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/tokens/colors.scss';
 
-$border-radius: getRem(3px);
+$group-radius: global-style.getRem(8px);
+$group-divider-width: global-style.getRem(1px);
 
+// Figma: buttonGroup - standard / toggle — buttons joined, rounded only on group ends, divider between
 .bds-btn-group {
-    display: flex;
+  display: inline-flex;
+  gap: 0;
+  border-radius: $group-radius;
+  overflow: hidden;
+  isolation: isolate;
 
-    & > button:not(:last-child):not(:first-child) {
-        border-radius: 0;
-    }
+  // Target Button root (bds-btn) when it's a direct child or inside a wrapper (e.g. Tooltip)
+  & > button,
+  & > div > button {
+    border-radius: 0;
+    margin: 0;
+  }
 
-    & > button:first-child {
-        border-radius: $border-radius 0 0 $border-radius;
-    }
+  & > button:first-child,
+  & > div:first-child > button {
+    border-top-left-radius: $group-radius;
+    border-bottom-left-radius: $group-radius;
+  }
 
-    & > button:last-child {
-        border-radius: 0 $border-radius $border-radius 0;
-    }
+  & > button:last-child,
+  & > div:last-child > button {
+    border-top-right-radius: $group-radius;
+    border-bottom-right-radius: $group-radius;
+  }
 
-    & > div:not(:last-child):not(:first-child) > button {
-        border-radius: 0;
-    }
+  // Divider between buttons (Figma: border-r on each button except last)
+  & > button:not(:last-child),
+  & > div:not(:last-child) > button {
+    border-right-width: $group-divider-width;
+    border-right-style: solid;
+  }
+}
 
-    & > div:first-child > button {
-        border-radius: $border-radius 0 0 $border-radius;
-    }
+// Divider color by group color (variant comes from each Button).
+// Custom theme / unthemed default: match the button border (--theme-text-primary).
+// [data-theme='light'] block below restores the original brand/neutral colors for light mode.
+.bds-btn-group--standard.bds-btn-group--tint {
+  & > button:not(:last-child),
+  & > div:not(:last-child) > button {
+    border-right-color: var(--theme-text-primary);
+  }
+}
+.bds-btn-group--standard.bds-btn-group--neutral {
+  & > button:not(:last-child),
+  & > div:not(:last-child) > button {
+    border-right-color: var(--theme-text-primary);
+  }
+}
 
-    & > div:last-child > button {
-        border-radius: 0 $border-radius $border-radius 0;
+// Toggle group (same radius/divider)
+.bds-btn-group--toggle {
+  & > button:not(:last-child),
+  & > div:not(:last-child) > button {
+    border-right-color: var(--theme-text-primary);
+  }
+}
+
+// Light theme — restore explicit brand colors (exactly as before)
+[data-theme='light'] {
+  .bds-btn-group--standard.bds-btn-group--tint {
+    & > button:not(:last-child),
+    & > div:not(:last-child) > button {
+      border-right-color: colors.$tint-primary-100;
     }
+  }
+  .bds-btn-group--standard.bds-btn-group--neutral {
+    & > button:not(:last-child),
+    & > div:not(:last-child) > button {
+      border-right-color: colors.$neutral-20;
+    }
+  }
+  .bds-btn-group--toggle {
+    & > button:not(:last-child),
+    & > div:not(:last-child) > button {
+      border-right-color: colors.$neutral-20;
+    }
+  }
+}
+
+// Dark: Figma buttonToggle ondark — dividers match inactive borders / filled seams
+[data-theme='dark'] {
+  .bds-btn-group--standard.bds-btn-group--tint {
+    & > button:not(:last-child),
+    & > div:not(:last-child) > button {
+      border-right-color: colors.material-white(40);
+    }
+  }
+  .bds-btn-group--standard.bds-btn-group--neutral {
+    & > button:not(:last-child),
+    & > div:not(:last-child) > button {
+      border-right-color: colors.material-white(20);
+    }
+  }
+  .bds-btn-group--toggle.bds-btn-group--tint {
+    & > button:not(:last-child),
+    & > div:not(:last-child) > button {
+      border-right-color: colors.material-white(40);
+    }
+  }
+  .bds-btn-group--toggle.bds-btn-group--neutral {
+    & > button:not(:last-child),
+    & > div:not(:last-child) > button {
+      border-right-color: colors.material-white(20);
+    }
+  }
 }

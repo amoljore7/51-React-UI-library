@@ -1,2 +1,2 @@
-import Breadcrumb from './breadcrumb';
-export default Breadcrumb;
+import Breadcrumb from './breadcrumb'
+export default Breadcrumb

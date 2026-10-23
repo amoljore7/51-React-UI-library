@@ -1,11 +1,12 @@
-@import '../../global-style/tokens/elevations.scss';
-@import '../../global-style/tokens/radius.scss';
+@use '../../global-style/tokens/elevations.scss';
+@use '../../global-style/tokens/radius.scss';
+@use '../../global-style/tokens/colors.scss' as colors;
 
 .elevation {
   &-container {
     width: 200px;
     height: 200px;
-    @include radius(8);
+    @include radius.radius(8);
     padding-top: 12px;
     padding-right: 10px;
     padding-bottom: 12px;
@@ -14,39 +15,46 @@
 
   &-level {
     &-1 {
-      @include elevation-1;
+      @include elevations.elevation-1;
     }
 
     &-2 {
-      @include elevation-2;
+      @include elevations.elevation-2;
     }
 
     &-3 {
-      @include elevation-3;
+      @include elevations.elevation-3;
     }
 
     &-4 {
-      @include elevation-4;
+      @include elevations.elevation-4;
     }
 
     &-5 {
-      @include elevation-5;
+      @include elevations.elevation-5;
     }
 
     &-6 {
-      @include elevation-6;
+      @include elevations.elevation-6;
     }
 
     &-7 {
-      @include elevation-7;
+      @include elevations.elevation-7;
     }
 
     &-8 {
-      @include elevation-8;
+      @include elevations.elevation-8;
     }
 
     &-9 {
-      @include elevation-9;
+      @include elevations.elevation-9;
     }
+  }
+}
+
+[data-theme='dark'] {
+  .elevation-container {
+    background-color: colors.$neutral-80;
+    color: colors.$neutral-0;
   }
 }

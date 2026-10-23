@@ -102,6 +102,7 @@ export const RadioButton = ({
         checked={selected}
         onChange={handleChange}
       />
+      <div className={classes.radioVisual} aria-hidden="true" />
 
       {label && (
         <label

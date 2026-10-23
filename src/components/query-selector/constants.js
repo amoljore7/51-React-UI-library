@@ -8,4 +8,4 @@ export const classes = {
   pipe: 'bds-query-selector-pipe',
   maxValueMsg: 'bds-query-selector-max-value-msg',
   disabledPill: 'bds-query-selector-disabled-pill',
-};
+}

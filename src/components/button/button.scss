@@ -1,245 +1,698 @@
-@import '../../global-style/index.scss';
-@import '../../global-style/tokens/colors.scss';
-@import '../../global-style/tokens/radius.scss';
-@import '../../global-style/tokens/spacing.scss';
-@import '../../global-style/tokens/type.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/tokens/colors.scss';
+@use '../../global-style/tokens/radius.scss';
+@use '../../global-style/tokens/spacing.scss';
+@use '../../global-style/tokens/type.scss';
+@use '../../global-style/font-family.scss' as *;
 
-// font-size
-$font-size-small: getRem(12px);
-$font-size-medium: getRem(14px);
-$font-size-large: getRem(16px);
+// Local rem-based values (Figma specs)
+$btn-radius: global-style.getRem(8px);
+$btn-border-width: global-style.getRem(1px);
+$btn-spinner-size: global-style.getRem(16px);
+$btn-spinner-border: global-style.getRem(2px);
+$btn-badge-size: global-style.getRem(8px);
+$btn-badge-offset: global-style.getRem(2px);
+$btn-icon-only-large: global-style.getRem(40px);
+$btn-icon-only-medium: global-style.getRem(32px);
+$btn-icon-only-small: global-style.getRem(24px);
 
-// height
-$height-small-btn: getRem(24px);
-$height-medium-btn: getRem(32px);
-$height-large-btn: getRem(40px);
+// ---------------------------------------------------------------------------
+// Theme: CSS custom properties (light / dark)
+// ---------------------------------------------------------------------------
+// Custom theme / unthemed defaults — tint tokens derived from surface variables.
+// [data-theme='light'] and [data-theme='dark'] blocks below override these
+// with their explicit brand colors, so neither existing theme is affected.
+:root {
+  // Primary tint: solid fill = text-primary; label = content-bg; states step toward bg
+  --bds-btn-primary-tint-bg:             var(--theme-text-primary);
+  --bds-btn-primary-tint-bg-hover:       color-mix(in srgb, var(--theme-text-primary) 85%, var(--theme-content-bg));
+  --bds-btn-primary-tint-bg-active:      color-mix(in srgb, var(--theme-text-primary) 70%, var(--theme-content-bg));
+  --bds-btn-primary-tint-text:           var(--theme-content-bg);
+  --bds-btn-primary-tint-border:         var(--theme-text-primary);
+  --bds-btn-primary-tint-border-hover:   color-mix(in srgb, var(--theme-text-primary) 85%, var(--theme-content-bg));
+  --bds-btn-primary-tint-border-active:  color-mix(in srgb, var(--theme-text-primary) 70%, var(--theme-content-bg));
 
-// padding
-$padding-top-small: getRem(2px);
-$padding-bottom-small: getRem(3px);
-$padding-left-small: getRem(8px);
-$padding-right-small: getRem(8px);
+  // Secondary tint: ghost button; text/border = text-primary; hover bg subtly tinted
+  --bds-btn-secondary-tint-bg:           transparent;
+  --bds-btn-secondary-tint-bg-hover:     var(--theme-hover-bg);
+  --bds-btn-secondary-tint-bg-active:    color-mix(in srgb, var(--theme-text-primary) 15%, var(--theme-content-bg));
+  --bds-btn-secondary-tint-text:         var(--theme-text-primary);
+  --bds-btn-secondary-tint-border:       var(--theme-text-primary);
 
-$padding-top-medium: getRem(6px);
-$padding-bottom-medium: getRem(7px);
-$padding-left-medium: getRem(16px);
-$padding-right-medium: getRem(16px);
+  // textOnly (tertiary) tint: hover bg derives from theme so custom themes get a
+  // theme-appropriate highlight instead of the brand-blue tint.
+  --bds-btn-tertiary-tint-bg: transparent;
+  --bds-btn-tertiary-tint-bg-hover: var(--theme-hover-bg);
+  --bds-btn-tertiary-tint-bg-active: color-mix(in srgb, var(--theme-text-primary) 15%, var(--theme-content-bg));
+  --bds-btn-tertiary-tint-text: var(--theme-text-primary);
+  --bds-btn-tertiary-tint-border: transparent;
 
-$padding-top-large: getRem(10px);
-$padding-bottom-large: getRem(11px);
-$padding-left-large: getRem(16px);
-$padding-right-large: getRem(16px);
+  --bds-btn-primary-neutral-bg: #{colors.material-black(5)};
+  --bds-btn-primary-neutral-bg-hover: #{colors.material-black(10)};
+  --bds-btn-primary-neutral-bg-active: #{colors.material-black(20)};
+  --bds-btn-primary-neutral-text: #{colors.$neutral-60};
+  --bds-btn-primary-neutral-border: #{colors.material-black(5)};
+  --bds-btn-primary-neutral-border-hover: #{colors.material-black(10)};
+  --bds-btn-primary-neutral-border-active: #{colors.material-black(20)};
 
-// border
-$border-width: getRem(1px);
-$border-radius: getRem(3px);
+  --bds-btn-secondary-neutral-bg: transparent;
+  --bds-btn-secondary-neutral-bg-hover: #{colors.material-black(5)};
+  --bds-btn-secondary-neutral-bg-active: #{colors.material-black(10)};
+  --bds-btn-secondary-neutral-text: var(--theme-text-primary);
+  --bds-btn-secondary-neutral-border: var(--theme-text-primary);
 
+  // textOnly (tertiary) neutral: hover bg also derives from theme.
+  --bds-btn-tertiary-neutral-bg: transparent;
+  --bds-btn-tertiary-neutral-bg-hover: var(--theme-hover-bg);
+  --bds-btn-tertiary-neutral-bg-active: color-mix(in srgb, var(--theme-text-primary) 15%, var(--theme-content-bg));
+  --bds-btn-tertiary-neutral-text: var(--theme-text-primary);
+  --bds-btn-tertiary-neutral-border: transparent;
+
+  --bds-btn-primary-negative-bg: #{colors.$feedback-negative-100};
+  --bds-btn-primary-negative-bg-hover: #{colors.$feedback-negative-80};
+  --bds-btn-primary-negative-bg-active: #{colors.$feedback-negative-120};
+  --bds-btn-primary-negative-text: #{colors.$neutral-0};
+  --bds-btn-primary-negative-border: #{colors.$feedback-negative-100};
+
+  --bds-btn-secondary-negative-bg: transparent;
+  --bds-btn-secondary-negative-bg-hover: #{colors.$feedback-negative-5};
+  --bds-btn-secondary-negative-bg-active: #{colors.$feedback-negative-10};
+  --bds-btn-secondary-negative-text: #{colors.$feedback-negative-100};
+  --bds-btn-secondary-negative-border: #{colors.$feedback-negative-100};
+
+  --bds-btn-tertiary-negative-bg: transparent;
+  --bds-btn-tertiary-negative-bg-hover: #{colors.$feedback-negative-5};
+  --bds-btn-tertiary-negative-bg-active: #{colors.$feedback-negative-10};
+  --bds-btn-tertiary-negative-text: #{colors.$feedback-negative-100};
+  --bds-btn-tertiary-negative-border: transparent;
+
+  --bds-btn-primary-positive-bg: #{colors.$feedback-positive-100};
+  --bds-btn-primary-positive-bg-hover: #{colors.$feedback-positive-80};
+  --bds-btn-primary-positive-bg-active: #{colors.$feedback-positive-120};
+  --bds-btn-primary-positive-text: #{colors.$neutral-0};
+  --bds-btn-primary-positive-border: #{colors.$feedback-positive-100};
+
+  --bds-btn-secondary-positive-bg: transparent;
+  --bds-btn-secondary-positive-bg-hover: #{colors.$feedback-positive-5};
+  --bds-btn-secondary-positive-bg-active: #{colors.$feedback-positive-10};
+  --bds-btn-secondary-positive-text: #{colors.$feedback-positive-100};
+  --bds-btn-secondary-positive-border: #{colors.$feedback-positive-100};
+
+  --bds-btn-tertiary-positive-bg: transparent;
+  --bds-btn-tertiary-positive-bg-hover: #{colors.$feedback-positive-5};
+  --bds-btn-tertiary-positive-bg-active: #{colors.$feedback-positive-10};
+  --bds-btn-tertiary-positive-text: #{colors.$feedback-positive-100};
+  --bds-btn-tertiary-positive-border: transparent;
+
+  // Primary disabled: muted fill derived from text-primary (20% mix = very subtle).
+  // Text stays content-bg so the inverted label style is preserved.
+  --bds-btn-disabled-bg:     color-mix(in srgb, var(--theme-text-primary) 20%, var(--theme-content-bg));
+  --bds-btn-disabled-text:   var(--theme-content-bg);
+  --bds-btn-disabled-border: color-mix(in srgb, var(--theme-text-primary) 20%, var(--theme-content-bg));
+  --bds-btn-disabled-secondary-bg: #{colors.$neutral-0};
+  --bds-btn-disabled-secondary-border: #{colors.$neutral-20};
+  --bds-btn-disabled-secondary-text: #{colors.$neutral-20};
+
+  --bds-btn-secondary-neutral-border-hover: var(--theme-text-primary);
+  --bds-btn-secondary-neutral-border-active: var(--theme-text-primary);
+  --bds-btn-secondary-neutral-text-hover: var(--theme-text-primary);
+  --bds-btn-tertiary-neutral-text-hover: var(--theme-text-primary);
+}
+
+// Light theme — restore explicit brand-tint, neutral-border and disabled values
+// so the light theme is completely unchanged from its original design.
+[data-theme='light'] {
+  --bds-btn-primary-tint-bg:             #{colors.$tint-primary-100};
+  --bds-btn-primary-tint-bg-hover:       #{colors.$tint-primary-80};
+  --bds-btn-primary-tint-bg-active:      #{colors.$tint-primary-60};
+  --bds-btn-primary-tint-text:           #{colors.$neutral-0};
+  --bds-btn-primary-tint-border:         #{colors.$tint-primary-100};
+  --bds-btn-primary-tint-border-hover:   #{colors.$tint-primary-80};
+  --bds-btn-primary-tint-border-active:  #{colors.$tint-primary-60};
+
+  --bds-btn-secondary-tint-bg-hover:     #{colors.$tint-primary-5};
+  --bds-btn-secondary-tint-bg-active:    #{colors.$tint-primary-10};
+  --bds-btn-secondary-tint-text:         #{colors.$tint-primary-100};
+  --bds-btn-secondary-tint-border:       #{colors.$tint-primary-100};
+
+  --bds-btn-secondary-neutral-border:         #{colors.$neutral-20};
+  --bds-btn-secondary-neutral-border-hover:   #{colors.$neutral-40};
+  --bds-btn-secondary-neutral-border-active:  #{colors.$neutral-60};
+
+  // textOnly (tertiary) — restore brand hover tints for light mode.
+  --bds-btn-tertiary-tint-bg-hover:    #{colors.$tint-primary-5};
+  --bds-btn-tertiary-tint-bg-active:   #{colors.$tint-primary-10};
+  --bds-btn-tertiary-neutral-bg-hover: #{colors.material-black(5)};
+  --bds-btn-tertiary-neutral-bg-active: #{colors.material-black(10)};
+
+  // Primary disabled — restore original hardcoded colors for light mode.
+  --bds-btn-disabled-bg:     #{colors.$neutral-10};
+  --bds-btn-disabled-text:   #{colors.$neutral-0};
+  --bds-btn-disabled-border: #{colors.$neutral-10};
+}
+
+// Dark: Figma Component Library — buttonToggle ondark (e.g. node 287:10168)
+[data-theme='dark'] {
+  // Primary (tint): subdued neutral fill — base $neutral-20, stepped for hover/active
+  --bds-btn-primary-tint-bg: #{colors.$neutral-20};
+  --bds-btn-primary-tint-bg-hover: #{colors.$neutral-10};
+  --bds-btn-primary-tint-bg-active: #{colors.$neutral-40};
+  --bds-btn-primary-tint-text: #{colors.$neutral-100};
+  --bds-btn-primary-tint-border: #{colors.$neutral-40};
+  --bds-btn-primary-tint-border-hover: #{colors.$neutral-20};
+  --bds-btn-primary-tint-border-active: #{colors.$neutral-60};
+
+  --bds-btn-secondary-tint-bg: transparent;
+  --bds-btn-secondary-tint-bg-hover: #{colors.$tint-primary-20};
+  --bds-btn-secondary-tint-bg-active: #{colors.$tint-primary-40};
+  --bds-btn-secondary-tint-text: #{colors.material-white(80)};
+  --bds-btn-secondary-tint-border: #{colors.material-white(40)};
+
+  --bds-btn-tertiary-tint-bg: transparent;
+  --bds-btn-tertiary-tint-bg-hover: #{colors.$tint-primary-20};
+  --bds-btn-tertiary-tint-bg-active: #{colors.$tint-primary-40};
+  --bds-btn-tertiary-tint-text: var(--theme-text-primary);
+  --bds-btn-tertiary-tint-border: transparent;
+
+  --bds-btn-primary-neutral-bg: #{colors.$neutral-0};
+  --bds-btn-primary-neutral-bg-hover: #{colors.material-white(80)};
+  --bds-btn-primary-neutral-bg-active: #{colors.material-white(80)};
+  --bds-btn-primary-neutral-text: #{colors.$neutral-80};
+  --bds-btn-primary-neutral-border: #{colors.material-black(5)};
+  --bds-btn-primary-neutral-border-hover: #{colors.material-black(10)};
+  --bds-btn-primary-neutral-border-active: #{colors.material-black(10)};
+
+  --bds-btn-secondary-neutral-bg: transparent;
+  --bds-btn-secondary-neutral-bg-hover: #{colors.material-white(5)};
+  --bds-btn-secondary-neutral-bg-active: #{colors.material-white(5)};
+  --bds-btn-secondary-neutral-text: var(--theme-text-primary);
+  --bds-btn-secondary-neutral-border: #{colors.material-white(20)};
+
+  --bds-btn-tertiary-neutral-bg: transparent;
+  --bds-btn-tertiary-neutral-bg-hover: #{colors.material-white(5)};
+  --bds-btn-tertiary-neutral-bg-active: #{colors.material-white(5)};
+  --bds-btn-tertiary-neutral-text: var(--theme-text-primary);
+  --bds-btn-tertiary-neutral-border: transparent;
+
+  --bds-btn-primary-negative-bg: #{colors.$feedback-negative-100};
+  --bds-btn-primary-negative-bg-hover: #{colors.$feedback-negative-120};
+  --bds-btn-primary-negative-bg-active: #{colors.$feedback-negative-140};
+  --bds-btn-primary-negative-text: #{colors.$neutral-0};
+  --bds-btn-primary-negative-border: #{colors.$feedback-negative-120};
+
+  --bds-btn-secondary-negative-bg: transparent;
+  --bds-btn-secondary-negative-bg-hover: #{colors.$feedback-negative-10};
+  --bds-btn-secondary-negative-bg-active: #{colors.$feedback-negative-20};
+  --bds-btn-secondary-negative-text: #{colors.$feedback-negative-40};
+  --bds-btn-secondary-negative-border: #{colors.$feedback-negative-60};
+
+  --bds-btn-tertiary-negative-bg: transparent;
+  --bds-btn-tertiary-negative-bg-hover: #{colors.$feedback-negative-10};
+  --bds-btn-tertiary-negative-bg-active: #{colors.$feedback-negative-20};
+  --bds-btn-tertiary-negative-text: #{colors.$feedback-negative-40};
+  --bds-btn-tertiary-negative-border: transparent;
+
+  --bds-btn-primary-positive-bg: #{colors.$feedback-positive-100};
+  --bds-btn-primary-positive-bg-hover: #{colors.$feedback-positive-120};
+  --bds-btn-primary-positive-bg-active: #{colors.$feedback-positive-140};
+  --bds-btn-primary-positive-text: #{colors.$neutral-0};
+  --bds-btn-primary-positive-border: #{colors.$feedback-positive-120};
+
+  --bds-btn-secondary-positive-bg: transparent;
+  --bds-btn-secondary-positive-bg-hover: #{colors.$feedback-positive-10};
+  --bds-btn-secondary-positive-bg-active: #{colors.$feedback-positive-20};
+  --bds-btn-secondary-positive-text: #{colors.$feedback-positive-40};
+  --bds-btn-secondary-positive-border: #{colors.$feedback-positive-60};
+
+  --bds-btn-tertiary-positive-bg: transparent;
+  --bds-btn-tertiary-positive-bg-hover: #{colors.$feedback-positive-10};
+  --bds-btn-tertiary-positive-bg-active: #{colors.$feedback-positive-20};
+  --bds-btn-tertiary-positive-text: #{colors.$feedback-positive-40};
+  --bds-btn-tertiary-positive-border: transparent;
+
+  --bds-btn-disabled-bg: #{colors.material-white(2)};
+  --bds-btn-disabled-text: #{colors.material-white(20)};
+  --bds-btn-disabled-border: #{colors.material-white(10)};
+  --bds-btn-disabled-secondary-bg: transparent;
+  --bds-btn-disabled-secondary-border: #{colors.material-white(10)};
+  --bds-btn-disabled-secondary-text: #{colors.material-white(20)};
+
+  --bds-btn-secondary-neutral-border-hover: #{colors.material-white(40)};
+  --bds-btn-secondary-neutral-border-active: #{colors.material-white(60)};
+  --bds-btn-secondary-neutral-text-hover: var(--theme-text-primary);
+  --bds-btn-tertiary-neutral-text-hover: var(--theme-text-primary);
+}
+
+// ---------------------------------------------------------------------------
+// Button (Figma buttonStandard)
+// ---------------------------------------------------------------------------
 .bds-btn {
   font-family: $font-type-01;
-  border-radius: $border-radius;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  background-color: $primary-intr-color;
-}
-
-.bds-btn-primary {
-  background-color: $primary-intr-color;
-  color: $interactive-txt-color;
-  &:active,
-  &:focus {
-    background-color: $blue-90;
-  }
-  &:hover {
-    background-color: $blue-60-hover;
-  }
-}
-
-.bds-btn-secondary {
-  border: $border-width solid $med-contrast-border;
-  background-color: transparent;
-  color: $secondary-txt-color;
-  &:active,
-  &:focus {
-    background-color: $gray-30;
-  }
-  &:hover {
-    background-color: $gray-20;
-  }
-}
-
-.bds-btn-textOnly {
-  background-color: transparent;
-  color: $secondary-txt-color;
-  &:active,
-  &:focus {
-    background-color: $gray-30;
-  }
-  &:hover {
-    background-color: $gray-20;
-  }
-}
-
-.bds-btn-small {
-  height: $height-small-btn;
-  font-size: $font-size-small;
-  padding-top: $padding-top-small;
-  padding-bottom: $padding-bottom-small;
-  padding-left: $padding-left-small;
-  padding-right: $padding-right-small;
-}
-
-.bds-btn-medium {
-  height: $height-medium-btn;
-  font-size: $font-size-medium;
-  padding-top: $padding-top-medium;
-  padding-bottom: $padding-bottom-medium;
-  padding-left: $padding-left-medium;
-  padding-right: $padding-right-medium;
-}
-
-.bds-btn-large {
-  height: $height-large-btn;
-  font-size: $font-size-large;
-  padding-top: $padding-top-large;
-  padding-bottom: $padding-bottom-large;
-  padding-left: $padding-left-large;
-  padding-right: $padding-right-large;
-}
-
-.bds-btn-primary.bds-btn-disabled {
-  cursor: not-allowed;
-  opacity: 70%;
-  &:hover {
-    background-color: $primary-intr-color;
-  }
-}
-.bds-btn-secondary.bds-btn-disabled {
-  cursor: not-allowed;
-  opacity: 35%;
-  &:hover {
-    background-color: transparent;
-  }
-}
-.bds-btn-textOnly.bds-btn-disabled {
-  cursor: not-allowed;
-  opacity: 35%;
-  &:hover {
-    background-color: transparent;
-  }
-}
-
-.bds-btn-v2 {
-  @include radius(8);
-  @include type-bold-60;
-  font-family: $font-type-01;
-  justify-content: center;
-  align-items: center;
-  display: inline-flex;
-  border-width: 1px;
+  border-radius: $btn-radius;
+  border-width: $btn-border-width;
   border-style: solid;
-  transition: all 0.4s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  appearance: none;
 
-  &-primary {
-    background-color: $tint-primary-100;
-    color: $white;
-    border-color: $tint-primary-100;
-    cursor: pointer;
-
-    &:hover {
-      background-color: $tint-primary-80;
-      border-color: $tint-primary-80;
-    }
-
-    &:active {
-      background-color: $tint-primary-60;
-      border-color: $tint-primary-60;
-    }
+  // Sizes (Figma: large 16px/20px, medium 14px/18px, small 13px/18px)
+  &--large {
+    @include type.type-bold-80;
+    padding: spacing.$spacing-8 spacing.$spacing-12;
+    gap: spacing.$spacing-6;
   }
 
-  &-secondary {
-    background-color: $white;
-    color: $tint-primary-100;
-    border-color: $tint-primary-100;
-    cursor: pointer;
-
-    &:hover {
-      background-color: $tint-primary-10;
-      border-color: $tint-primary-80;
-    }
-
-    &:active {
-      background-color: $tint-primary-20;
-      border-color: $tint-primary-60;
-    }
+  &--medium {
+    @include type.type-bold-60;
+    padding: spacing.$spacing-6 spacing.$spacing-8;
+    gap: spacing.$spacing-4;
   }
 
-  &-tertiary {
-    background-color: transparent;
-    color: $tint-primary-100;
-    border-color: transparent;
-    cursor: pointer;
-
-    &:hover {
-      background-color: $tint-primary-10;
-      border-color: $tint-primary-10;
-    }
-
-    &:active {
-      background-color: $tint-primary-20;
-      border-color: $tint-primary-20;
-    }
+  &--small {
+    @include type.type-bold-40;
+    padding: spacing.$spacing-2 spacing.$spacing-6;
+    gap: spacing.$spacing-2;
   }
 
-  &-large {
-    padding: $spacing-8 $spacing-12;
-    gap: $spacing-6;
+  // Icon-only: square (getRem for dimensions)
+  &.bds-btn--iconOnly.bds-btn--large {
+    padding: spacing.$spacing-8;
+    min-width: $btn-icon-only-large;
+    min-height: $btn-icon-only-large;
+  }
+  &.bds-btn--iconOnly.bds-btn--medium {
+    padding: spacing.$spacing-6;
+    min-width: $btn-icon-only-medium;
+    min-height: $btn-icon-only-medium;
+  }
+  &.bds-btn--iconOnly.bds-btn--small {
+    padding: spacing.$spacing-2;
+    min-width: $btn-icon-only-small;
+    min-height: $btn-icon-only-small;
   }
 
-  &-medium {
-    padding: $spacing-6 $spacing-8;
-    gap: $spacing-4;
+  &__content {
+    display: inline-flex;
+    align-items: center;
+    gap: inherit;
   }
 
-  &-small {
-    padding: $spacing-2 $spacing-6;
-    gap: $spacing-2;
+  &__caret {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &--badge::after {
+    content: '';
+    position: absolute;
+    top: -$btn-badge-offset;
+    right: -$btn-badge-offset;
+    width: $btn-badge-size;
+    height: $btn-badge-size;
+    border-radius: 50%;
+    background: colors.$feedback-information-100;
+    border: $btn-border-width solid colors.$neutral-0;
+  }
+
+  &--loading .bds-btn__content {
+    visibility: hidden;
+  }
+  &--loading .bds-btn__spinner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
 }
 
-.bds-btn-v2-primary.bds-btn-v2-disabled {
-  cursor: not-allowed;
-  background-color: $neutral-10;
-  border-color: $neutral-10;
-  color: $white;
+.bds-btn__spinner-inner {
+  display: inline-block;
+  width: $btn-spinner-size;
+  height: $btn-spinner-size;
+  border: $btn-spinner-border solid colors.$neutral-20;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: bds-btn-spin 0.8s linear infinite;
+}
+@keyframes bds-btn-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
+// Primary + color
+.bds-btn--primary.bds-btn--tint {
+  background-color: var(--bds-btn-primary-tint-bg);
+  color: var(--bds-btn-primary-tint-text);
+  border-color: var(--bds-btn-primary-tint-border);
+  &:hover:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-primary-tint-bg-hover);
+    border-color: var(--bds-btn-primary-tint-border-hover);
+  }
+  &:active:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-primary-tint-bg-active);
+    border-color: var(--bds-btn-primary-tint-border-active);
+  }
+}
+.bds-btn--primary.bds-btn--neutral {
+  background-color: var(--bds-btn-primary-neutral-bg);
+  color: var(--bds-btn-primary-neutral-text);
+  border-color: var(--bds-btn-primary-neutral-border);
+  &:hover:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-primary-neutral-bg-hover);
+    border-color: var(--bds-btn-primary-neutral-border-hover);
+  }
+  &:active:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-primary-neutral-bg-active);
+    border-color: var(--bds-btn-primary-neutral-border-active);
+  }
+}
+.bds-btn--primary.bds-btn--negative {
+  background-color: var(--bds-btn-primary-negative-bg);
+  color: var(--bds-btn-primary-negative-text);
+  border-color: var(--bds-btn-primary-negative-border);
+  &:hover:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-primary-negative-bg-hover);
+    border-color: var(--bds-btn-primary-negative-bg-hover);
+  }
+  &:active:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-primary-negative-bg-active);
+    border-color: var(--bds-btn-primary-negative-bg-active);
+  }
+}
+.bds-btn--primary.bds-btn--positive {
+  background-color: var(--bds-btn-primary-positive-bg);
+  color: var(--bds-btn-primary-positive-text);
+  border-color: var(--bds-btn-primary-positive-border);
+  &:hover:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-primary-positive-bg-hover);
+    border-color: var(--bds-btn-primary-positive-bg-hover);
+  }
+  &:active:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-primary-positive-bg-active);
+    border-color: var(--bds-btn-primary-positive-bg-active);
+  }
+}
+
+// Secondary + color
+.bds-btn--secondary.bds-btn--tint {
+  background-color: var(--bds-btn-secondary-tint-bg);
+  color: var(--bds-btn-secondary-tint-text);
+  border-color: var(--bds-btn-secondary-tint-border);
+  &:hover:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-secondary-tint-bg-hover);
+    border-color: var(--bds-btn-primary-tint-border-hover);
+  }
+  &:active:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-secondary-tint-bg-active);
+    border-color: var(--bds-btn-primary-tint-border-active);
+  }
+}
+.bds-btn--secondary.bds-btn--neutral {
+  background-color: var(--bds-btn-secondary-neutral-bg);
+  color: var(--bds-btn-secondary-neutral-text);
+  border-color: var(--bds-btn-secondary-neutral-border);
+  &:hover:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-secondary-neutral-bg-hover);
+    border-color: var(--bds-btn-secondary-neutral-border-hover);
+    color: var(--bds-btn-secondary-neutral-text-hover);
+  }
+  &:active:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-secondary-neutral-bg-active);
+    border-color: var(--bds-btn-secondary-neutral-border-active);
+    color: var(--bds-btn-secondary-neutral-text-hover);
+  }
+}
+.bds-btn--secondary.bds-btn--negative {
+  background-color: var(--bds-btn-secondary-negative-bg);
+  color: var(--bds-btn-secondary-negative-text);
+  border-color: var(--bds-btn-secondary-negative-border);
+  &:hover:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-secondary-negative-bg-hover);
+    border-color: colors.$feedback-negative-80;
+  }
+  &:active:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-secondary-negative-bg-active);
+    border-color: colors.$feedback-negative-60;
+  }
+}
+.bds-btn--secondary.bds-btn--positive {
+  background-color: var(--bds-btn-secondary-positive-bg);
+  color: var(--bds-btn-secondary-positive-text);
+  border-color: var(--bds-btn-secondary-positive-border);
+  &:hover:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-secondary-positive-bg-hover);
+    border-color: colors.$feedback-positive-80;
+  }
+  &:active:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-secondary-positive-bg-active);
+    border-color: colors.$feedback-positive-60;
+  }
+}
+
+// Tertiary + color
+.bds-btn--tertiary.bds-btn--tint {
+  background-color: var(--bds-btn-tertiary-tint-bg);
+  color: var(--bds-btn-tertiary-tint-text);
+  border-color: var(--bds-btn-tertiary-tint-border);
+  &:hover:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-tertiary-tint-bg-hover);
+    border-color: var(--bds-btn-tertiary-tint-bg-hover);
+  }
+  &:active:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-tertiary-tint-bg-active);
+    border-color: var(--bds-btn-tertiary-tint-bg-active);
+  }
+}
+.bds-btn--tertiary.bds-btn--neutral {
+  background-color: var(--bds-btn-tertiary-neutral-bg);
+  color: var(--bds-btn-tertiary-neutral-text);
+  border-color: var(--bds-btn-tertiary-neutral-border);
+  &:hover:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-tertiary-neutral-bg-hover);
+    border-color: var(--bds-btn-tertiary-neutral-bg-hover);
+    color: var(--bds-btn-tertiary-neutral-text-hover);
+  }
+  &:active:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-tertiary-neutral-bg-active);
+    border-color: var(--bds-btn-tertiary-neutral-bg-active);
+    color: var(--bds-btn-tertiary-neutral-text-hover);
+  }
+}
+.bds-btn--tertiary.bds-btn--negative {
+  background-color: var(--bds-btn-tertiary-negative-bg);
+  color: var(--bds-btn-tertiary-negative-text);
+  border-color: var(--bds-btn-tertiary-negative-border);
+  &:hover:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-tertiary-negative-bg-hover);
+    border-color: var(--bds-btn-tertiary-negative-bg-hover);
+  }
+  &:active:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-tertiary-negative-bg-active);
+    border-color: var(--bds-btn-tertiary-negative-bg-active);
+  }
+}
+.bds-btn--tertiary.bds-btn--positive {
+  background-color: var(--bds-btn-tertiary-positive-bg);
+  color: var(--bds-btn-tertiary-positive-text);
+  border-color: var(--bds-btn-tertiary-positive-border);
+  &:hover:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-tertiary-positive-bg-hover);
+    border-color: var(--bds-btn-tertiary-positive-bg-hover);
+  }
+  &:active:not(.bds-btn--disabled) {
+    background-color: var(--bds-btn-tertiary-positive-bg-active);
+    border-color: var(--bds-btn-tertiary-positive-bg-active);
+  }
+}
+
+// Toggled state (Figma buttonToggle: active=true, interaction=Rest — not :pressed)
+.bds-btn--primary.bds-btn--toggled:not(.bds-btn--disabled) {
+  &.bds-btn--tint {
+    background-color: var(--bds-btn-primary-tint-bg);
+    border-color: var(--bds-btn-primary-tint-border);
+  }
+  &.bds-btn--neutral {
+    background-color: var(--bds-btn-primary-neutral-bg);
+    border-color: var(--bds-btn-primary-neutral-border);
+  }
+  &.bds-btn--negative {
+    background-color: var(--bds-btn-primary-negative-bg);
+    border-color: var(--bds-btn-primary-negative-border);
+  }
+  &.bds-btn--positive {
+    background-color: var(--bds-btn-primary-positive-bg);
+    border-color: var(--bds-btn-primary-positive-border);
+  }
+}
+.bds-btn--primary.bds-btn--toggled:hover:not(.bds-btn--disabled) {
+  &.bds-btn--tint {
+    background-color: var(--bds-btn-primary-tint-bg-hover);
+    border-color: var(--bds-btn-primary-tint-border-hover);
+  }
+  &.bds-btn--neutral {
+    background-color: var(--bds-btn-primary-neutral-bg-hover);
+    border-color: var(--bds-btn-primary-neutral-border-hover);
+  }
+  &.bds-btn--negative {
+    background-color: var(--bds-btn-primary-negative-bg-hover);
+    border-color: var(--bds-btn-primary-negative-bg-hover);
+  }
+  &.bds-btn--positive {
+    background-color: var(--bds-btn-primary-positive-bg-hover);
+    border-color: var(--bds-btn-primary-positive-bg-hover);
+  }
+}
+.bds-btn--primary.bds-btn--toggled:active:not(.bds-btn--disabled) {
+  &.bds-btn--tint {
+    background-color: var(--bds-btn-primary-tint-bg-active);
+    border-color: var(--bds-btn-primary-tint-border-active);
+  }
+  &.bds-btn--neutral {
+    background-color: var(--bds-btn-primary-neutral-bg-active);
+    border-color: var(--bds-btn-primary-neutral-border-active);
+  }
+  &.bds-btn--negative {
+    background-color: var(--bds-btn-primary-negative-bg-active);
+    border-color: var(--bds-btn-primary-negative-bg-active);
+  }
+  &.bds-btn--positive {
+    background-color: var(--bds-btn-primary-positive-bg-active);
+    border-color: var(--bds-btn-primary-positive-bg-active);
+  }
+}
+.bds-btn--secondary.bds-btn--toggled:not(.bds-btn--disabled) {
+  // Secondary toggled = filled like primary
+  &.bds-btn--tint {
+    background-color: var(--bds-btn-primary-tint-bg);
+    color: var(--bds-btn-primary-tint-text);
+    border-color: var(--bds-btn-primary-tint-border);
+  }
+  &.bds-btn--neutral {
+    background-color: var(--bds-btn-primary-neutral-bg);
+    color: var(--bds-btn-primary-neutral-text);
+    border-color: var(--bds-btn-primary-neutral-border);
+  }
+  &.bds-btn--negative {
+    background-color: var(--bds-btn-primary-negative-bg);
+    color: var(--bds-btn-primary-negative-text);
+    border-color: var(--bds-btn-primary-negative-border);
+  }
+  &.bds-btn--positive {
+    background-color: var(--bds-btn-primary-positive-bg);
+    color: var(--bds-btn-primary-positive-text);
+    border-color: var(--bds-btn-primary-positive-border);
+  }
   &:hover {
-    background-color: $neutral-10;
+    &.bds-btn--tint {
+      background-color: var(--bds-btn-primary-tint-bg-hover);
+      border-color: var(--bds-btn-primary-tint-border-hover);
+    }
+    &.bds-btn--neutral {
+      background-color: var(--bds-btn-primary-neutral-bg-hover);
+      border-color: var(--bds-btn-primary-neutral-border-hover);
+    }
+    &.bds-btn--negative {
+      background-color: var(--bds-btn-primary-negative-bg-hover);
+      border-color: var(--bds-btn-primary-negative-bg-hover);
+    }
+    &.bds-btn--positive {
+      background-color: var(--bds-btn-primary-positive-bg-hover);
+      border-color: var(--bds-btn-primary-positive-bg-hover);
+    }
   }
 }
-
-.bds-btn-v2-secondary.bds-btn-v2-disabled {
-  cursor: not-allowed;
-  background-color: $white;
-  border-color: $neutral-20;
-  color: $neutral-20;
-
+.bds-btn--tertiary.bds-btn--toggled:not(.bds-btn--disabled) {
+  // Tertiary toggled = subtle fill
+  &.bds-btn--tint {
+    background-color: var(--bds-btn-tertiary-tint-bg-active);
+    border-color: var(--bds-btn-tertiary-tint-bg-active);
+  }
+  &.bds-btn--neutral {
+    background-color: var(--bds-btn-tertiary-neutral-bg-active);
+    border-color: var(--bds-btn-tertiary-neutral-bg-active);
+  }
+  &.bds-btn--negative {
+    background-color: var(--bds-btn-tertiary-negative-bg-active);
+    border-color: var(--bds-btn-tertiary-negative-bg-active);
+  }
+  &.bds-btn--positive {
+    background-color: var(--bds-btn-tertiary-positive-bg-active);
+    border-color: var(--bds-btn-tertiary-positive-bg-active);
+  }
   &:hover {
-    background-color: $white;
+    &.bds-btn--tint {
+      background-color: var(--bds-btn-tertiary-tint-bg-active);
+      border-color: var(--bds-btn-tertiary-tint-bg-active);
+    }
+    &.bds-btn--neutral {
+      background-color: var(--bds-btn-tertiary-neutral-bg-active);
+      border-color: var(--bds-btn-tertiary-neutral-bg-active);
+    }
+    &.bds-btn--negative {
+      background-color: var(--bds-btn-tertiary-negative-bg-active);
+      border-color: var(--bds-btn-tertiary-negative-bg-active);
+    }
+    &.bds-btn--positive {
+      background-color: var(--bds-btn-tertiary-positive-bg-active);
+      border-color: var(--bds-btn-tertiary-positive-bg-active);
+    }
   }
 }
 
-.bds-btn-v2-tertiary.bds-btn-v2-disabled {
+// Disabled
+.bds-btn--primary.bds-btn--disabled {
   cursor: not-allowed;
+  pointer-events: none;
+  opacity: 1;
+  -webkit-text-fill-color: currentColor;
+  background-color: var(--bds-btn-disabled-bg);
+  border-color: var(--bds-btn-disabled-border);
+  color: var(--bds-btn-disabled-text);
+  &:hover {
+    background-color: var(--bds-btn-disabled-bg);
+    border-color: var(--bds-btn-disabled-border);
+  }
+}
+.bds-btn--secondary.bds-btn--disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 1;
+  -webkit-text-fill-color: currentColor;
+  background-color: var(--bds-btn-disabled-secondary-bg);
+  border-color: var(--bds-btn-disabled-secondary-border);
+  color: var(--bds-btn-disabled-secondary-text);
+  &:hover {
+    background-color: var(--bds-btn-disabled-secondary-bg);
+    border-color: var(--bds-btn-disabled-secondary-border);
+  }
+}
+.bds-btn--tertiary.bds-btn--disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 1;
+  -webkit-text-fill-color: currentColor;
   background-color: transparent;
   border-color: transparent;
-  color: $neutral-20;
-
+  color: var(--bds-btn-disabled-secondary-text);
   &:hover {
     background-color: transparent;
+    border-color: transparent;
+  }
+}
+
+// Hugs the button so only the button, not the whole row, triggers its tooltip.
+.bds-btn__tooltip-anchor {
+  width: fit-content;
+
+  &--disabled {
+    cursor: not-allowed;
   }
 }

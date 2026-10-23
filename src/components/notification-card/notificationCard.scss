@@ -1,14 +1,17 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
-$notification-card-height: getRem(159px);
-$card-content-margin: getRem(24px);
-$card-message-margin-top: getRem(8px);
-$card-message-margin-bottom: getRem(16px);
-$secondary-button-spacing-margin-right: getRem(16px);
+$notification-card-height: global-style.getRem(159px);
+$card-content-margin: global-style.getRem(24px);
+$card-message-margin-top: global-style.getRem(8px);
+$card-message-margin-bottom: global-style.getRem(16px);
+$secondary-button-spacing-margin-right: global-style.getRem(16px);
 
 .bds-notification-card {
   display: flex;
-  background-color: #ffffff;
+  background-color: var(--theme-content-bg);
   height: $notification-card-height;
   flex-grow: 2;
 
@@ -39,7 +42,7 @@ $secondary-button-spacing-margin-right: getRem(16px);
     .bds-card-message {
       display: flex;
       flex-grow: 2;
-      color: $gray-80;
+      color: var(--theme-text-primary);
       margin-top: $card-message-margin-top;
       margin-bottom: $card-message-margin-bottom;
       overflow: hidden;
@@ -47,6 +50,7 @@ $secondary-button-spacing-margin-right: getRem(16px);
       -ms-text-overflow: ellipsis;
       display: -webkit-box;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       -webkit-box-orient: vertical;
     }
 
@@ -63,4 +67,24 @@ $secondary-button-spacing-margin-right: getRem(16px);
 
 .bds-notification-card-with-spinner-overlay {
   position: relative;
+}
+
+[data-theme='dark'] {
+  .bds-notification-card {
+    background-color: var(--theme-content-bg);
+    color: var(--theme-text-primary);
+
+    &:hover {
+      background-color: tokens.$neutral-60;
+    }
+
+    .bds-card-title,
+    .bds-card-time {
+      color: tokens.$neutral-40;
+    }
+
+    .bds-card-message {
+      color: var(--theme-text-primary);
+    }
+  }
 }

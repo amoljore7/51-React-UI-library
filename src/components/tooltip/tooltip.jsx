@@ -1,48 +1,77 @@
 import React, {
   cloneElement,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
+import PropTypes from 'prop-types';
 import Typography from '../typography';
 import {
   classes,
+  defaultPosition,
+  defaultTheme,
   hoverOffset,
+  themeAuto,
   tooltipId,
+  tooltipArrowOffset,
   tooltipMargin,
   tooltipMaxHeight,
   tooltipMaxWidth,
-  zIndexDefault
+  zIndexDefault,
 } from './constants';
 import './tooltip.scss';
-// checks if mouse current Position is near the boundary of tooltip
-// the boundary is extended by 10 px on all sides tooltip element
+
+const POSITIONS = [
+  'top',
+  'bottom',
+  'left',
+  'right',
+  'top-left',
+  'top-right',
+  'bottom-left',
+  'bottom-right',
+];
+
+const POSITION_CLASS_MAP = {
+  top: classes.positionTop,
+  bottom: classes.positionBottom,
+  left: classes.positionLeft,
+  right: classes.positionRight,
+  'top-left': classes.positionTopLeft,
+  'top-right': classes.positionTopRight,
+  'bottom-left': classes.positionBottomLeft,
+  'bottom-right': classes.positionBottomRight,
+};
+
+function setRef(ref, value) {
+  if (typeof ref === 'function') ref(value);
+  else if (ref != null) ref.current = value;
+}
+
+function mergeRefs(refA, refB) {
+  return (value) => {
+    refA.current = value;
+    setRef(refB, value);
+  };
+}
+
 const isMousePointerNearTooltipContainer = (tooltipElement, mouseEvent) => {
-  let {
+  const {
     left: tooltipLeft,
     right: tooltipRight,
     bottom: tooltipBottom,
     top: tooltipTop,
   } = tooltipElement.getBoundingClientRect();
 
-  let isInsideWidth = false;
-  let isInsideHeight = false;
-
-  if (
+  const isInsideWidth =
     mouseEvent.pageX >= tooltipLeft + window.pageXOffset - hoverOffset &&
-    mouseEvent.pageX < tooltipRight + window.pageXOffset + hoverOffset
-  ) {
-    isInsideWidth = true;
-  }
-
-  if (
+    mouseEvent.pageX < tooltipRight + window.pageXOffset + hoverOffset;
+  const isInsideHeight =
     mouseEvent.pageY < tooltipBottom + window.pageYOffset + hoverOffset &&
-    mouseEvent.pageY > tooltipTop + window.pageYOffset - hoverOffset
-  ) {
-    isInsideHeight = true;
-  }
+    mouseEvent.pageY > tooltipTop + window.pageYOffset - hoverOffset;
 
   return isInsideWidth && isInsideHeight;
 };
@@ -87,30 +116,30 @@ const changeTooltipPos = (tooltipElement, element, position) => {
 
   const moveToTopLeft = () => {
     tooltipElement.style.transform = `translate3d(${
-      rect.left + window.pageXOffset - hoverOffset - tooltipElement.offsetWidth
+      rect.left + window.pageXOffset - tooltipElement.offsetWidth + tooltipArrowOffset
     }px,${
-      rect.top + window.pageYOffset - hoverOffset - tooltipElement.offsetHeight
+      rect.top + window.pageYOffset - tooltipElement.offsetHeight - tooltipMargin
     }px,0)`;
   };
 
   const moveToTopRight = () => {
     tooltipElement.style.transform = `translate3d(${
-      rect.right + window.pageXOffset + hoverOffset
+      rect.right + window.pageXOffset - tooltipArrowOffset
     }px,${
-      rect.top + window.pageYOffset - hoverOffset - tooltipElement.offsetHeight
+      rect.top + window.pageYOffset - tooltipElement.offsetHeight - tooltipMargin
     }px,0)`;
   };
 
   const moveToBottomLeft = () => {
     tooltipElement.style.transform = `translate3d(${
-      rect.left + window.pageXOffset - hoverOffset - tooltipElement.offsetWidth
-    }px,${rect.bottom + window.pageYOffset + hoverOffset}px,0)`;
+      rect.left + window.pageXOffset - tooltipElement.offsetWidth + tooltipArrowOffset
+    }px,${rect.bottom + window.pageYOffset + tooltipMargin}px,0)`;
   };
 
   const moveToBottomRight = () => {
     tooltipElement.style.transform = `translate3d(${
-      rect.right + window.pageXOffset + hoverOffset
-    }px,${rect.bottom + window.pageYOffset + hoverOffset}px,0)`;
+      rect.right + window.pageXOffset - tooltipArrowOffset
+    }px,${rect.bottom + window.pageYOffset + tooltipMargin}px,0)`;
   };
 
   const moveToLeft = () => {
@@ -172,7 +201,7 @@ const changeTooltipPos = (tooltipElement, element, position) => {
   const adjustTopLeftPosition = () => {
     if (rect.top - tooltipElement.offsetHeight - tooltipMargin < 0) {
       moveToBottomLeft();
-    } else if (rect.left - tooltipElement.offsetWidth - tooltipMargin < 0) {
+    } else if (rect.left - tooltipElement.offsetWidth + tooltipArrowOffset < 0) {
       moveToTopRight();
     } else {
       moveToTopLeft();
@@ -182,7 +211,7 @@ const changeTooltipPos = (tooltipElement, element, position) => {
   const adjustTopRightPosition = () => {
     if (rect.top - tooltipElement.offsetHeight - tooltipMargin < 0) {
       moveToBottomRight();
-    } else if (rect.right + tooltipMargin + tooltipElement.offsetWidth > vw) {
+    } else if (rect.right - tooltipArrowOffset + tooltipElement.offsetWidth > vw) {
       moveToTopLeft();
     } else {
       moveToTopRight();
@@ -192,7 +221,7 @@ const changeTooltipPos = (tooltipElement, element, position) => {
   const adjustBottomLeftPosition = () => {
     if (rect.bottom + tooltipElement.offsetHeight + tooltipMargin > vh) {
       moveToTopLeft();
-    } else if (rect.left - tooltipElement.offsetWidth - tooltipMargin < 0) {
+    } else if (rect.left - tooltipElement.offsetWidth + tooltipArrowOffset < 0) {
       moveToBottomRight();
     } else {
       moveToBottomLeft();
@@ -202,7 +231,7 @@ const changeTooltipPos = (tooltipElement, element, position) => {
   const adjustBottomRightPosition = () => {
     if (rect.bottom + tooltipElement.offsetHeight + tooltipMargin > vh) {
       moveToTopRight();
-    } else if (rect.right + tooltipMargin + tooltipElement.offsetWidth > vw) {
+    } else if (rect.right - tooltipArrowOffset + tooltipElement.offsetWidth > vw) {
       moveToBottomLeft();
     } else {
       moveToBottomRight();
@@ -237,76 +266,112 @@ const changeTooltipPos = (tooltipElement, element, position) => {
   }
 };
 
-const Tooltip = ({ title, children, position, zIndex = zIndexDefault, className }) => {
-  const [tooltipElement] = useState(document.createElement('div'));
+const Tooltip = ({
+  title,
+  children,
+  position = defaultPosition,
+  theme = defaultTheme,
+  zIndex = zIndexDefault,
+  className,
+}) => {
+  const resolvedTheme =
+    theme === themeAuto && typeof document !== 'undefined'
+      ? document.documentElement.getAttribute('data-theme')
+      : theme;
+  const isDark = resolvedTheme === 'dark';
+  const portalRef = useRef(null);
+  const childRef = useRef(null);
   const [isHover, setIsHover] = useState(false);
   const [isNear, setIsNear] = useState(false);
-  const childRef = useRef();
-  tooltipElement.id = `${tooltipId}`;
-  tooltipElement.style.position = 'absolute';
-  tooltipElement.style.willChange = 'transform';
-  tooltipElement.style.zIndex = zIndex;
-  tooltipElement.style.top = 0;
-  tooltipElement.style.left = 0;
-  tooltipElement.style.maxWidth = tooltipMaxWidth;
-  tooltipElement.style.maxHeight = tooltipMaxHeight;
-  tooltipElement.style.overflow = 'auto';
-  if (className) {
-    tooltipElement.classList.add(className);
-  }
+  const rafRef = useRef(null);
 
   useEffect(() => {
-    document.body.appendChild(tooltipElement);
+    const el = document.createElement('div');
+    el.id = tooltipId;
+    el.style.position = 'absolute';
+    el.style.willChange = 'transform';
+    el.style.zIndex = zIndex;
+    el.style.top = '0';
+    el.style.left = '0';
+    el.style.maxWidth = tooltipMaxWidth;
+    el.style.maxHeight = tooltipMaxHeight;
+    el.style.overflow = 'visible';
+    el.style.display = 'none';
+    if (className) el.classList.add(className);
+    portalRef.current = el;
+    document.body.appendChild(el);
+
+    let pending = false;
     const mouseMoveHandler = (event) => {
-      const isMousePointerNear = isMousePointerNearTooltipContainer(
-        tooltipElement,
-        event
-      );
-      if (isMousePointerNear) {
-        setIsNear(true);
-      } else {
-        setIsNear(false);
-      }
+      if (pending) return;
+      pending = true;
+      rafRef.current = requestAnimationFrame(() => {
+        pending = false;
+        if (!portalRef.current) return;
+        const near = isMousePointerNearTooltipContainer(portalRef.current, event);
+        setIsNear(near);
+      });
     };
     document.addEventListener('mousemove', mouseMoveHandler);
+
     return () => {
-      document.body.removeChild(tooltipElement);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       document.removeEventListener('mousemove', mouseMoveHandler);
+      if (portalRef.current && portalRef.current.parentNode === document.body) {
+        document.body.removeChild(portalRef.current);
+      }
+      portalRef.current = null;
     };
-  }, []);
+  }, [zIndex, className]);
 
   useLayoutEffect(() => {
-    if (childRef && childRef.current && isHover) {
-      tooltipElement.style.display = 'block'
-      changeTooltipPos(tooltipElement, childRef.current, position);
+    const el = portalRef.current;
+    if (!el) return;
+    if (childRef.current && isHover) {
+      el.style.display = 'block';
+      changeTooltipPos(el, childRef.current, position);
     } else {
-      tooltipElement.style.display = 'none'
+      el.style.display = 'none';
     }
-  }, [isHover, title]);
+  }, [isHover, title, position]);
+
+  const handleMouseOver = useCallback(() => setIsHover(true), []);
+  const handleMouseLeave = useCallback(() => setIsHover(false), []);
+
+  const child = React.Children.only(children);
+  const mergedRef = mergeRefs(childRef, child.ref);
 
   return (
     <>
-      {cloneElement(React.Children.only(children), {
-        ref: childRef,
-        onMouseOver: (e) => {
-          setIsHover(true);
-        },
-        onMouseLeave: (e) => {
-          setIsHover(false);
-        },
+      {cloneElement(child, {
+        ref: mergedRef,
+        onMouseOver: handleMouseOver,
+        onMouseLeave: handleMouseLeave,
       })}
-      {(isHover || isNear) && title &&
+      {(isHover || isNear) &&
+        title &&
+        portalRef.current &&
         createPortal(
           <div
-            className={classes.tooltipContainer}
+            className={`${classes.tooltipContainer} ${POSITION_CLASS_MAP[position] ?? classes.positionTop}${isDark ? ` ${classes.tooltipDark}` : ''}`}
             onMouseLeave={() => setIsNear(false)}
           >
-            <Typography variant='body'>{title} </Typography>
+            <span className={classes.tooltipArrow} aria-hidden />
+            <Typography variant="caption1">{title}</Typography>
           </div>,
-          tooltipElement
+          portalRef.current
         )}
     </>
   );
+};
+
+Tooltip.propTypes = {
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  children: PropTypes.node.isRequired,
+  position: PropTypes.oneOf(POSITIONS),
+  theme: PropTypes.oneOf(['light', 'dark', 'auto']),
+  zIndex: PropTypes.number,
+  className: PropTypes.string,
 };
 
 export default Tooltip;

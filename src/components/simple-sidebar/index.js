@@ -1,2 +1,2 @@
-import SimpleSidebar from './simple-sidebar';
-export default SimpleSidebar;
+import SimpleSidebar from './simple-sidebar'
+export default SimpleSidebar

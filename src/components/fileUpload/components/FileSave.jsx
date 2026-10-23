@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { IoMdClose } from 'react-icons/io';
-import FileUploadTextIcon from '../../../assets/icons/file-upload-text.svg';
+import FileUploadTextIcon from '../../../assets/icons/file-upload-text.svg?react';
 import Button from '../../button';
 import Tooltip from '../../tooltip';
 import Typography from '../../typography';
@@ -17,11 +17,10 @@ const FileSave = ({ file, base64File, handleFileReset, handleFileSelect, width }
     <div className={UploadFormClasses.uploadFormCompleteContainer} style={width ? { width } : undefined}>
       <div className={UploadFormClasses.uploadFormComplete}>
         {!(file.type.startsWith('image') || file.type.startsWith('img')) && (
-          <img
+          <FileUploadTextIcon
             className={UploadFormClasses.uploadFormCompleteFileIcon}
-            role='img'
-            alt={fileUploaded}
-            src={FileUploadTextIcon}
+            role="img"
+            aria-label={fileUploaded}
           />
         )}
         {(file.type.startsWith('image') || file.type.startsWith('img')) && (

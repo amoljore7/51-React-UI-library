@@ -1,2 +1,2 @@
-import DialogPopup from './dialog';
-export default DialogPopup;
+import DialogPopup from './dialog'
+export default DialogPopup

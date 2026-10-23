@@ -1,4 +1,4 @@
-const classes = {
+export const classes = {
   flexibleMenu: 'bds-flexible-menu-container',
   header: 'bds-flexible-menu-header',
   content: 'bds-flexible-menu-content',

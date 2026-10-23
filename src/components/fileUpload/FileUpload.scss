@@ -1,30 +1,33 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
-$container-border-radius: getRem(3px);
-$container-border-color: $gray-40;
-$container-padding-top-bottom: getRem(16px);
-$container-padding-left-right: getRem(103px);
-$container-border-width: getRem(1px);
+$container-border-radius: global-style.getRem(3px);
+$container-border-color: var(--theme-border);
+$container-padding-top-bottom: global-style.getRem(16px);
+$container-padding-left-right: global-style.getRem(103px);
+$container-border-width: global-style.getRem(1px);
 
-$container-width: getRem(490px);
-$container-height: getRem(238px);
+$container-width: global-style.getRem(490px);
+$container-height: global-style.getRem(238px);
 $instruct-text-color: $blue-70;
 $filename-text-color: $blue-70;
-$error-icon-right-margin: getRem(8px);
+$error-icon-right-margin: global-style.getRem(8px);
 
-$container-border-width-dragged-over: getRem(2px);
+$container-border-width-dragged-over: global-style.getRem(2px);
 $container-border-color-dragged-over: $blue-70;
 
-$upload-complete-text-icon-margin: getRem(32px);
-$upload-complete-file-icon-margin: getRem(8px);
-$upload-complete-file-container-bottom-margin: getRem(16px);
-$upload-complete-image-window-width-height: getRem(120px);
+$upload-complete-text-icon-margin: global-style.getRem(32px);
+$upload-complete-file-icon-margin: global-style.getRem(8px);
+$upload-complete-file-container-bottom-margin: global-style.getRem(16px);
+$upload-complete-image-window-width-height: global-style.getRem(120px);
 
-$upload-complete-thumbnail-padding: getRem(8px);
-$upload-complete-filename-width: getRem(144px);
-$upload-complete-bottom-panel-in-between-margin: getRem(16px);
+$upload-complete-thumbnail-padding: global-style.getRem(8px);
+$upload-complete-filename-width: global-style.getRem(144px);
+$upload-complete-bottom-panel-in-between-margin: global-style.getRem(16px);
 $upload-input-required-error-border-color: $error-color;
-$upload-input-required-error-border-width: getRem(2px);
+$upload-input-required-error-border-width: global-style.getRem(2px);
 
 @mixin inputLabel {
   position: absolute;
@@ -134,7 +137,7 @@ $upload-input-required-error-border-width: getRem(2px);
     }
 
     .bds-upload-form-complete-reset {
-      color: $gray-80;
+      color: var(--theme-text-primary);
       display: flex;
       align-items: center;
     }
@@ -168,13 +171,13 @@ $upload-input-required-error-border-width: getRem(2px);
 
     .bds-upload-form-file-complete-icon {
       display: flex;
-      color: $gray-80;
+      color: var(--theme-text-primary);
       margin-top: $upload-complete-text-icon-margin;
     }
     .bds-upload-form-file-complete-thumbnail {
       box-sizing: border-box;
       display: flex;
-      color: $gray-80;
+      color: var(--theme-text-primary);
       margin-top: $upload-complete-text-icon-margin;
       width: $upload-complete-image-window-width-height;
       height: $upload-complete-image-window-width-height;
@@ -187,7 +190,7 @@ $upload-input-required-error-border-width: getRem(2px);
 .bds-upload-form-dragged-over-container {
   display: flex;
   border: $container-border-width-dragged-over dashed
-    $container-border-color-dragged-over;
+  $container-border-color-dragged-over;
   border-radius: $container-border-radius;
   width: $container-width;
   height: $container-height;
@@ -198,5 +201,49 @@ $upload-input-required-error-border-width: getRem(2px);
 
   .bds-upload-form-dragged-over {
     display: flex;
+  }
+}
+
+[data-theme='dark'] {
+  .bds-upload-form-container {
+    border-color: var(--theme-border);
+    background-color: var(--theme-content-bg);
+
+    svg {
+      color: var(--theme-text-primary);
+    }
+  }
+
+  .bds-upload-form-file-complete-container {
+    border-color: var(--theme-border);
+    background-color: var(--theme-content-bg);
+  }
+
+  .bds-upload-form-complete-container {
+    .bds-upload-form-complete-file-icon,
+    .bds-upload-form-complete-thumbnail {
+      color: var(--theme-text-primary);
+    }
+  }
+
+  .bds-upload-form-dragged-over-container {
+    border-color: tokens.$feedback-information-60;
+    background-color: rgba(tokens.$neutral-80, 0.5);
+
+    svg {
+      color: var(--theme-text-primary);
+    }
+  }
+
+  .bds-upload-form-file-complete{
+    .bds-upload-form-file-complete-icon {
+      color: var(--theme-text-primary);
+    }
+  }
+
+  .bds-upload-form-complete-file-container{
+    .bds-upload-form-complete-reset{
+      color: var(--theme-text-primary);
+    }
   }
 }

@@ -8,4 +8,4 @@ export const classes = {
   contentClosed: 'content-closed',
   marginTop32: 'margin-top-32',
   marginTop8: 'margin-top-8',
-};
+}

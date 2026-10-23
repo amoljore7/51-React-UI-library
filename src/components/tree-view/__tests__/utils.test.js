@@ -1,4 +1,4 @@
-import { SHOW_SELECTED } from "../constants"
+import { SHOW_SELECTED } from '../constants'
 import {
   areAllChildrenChecked,
   findAndUpdateCheckedStatus,
@@ -12,7 +12,7 @@ import {
   prepareDataForTable,
   sortNodesByDepth,
   toggleNodeExpansion,
-} from "../utils"
+} from '../utils'
 
 describe('flattenTree', () => {
   const nestedTree = {
@@ -64,7 +64,7 @@ describe('flattenTree', () => {
       _id: '0-0-0',
       _parent: '0-0',
       _depth: 2,
-    }
+    },
   ]
   it('should flatten the tree.', () => {
     const actualFlattenedTree = flattenTree(nestedTree)
@@ -102,7 +102,7 @@ describe('getNodesToRender', () => {
         _id: '0-0-0',
         _parent: '0-0',
         _depth: 2,
-      }
+      },
     ]
 
     const expectedNodesToRender = [
@@ -149,7 +149,7 @@ describe('getNodesToRender', () => {
         _id: '0-0-0',
         _parent: '0-0',
         _depth: 2,
-      }
+      },
     ]
 
     const expectedNodesToRender = [
@@ -181,7 +181,7 @@ describe('getNodesToRender', () => {
         _id: '0-0-0',
         _parent: '0-0',
         _depth: 2,
-      }
+      },
     ]
 
     const actualNodesToRender = getNodesToRender(nodes)
@@ -216,7 +216,7 @@ describe('getNodesToRender', () => {
         _id: '0-0-0',
         _parent: '0-0',
         _depth: 2,
-      }
+      },
     ]
 
     const actualNodesToRender = getNodesToRender(nodes, true)
@@ -263,7 +263,7 @@ describe('getNodesToRender', () => {
         _id: '0-1',
         _parent: '0',
         _depth: 1,
-      }
+      },
     ]
 
     const expectedNodesToRender = [
@@ -304,7 +304,7 @@ describe('getNodesToRender', () => {
         _id: '0-0-0',
         _parent: '0-0',
         _depth: 2,
-      }
+      },
     ]
 
     const actualNodesToRender = getNodesToRender(nodes, false, true)
@@ -341,7 +341,7 @@ describe('getAllTheChildren', () => {
         _id: '0-0-0',
         _parent: '0-0',
         _depth: 2,
-      }
+      },
     ]
     const expectedChildrenIds = ['0-0', '0-0-0']
     expect(getAllTheChildren(nodes, nodes[0]._id)).toEqual(expectedChildrenIds)
@@ -1131,7 +1131,7 @@ describe('getSelectedItems', () => {
       {
         label: 'Dev',
         value: 'Dev',
-      }
+      },
     ]
 
     expect(getSelectedItems(nodes)).toMatchObject(expectedResult)
@@ -1186,7 +1186,7 @@ describe('getSelectedItems', () => {
       {
         label: 'All Secrets',
         value: 'All Secrets',
-      }
+      },
     ]
 
     expect(getSelectedItems(nodes)).toMatchObject(expectedResult)

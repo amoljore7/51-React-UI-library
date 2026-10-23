@@ -1,2 +1,2 @@
-import FlexibleMenu from './flexibleMenu';
-export default FlexibleMenu;
+import FlexibleMenu from './flexibleMenu'
+export default FlexibleMenu

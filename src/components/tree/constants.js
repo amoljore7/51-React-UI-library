@@ -15,22 +15,22 @@ export const TreeNodeClasses = {
   parentIcon: 'tree-node-parent-icon',
   parentText: 'tree-node-parent-text',
   actionIconHolder: 'tree-node-action-item-holder',
-};
+}
 export const TreeClass = {
   boundingContainer: 'tree-bounding-container',
   container: 'tree-container',
   resize: 'tree-resize-line',
-};
+}
 
-export const trackingLineInitialWidth = 28;
-export const trackingLineRestWidth = 32;
-export const defaultIconSize = 24;
-export const trackingLineSeperation = 4;
-export const tabIndex = '0';
-export const tabIndexNegative = '-1';
-export const leafNodeKey = 'leaf-item-';
-export const treeNodeKey = 'tree-node-item-';
-export const mousedownEvent = 'mousedown';
-export const mousemoveEvent = 'mousemove';
-export const mouseupEvent = 'mouseup';
-export const recursivePropName = 'nodes';
+export const trackingLineInitialWidth = 28
+export const trackingLineRestWidth = 32
+export const defaultIconSize = 24
+export const trackingLineSeperation = 4
+export const tabIndex = '0'
+export const tabIndexNegative = '-1'
+export const leafNodeKey = 'leaf-item-'
+export const treeNodeKey = 'tree-node-item-'
+export const mousedownEvent = 'mousedown'
+export const mousemoveEvent = 'mousemove'
+export const mouseupEvent = 'mouseup'
+export const recursivePropName = 'nodes'

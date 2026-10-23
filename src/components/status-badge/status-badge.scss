@@ -1,0 +1,145 @@
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/tokens/colors.scss' as tokens;
+@use '../../global-style/font-family.scss' as *;
+
+$font-size: global-style.getRem(13px);
+$padding-vertical: global-style.getRem(2px);
+$padding-horizontal: global-style.getRem(8px);
+$radius: global-style.getRem(4px);
+$gap: global-style.getRem(6px);
+
+@mixin status-tokens($name, $bg, $text, $border) {
+  --bds-status-badge-#{$name}-bg: #{$bg};
+  --bds-status-badge-#{$name}-text: #{$text};
+  --bds-status-badge-#{$name}-border: #{$border};
+}
+
+@mixin status-colors($name) {
+  background-color: var(--bds-status-badge-#{$name}-bg);
+  color: var(--bds-status-badge-#{$name}-text);
+  border-color: var(--bds-status-badge-#{$name}-border);
+}
+
+/**
+ * Semantic, not structural: a badge's whole job is to signal success/failure,
+ * so the hues stay pinned rather than deriving from --theme-*. A custom theme
+ * therefore gets the light values, which is why the default block has to cover
+ * [data-theme] too — see CLAUDE.md, "The three-block convention".
+ */
+:root,
+[data-theme] {
+  @include status-tokens(
+    success,
+    tokens.$feedback-positive-10,
+    tokens.$feedback-positive-140,
+    tokens.$feedback-positive-20
+  );
+  @include status-tokens(
+    error,
+    tokens.$feedback-negative-10,
+    tokens.$feedback-negative-140,
+    tokens.$feedback-negative-20
+  );
+  @include status-tokens(
+    warning,
+    tokens.$feedback-warning-10,
+    tokens.$feedback-warning-140,
+    tokens.$feedback-warning-20
+  );
+  @include status-tokens(
+    info,
+    tokens.$feedback-information-10,
+    tokens.$feedback-information-140,
+    tokens.$feedback-information-20
+  );
+  @include status-tokens(
+    general,
+    tokens.$neutral-5,
+    tokens.$neutral-80,
+    tokens.$neutral-20
+  );
+}
+
+[data-theme='dark'] {
+  @include status-tokens(
+    success,
+    tokens.$feedback-positive-140,
+    tokens.$feedback-positive-40,
+    tokens.$feedback-positive-120
+  );
+  @include status-tokens(
+    error,
+    tokens.$feedback-negative-140,
+    tokens.$feedback-negative-40,
+    tokens.$feedback-negative-120
+  );
+  @include status-tokens(
+    warning,
+    tokens.$feedback-warning-140,
+    tokens.$feedback-warning-40,
+    tokens.$feedback-warning-120
+  );
+  @include status-tokens(
+    info,
+    tokens.$feedback-information-140,
+    tokens.$feedback-information-40,
+    tokens.$feedback-information-120
+  );
+  @include status-tokens(
+    general,
+    tokens.$neutral-80,
+    tokens.$neutral-20,
+    tokens.$neutral-60
+  );
+}
+
+.bds-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: $gap;
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: $padding-vertical $padding-horizontal;
+  border: 1px solid transparent;
+  border-radius: $radius;
+  font-family: $font-type-01;
+  font-size: $font-size;
+  font-weight: 500;
+  line-height: global-style.getRem(20px);
+  white-space: nowrap;
+  vertical-align: middle;
+
+  &--success {
+    @include status-colors(success);
+  }
+
+  &--error {
+    @include status-colors(error);
+  }
+
+  &--warning {
+    @include status-colors(warning);
+  }
+
+  &--info {
+    @include status-colors(info);
+  }
+
+  &--general {
+    @include status-colors(general);
+  }
+
+  &__icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    // A currentColor icon picks up the badge's own semantic text color here,
+    // so no per-type icon rule is needed. src/assets/icons/{success,error,
+    // warning}.svg carry their hue literally and deliberately keep it.
+    color: inherit;
+  }
+
+  &__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

@@ -1,15 +1,14 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
 // spacing tokens
-$small-loader: getRem(10px);
-$medium-loader: getRem(46px);
-$large-loader: getRem(126px);
-$loader-message-top-margin: getRem(8px);
-$loader-border: getRem(5px);
-$loader-small-border: getRem(3px);
+$small-loader: global-style.getRem(10px);
+$medium-loader: global-style.getRem(46px);
+$large-loader: global-style.getRem(126px);
+$loader-message-top-margin: global-style.getRem(8px);
+$loader-border: global-style.getRem(5px);
+$loader-small-border: global-style.getRem(3px);
 
-// TODO: move these color token to common file.
-$primary-background: #ffffff;
 $gray-10-hover: #e5e5e5;
 
 .bds-loader-overlay {
@@ -22,7 +21,7 @@ $gray-10-hover: #e5e5e5;
   height: 100%;
   align-items: center;
   justify-content: center;
-  background-color: $primary-background;
+  background-color: var(--theme-content-bg);
   opacity: 0.8;
 }
 
@@ -42,7 +41,7 @@ $gray-10-hover: #e5e5e5;
 }
 
 .bds-loader {
-  border: $loader-border solid $gray-10-hover;
+  border: $loader-border solid var(--theme-border-subtle);
   border-radius: 50%;
   border-top: $loader-border solid var(--brand);
   -webkit-animation: spin 1s linear infinite; /* Safari */
@@ -82,5 +81,20 @@ $gray-10-hover: #e5e5e5;
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+[data-theme='dark'] {
+  .bds-loader-overlay {
+    background-color: rgba(tokens.$neutral-100, 0.92);
+  }
+
+  .bds-loader {
+    border-color: var(--theme-border-subtle);
+    border-top-color: var(--brand);
+  }
+
+  .bds-loader-container {
+    color: var(--theme-text-primary);
   }
 }

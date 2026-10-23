@@ -1,82 +1,139 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
-$option-large-height: getRem(56px);
-$option-small-height: getRem(40px);
-$option-padding-left: getRem(16px);
-$option-padding-left-intended: getRem(32px);
-$option-padding-top: getRem(8px);
-$option-padding-bottom: getRem(8px);
-$option-icon-margin-right: getRem(16px);
-$option-option-hover-color: getRem(8px);
-$options-container-border-width: getRem(1px);
-$options-container-border-color: var(--brand);
-$options-container-max-height: getRem(320px);
-$option-label-height: getRem(19px);
-$option-label-letter-spacing: getRem(0.32px);
-$option-label-color: #393939;
-$option-label-font-size: getRem(14px);
-$option-label-margin-bottom: getRem(4px);
-$option-sublabel-height: getRem(17px);
-$option-sublabel-letter-spacing: getRem(0.32px);
-$option-sublabel-color: #6f6f6f;
-$option-sublabel-font-size: getRem(12px);
-$option-large-icon-width: getRem(40px);
-$option-large-icon-height: getRem(40px);
-$option-small-icon-width: getRem(24px);
-$option-small-icon-height: getRem(24px);
-$option-label-alone-margin-top: getRem(10px);
-$option-label-alone-margin-bottom: getRem(11px);
-$option-hover-color: #e0e0e0;
-$options-separator-margin-top-bottom: getRem(4px);
-$options-container-padding-top-bottom: getRem(4px);
-$selected-option-background-color: #d0e2ff;
-$options-container-border-radius: getRem(3px);
-$category-color: #ececec;
+/* Figma x-menuFilter-option: padding 8px, gap 8px, option radius 4px; list border 8px radius */
+$option-padding: global-style.getRem(8px);
+$option-padding-left: global-style.getRem(16px);
+$option-padding-left-grouped: global-style.getRem(32px);
+$option-gap: global-style.getRem(8px);
+$option-radius: global-style.getRem(4px);
+$options-container-max-height: global-style.getRem(320px);
+$options-container-radius: global-style.getRem(8px);
+$options-container-padding: global-style.getRem(4px);
+$options-container-border-width: global-style.getRem(1px);
 
+$option-label-font-size: global-style.getRem(14px);
+$option-label-line-height: global-style.getRem(18px);
+$option-label-letter-spacing: global-style.getRem(0.21px);
+$option-sublabel-font-size: global-style.getRem(12px);
+$option-sublabel-line-height: global-style.getRem(17px);
+$option-sublabel-letter-spacing: global-style.getRem(0.24px);
+$option-large-height: global-style.getRem(56px);
+$option-small-height: global-style.getRem(40px);
+$option-icon-margin-right: global-style.getRem(16px);
+$option-icon-large: global-style.getRem(40px);
+$option-icon-small: global-style.getRem(24px);
+$separator-margin: global-style.getRem(4px);
+
+// ─── Theme tokens ─────────────────────────────────────────────────────────────
+// :root provides custom-theme / unthemed defaults derived from surface variables.
+// [data-theme='light'] preserves the original light-mode values.
+// [data-theme='dark'] uses the dark palette tokens.
+// Brand highlight keeps its palette value in every theme: it signals a match
+// rather than a surface, so it must not dissolve into a custom background.
+:root {
+  --bds-menu-options-bg: var(--theme-content-bg);
+  --bds-menu-options-border: var(--theme-border);
+  --bds-menu-option-hover-bg: var(--theme-hover-bg);
+  --bds-menu-option-selected-bg: var(--theme-hover-bg);
+  --bds-menu-option-label: var(--theme-text-primary);
+  --bds-menu-option-sublabel: var(--theme-text-secondary);
+  --bds-menu-option-label-disabled: var(--theme-text-placeholder);
+  --bds-menu-option-icon: var(--theme-text-primary);
+  --bds-menu-option-icon-disabled: var(--theme-text-placeholder);
+  --bds-menu-option-category-bg: var(--theme-hover-bg);
+  --bds-menu-option-category-text: var(--theme-text-primary);
+  --bds-menu-option-highlight-bg: #{tokens.$tint-primary-100};
+  --bds-menu-option-highlight-text: #{tokens.$neutral-0};
+}
+
+[data-theme='light'] {
+  --bds-menu-options-bg: var(--theme-content-bg);
+  --bds-menu-options-border: #{tokens.$tint-primary-100};
+  --bds-menu-option-hover-bg: #{tokens.$neutral-5};
+  --bds-menu-option-selected-bg: #{tokens.$tint-primary-10};
+  --bds-menu-option-label: var(--theme-text-primary);
+  --bds-menu-option-sublabel: #{tokens.$neutral-60};
+  --bds-menu-option-label-disabled: #{tokens.$neutral-40};
+  --bds-menu-option-icon: #{tokens.$neutral-100};
+  --bds-menu-option-icon-disabled: #{tokens.$neutral-40};
+  --bds-menu-option-category-bg: #{tokens.$neutral-5};
+  --bds-menu-option-category-text: #{tokens.$neutral-100};
+  --bds-menu-option-highlight-bg: #{tokens.$tint-primary-100};
+  --bds-menu-option-highlight-text: #{tokens.$neutral-0};
+}
+
+[data-theme='dark'] {
+  --bds-menu-options-bg: var(--theme-content-bg);
+  --bds-menu-options-border: #{tokens.$neutral-0};
+  --bds-menu-option-hover-bg: #{tokens.$neutral-60};
+  --bds-menu-option-selected-bg: #{tokens.$tint-primary-20};
+  --bds-menu-option-label: var(--theme-text-primary);
+  --bds-menu-option-sublabel: #{tokens.$neutral-40};
+  --bds-menu-option-label-disabled: #{tokens.$neutral-60};
+  --bds-menu-option-icon: var(--theme-text-primary);
+  --bds-menu-option-icon-disabled: #{tokens.$neutral-60};
+  --bds-menu-option-category-bg: #{tokens.$neutral-60};
+  --bds-menu-option-category-text: var(--theme-text-primary);
+  --bds-menu-option-highlight-bg: #{tokens.$neutral-0};
+  --bds-menu-option-highlight-text: #{tokens.$neutral-100};
+}
+
+.bds-menu-options-portal {
+  background-color: var(--bds-menu-options-bg);
+  // Portal roots mount on <body>, so currentColor icons would otherwise inherit
+  // the host application's body color instead of the menu's theme.
+  color: var(--bds-menu-option-label);
+  border-radius: $options-container-radius;
+}
 
 .category {
-  padding-left: $option-padding-left;
-  padding-top: $option-padding-top;
-  padding-bottom: $option-padding-bottom;
-  font-weight: bold;
-  letter-spacing: 1px;
+  padding: $option-padding $option-padding-left;
   font-family: $font-type-01;
-  background-color: $category-color;
+  font-weight: 600;
+  font-size: $option-label-font-size;
+  letter-spacing: $option-label-letter-spacing;
+  color: var(--bds-menu-option-category-text);
+  background-color: var(--bds-menu-option-category-bg);
   cursor: default;
 }
 
 .options-container {
   max-height: $options-container-max-height;
-  border: $options-container-border-width solid $options-container-border-color;
-  padding-top: $options-container-padding-top-bottom;
-  padding-bottom: $options-container-padding-top-bottom;
+  border: $options-container-border-width solid var(--bds-menu-options-border);
+  border-radius: $options-container-radius;
+  padding: $options-container-padding 0;
   box-sizing: border-box;
   overflow: auto;
-  border-radius: $options-container-border-radius;
+  background-color: var(--bds-menu-options-bg);
 }
 
 .option {
   display: flex;
   align-items: center;
-  padding-left: $option-padding-left;
-  padding-top: $option-padding-top;
-  padding-bottom: $option-padding-bottom;
+  gap: $option-gap;
+  padding: $option-padding $option-padding-left;
   box-sizing: border-box;
   cursor: pointer;
+  border-radius: $option-radius;
+  margin: 0 $options-container-padding;
+
   &:hover {
-    background: $option-hover-color;
+    background-color: var(--bds-menu-option-hover-bg);
   }
+
   &.grouped {
-    padding-left: $option-padding-left-intended;
+    padding-left: $option-padding-left-grouped;
   }
 }
 
 .selected-option {
-  background-color: $selected-option-background-color;
+  background-color: var(--bds-menu-option-selected-bg);
 }
 
 .highlight-option {
-  background-color: $primary-intr-color;
+  background-color: var(--bds-menu-option-highlight-bg);
 }
 
 .option-with-label-sublabel {
@@ -91,68 +148,86 @@ $category-color: #ececec;
   display: flex;
   align-items: center;
   margin-right: $option-icon-margin-right;
+  flex-shrink: 0;
+  color: var(--bds-menu-option-icon);
 }
 
 .option-icon-large {
-  width: $option-large-icon-width;
-  height: $option-large-icon-height;
+  width: $option-icon-large;
+  height: $option-icon-large;
 }
 
 .option-icon-small {
-  width: $option-small-icon-width;
-  height: $option-small-icon-height;
+  width: $option-icon-small;
+  height: $option-icon-small;
 }
 
 .option-label {
   display: block;
-  height: $option-label-height;
   font-family: $font-type-01;
-  letter-spacing: $option-label-letter-spacing;
-  color: $option-label-color;
   font-size: $option-label-font-size;
+  line-height: $option-label-line-height;
+  letter-spacing: $option-label-letter-spacing;
+  color: var(--bds-menu-option-label);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
 
-  &:hover {
-    color: $option-label-color;
+// Disabled state is expressed through tokens, not opacity: opacity would stack
+// with the already-muted label token and leave the text unreadable on dark and
+// custom surfaces.
+.disabled-option {
+  cursor: not-allowed;
+
+  .option-icon {
+    color: var(--bds-menu-option-icon-disabled);
+  }
+
+  .option-sublabel {
+    color: var(--bds-menu-option-label-disabled);
+  }
+
+  &:hover,
+  &.selected-option:hover {
+    background-color: transparent;
   }
 }
 
-.highlight-option-label {
-  color: $interactive-txt-color;
+.disabled-option-label {
+  color: var(--bds-menu-option-label-disabled);
 }
 
-.disabled-option-label {
-  color: $gray-30;
+.highlight-option-label {
+  color: var(--bds-menu-option-highlight-text);
 }
 
 .option-label-with-sublabel {
-  margin-bottom: $option-label-margin-bottom;
+  margin-bottom: global-style.getRem(4px);
 }
 
 .option-label-alone {
-  margin-top: $option-label-alone-margin-top;
-  margin-bottom: $option-label-alone-margin-bottom;
+  margin-top: global-style.getRem(10px);
+  margin-bottom: global-style.getRem(11px);
 }
 
 .option-sublabel {
   display: flex;
   align-items: center;
-  height: $option-sublabel-height;
   font-family: $font-type-01;
-  letter-spacing: $option-sublabel-letter-spacing;
-  color: $option-sublabel-color;
   font-size: $option-sublabel-font-size;
+  line-height: $option-sublabel-line-height;
+  letter-spacing: $option-sublabel-letter-spacing;
+  color: var(--bds-menu-option-sublabel);
 }
 
 .option-label-sublabel-container {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  min-width: 0;
+  flex: 1;
 }
 
 .separator {
-  margin-top: $options-separator-margin-top-bottom;
-  margin-bottom: $options-separator-margin-top-bottom;
+  margin: $separator-margin 0;
 }

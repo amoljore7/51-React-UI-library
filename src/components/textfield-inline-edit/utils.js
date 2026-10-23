@@ -1,6 +1,6 @@
-import { inlineEditClasses, rawTextClasses } from "./constants"
+import { inlineEditClasses, rawTextClasses } from './constants'
 
-export const getInputContainerClass = (readOnly) => {
+export const getInputContainerClass = readOnly => {
   if (readOnly) {
     return inlineEditClasses.inputContainerReadOnly
   }

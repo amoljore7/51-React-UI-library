@@ -1,77 +1,675 @@
-@import '../../global-style/index.scss';
-@import './table-tokens.scss';
+@use '../../global-style/index.scss';
+@use 'table-tokens.scss';
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
+
+/**
+ * --bds-table-header-bg defaults to the tinted hover-bg formula rather than
+ * a flat var(--theme-content-bg): on a custom theme, a flat value resolves
+ * to the exact same color as the surrounding canvas, so the header would
+ * read as if it had no background at all.
+ */
+:root,
+[data-theme] {
+  --bds-table-row-hover-bg: var(--theme-hover-bg);
+  --bds-table-row-checked-bg: color-mix(in srgb, var(--theme-text-primary) 20%, var(--theme-content-bg));
+  --bds-table-header-bg: var(--theme-hover-bg);
+  --bds-table-header-hover-bg: var(--theme-border-subtle);
+  --bds-table-header-pinned-bg: var(--theme-separator);
+  --bds-table-header-pinned-border: var(--theme-separator);
+  --bds-table-cell-pinned-border: var(--theme-separator);
+  --bds-table-pill-nav-color: var(--theme-text-primary);
+  --bds-table-pill-nav-disabled-color: var(--theme-text-placeholder);
+  /**
+   * Accent, not structural: the pill reads as a selection chip, so it stays
+   * the same blue on every theme instead of dissolving into a custom surface.
+   * Declared only here — the light/dark blocks deliberately don't repeat it,
+   * which is why this block's selector has to cover [data-theme] too.
+   */
+  --bds-table-hidden-pill-bg: #{tokens.$blue-20};
+  --bds-table-hidden-pill-border: #{tokens.$blue-60};
+  --bds-table-hidden-pill-color: #{tokens.material-black(60)};
+  --bds-table-hidden-pill-hover-bg: color-mix(in srgb, #{tokens.$blue-60} 12%, #{tokens.$blue-20});
+  --bds-table-drawer-icon-color: var(--theme-text-secondary);
+  --bds-table-drawer-text-color: var(--theme-text-primary);
+  --bds-table-drawer-section-border: var(--theme-border-subtle);
+  --bds-table-drawer-section-title-color: var(--theme-text-secondary);
+  --bds-table-drawer-row-hover-bg: var(--theme-hover-bg);
+  --bds-table-drawer-row-action-disabled-color: var(--theme-text-placeholder);
+  --bds-table-cell-clamp-fade-end: var(--theme-content-bg);
+  --bds-table-cell-toggle-bg: var(--theme-content-bg);
+  --bds-table-cell-toggle-border: var(--theme-border);
+  --bds-table-cell-toggle-color: var(--theme-text-primary);
+  --bds-table-expanded-row-cell-bg: var(--theme-hover-bg);
+  --bds-table-expanded-row-cell-border: var(--theme-separator);
+  --bds-table-expanded-row-divider: var(--theme-separator);
+  --bds-table-actions-shadow: rgba(0, 0, 0, 0.05);
+  --bds-table-action-icon-hover-bg: var(--theme-hover-bg);
+  --bds-table-header-icon-muted-opacity: 0.45;
+  --bds-table-filter-divider: var(--theme-separator);
+  --bds-table-clear-all-active-color: var(--theme-text-primary);
+  --bds-table-clear-all-disabled-color: var(--theme-text-placeholder);
+  --bds-table-action-chevron-hover-bg: transparent;
+  --bds-table-action-icon-color: inherit;
+  --bds-table-action-icon-hover-color: inherit;
+}
+
+[data-theme='light'] {
+  --bds-table-row-hover-bg: #{table-tokens.$table-row-hover-color};
+  --bds-table-row-checked-bg: #{table-tokens.$table-row-checked-color};
+  --bds-table-header-bg: #{$gray-10};
+  --bds-table-header-hover-bg: #{$ui-hover-01};
+  --bds-table-header-pinned-bg: #{$gray-20};
+  --bds-table-header-pinned-border: #{$gray-30};
+  --bds-table-cell-pinned-border: #{$gray-30};
+  --bds-table-pill-nav-color: #{$gray-80};
+  --bds-table-pill-nav-disabled-color: #{$gray-40};
+  --bds-table-scroll-nav-color: #{$gray-60};
+  --bds-table-scroll-nav-bg: #{rgba($white, 0.85)};
+  --bds-table-hidden-pill-color: #{$gray-80};
+  --bds-table-drawer-icon-color: #{$gray-50};
+  --bds-table-drawer-text-color: #{$gray-80};
+  --bds-table-drawer-section-border: #{$gray-20};
+  --bds-table-drawer-section-title-color: #{$gray-60};
+  --bds-table-drawer-row-hover-bg: #{$gray-10};
+  --bds-table-drawer-row-action-disabled-color: #{$gray-30};
+  --bds-table-cell-clamp-fade-end: #{$white};
+  --bds-table-cell-toggle-bg: #{$white};
+  --bds-table-cell-toggle-border: #{$gray-40};
+  --bds-table-cell-toggle-color: #{$gray-80};
+  --bds-table-expanded-row-cell-bg: #{$gray-10};
+  --bds-table-expanded-row-cell-border: #{$gray-20};
+  --bds-table-expanded-row-divider: #{$gray-30};
+  --bds-table-action-icon-hover-bg: #{$gray-20};
+  --bds-table-filter-divider: #{$gray-30};
+  --bds-table-clear-all-active-color: #007bff;
+  --bds-table-clear-all-disabled-color: #{$gray-40};
+  // No prior light value existed for these — light never had a hover/color
+  // treatment here at all, so keep it exactly that way (see the dark block
+  // below, migrated out of a [data-theme='dark'] selector override).
+  --bds-table-action-chevron-hover-bg: transparent;
+  --bds-table-action-icon-color: inherit;
+  --bds-table-action-icon-hover-color: inherit;
+}
+
+[data-theme='dark'] {
+  // Preserve the already-shipped flat (untinted) dark value exactly
+  --bds-table-header-bg: var(--theme-content-bg);
+  --bds-table-header-hover-bg: #{tokens.$neutral-80};
+  --bds-table-header-pinned-bg: #{tokens.$neutral-100};
+  --bds-table-header-pinned-border: #{tokens.$neutral-60};
+  --bds-table-cell-pinned-border: #{tokens.$neutral-60};
+  // No prior dark value existed for these (real bugs, not just missing
+  // custom-theme coverage) — picked to match sibling elements' dark tones.
+  --bds-table-pill-nav-color: #{tokens.$neutral-0};
+  --bds-table-pill-nav-disabled-color: #{tokens.$neutral-40};
+  --bds-table-scroll-nav-color: #{tokens.$neutral-40};
+  --bds-table-scroll-nav-bg: color-mix(in srgb, var(--theme-content-bg) 85%, transparent);
+  --bds-table-drawer-icon-color: #{tokens.$neutral-40};
+  --bds-table-drawer-row-action-disabled-color: #{tokens.$neutral-60};
+  --bds-table-drawer-text-color: #{tokens.$neutral-0};
+  --bds-table-drawer-section-border: #{tokens.$neutral-80};
+  --bds-table-drawer-section-title-color: #{tokens.$neutral-40};
+  --bds-table-drawer-row-hover-bg: #{tokens.$neutral-80};
+  --bds-table-expanded-row-cell-bg: #{tokens.$neutral-80};
+  --bds-table-expanded-row-cell-border: #{tokens.$neutral-60};
+  --bds-table-expanded-row-divider: #{tokens.$neutral-60};
+  --bds-table-actions-shadow: rgba(0, 0, 0, 0.16);
+  --bds-table-action-icon-hover-bg: #{tokens.$neutral-60};
+  --bds-table-header-icon-muted-opacity: 0.55;
+  --bds-table-filter-divider: #{tokens.$neutral-60};
+  --bds-table-clear-all-active-color: #{tokens.$neutral-0};
+  --bds-table-clear-all-disabled-color: #{tokens.$neutral-40};
+  // Preserve the already-shipped dark-only values exactly — migrated out of
+  // the [data-theme='dark'] .bds-table-container override block below.
+  --bds-table-action-chevron-hover-bg: rgba(255, 255, 255, 0.1);
+  --bds-table-action-icon-color: #{tokens.$neutral-40};
+  --bds-table-action-icon-hover-color: #{tokens.$neutral-0};
+}
+
+/**
+ * ModalPopup and OverflowMenu render via portals appended to <body>, outside
+ * .bds-table-container — these rules must stay unscoped or they never match.
+ */
+
+.filter-menus {
+  background-color: var(--theme-content-bg);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--theme-text-primary) 20%, transparent),
+              0 0 0 1px color-mix(in srgb, var(--theme-text-primary) 15%, transparent);
+  color: var(--theme-text-primary);
+  border-radius: 6px;
+  font-weight: 400;
+  z-index: 3000;
+  /**
+   * top/left/width are computed in JS from the trigger's viewport position
+   * and set inline; fixed (not absolute) so the panel isn't clipped by the
+   * table's scrollable ancestor.
+   */
+  position: fixed;
+
+  &-search {
+    margin: 8px;
+  }
+
+  &-menu-divider {
+    border: 0;
+    border-top: 1px solid var(--bds-table-filter-divider);
+  }
+
+  &-filter-list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow-y: auto;
+    max-height: 280px;
+  }
+
+  &-action-btns {
+    /**
+     * Horizontal margins match the search row's, so the buttons keep their
+     * gutter now that the panel can shrink to exactly this row's width.
+     */
+    margin: 0 8px 8px;
+    justify-content: flex-end;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  &-no-data-found {
+    padding: 8px 12px;
+  }
+
+  &-filter-menus-list {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 12px;
+    overflow-wrap: anywhere;
+
+    /**
+     * Checkbox and radio containers are flex-shrink: 0 by default, so a long
+     * option label pushes past the panel rather than wrapping inside it.
+     * They need to shrink, and min-width: 0 to get below their content size.
+     */
+    .bds-checkbox-container,
+    .radio-container {
+      flex-shrink: 1;
+      min-width: 0;
+    }
+
+    .bds-checkbox-icon-container {
+      flex-shrink: 0;
+    }
+
+    .bds-label-container,
+    .label-container {
+      min-width: 0;
+    }
+  }
+
+  &-clear-all {
+    margin-left: 13px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  &-clear-all-label {
+    font-size: table-tokens.$table-cell-font-size;
+    line-height: table-tokens.$filter-clear-all-line-height;
+    font-weight: 400;
+    letter-spacing: table-tokens.$table-cell-letter-spacing;
+  }
+}
+
+.bds-table-column-drawer-body {
+  padding: 0 16px 8px;
+}
+
+.bds-table-column-drawer-section {
+  padding: 12px 0 4px;
+  border-bottom: 1px solid var(--bds-table-drawer-section-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.bds-table-column-drawer-section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--bds-table-drawer-section-title-color);
+  margin-bottom: 4px;
+}
+
+.bds-table-column-drawer-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px;
+  border-radius: 4px;
+  min-height: 36px;
+
+  &:hover {
+    background: var(--bds-table-drawer-row-hover-bg);
+  }
+}
+
+.bds-table-column-drawer-row-dragging {
+  opacity: 0.6;
+}
+
+.bds-table-column-drawer-drag-handle {
+  display: flex;
+  align-items: center;
+  cursor: grab;
+  flex-shrink: 0;
+  color: var(--bds-table-drawer-icon-color);
+}
+
+.bds-table-column-drawer-lock-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 16px;
+  color: var(--bds-table-drawer-icon-color);
+}
+
+.bds-table-column-drawer-row-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: table-tokens.$table-cell-font-size;
+  color: var(--bds-table-drawer-text-color);
+  font-weight: 400;
+}
+
+.bds-table-column-drawer-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.bds-table-column-drawer-row-action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--bds-table-drawer-icon-color);
+  padding: 0;
+
+  &:hover {
+    color: var(--bds-table-drawer-text-color);
+  }
+}
+
+.bds-table-column-drawer-row-action-disabled {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: var(--bds-table-drawer-row-action-disabled-color);
+  cursor: default;
+}
+
+.bds-table-column-menu-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1;
+}
+
+.bds-table-column-menu-option-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.bds-table-column-menu-option-text {
+  white-space: nowrap;
+  line-height: 1.2;
+}
 
 .bds-table-container {
   width: 100%;
   height: 100%;
-  min-width: $table-min-width;
-
-  .bds-table-sort-icon-resize-container {
-    display: flex;
-  }
-
-  .bds-table {
-    width: 100%;
-    height: 100%;
-    display: table;
-    position: relative;
-  }
+  min-width: table-tokens.$table-min-width;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
 
   .bds-table-search {
+    flex-shrink: 0;
     position: sticky;
     top: 0;
-    z-index: 1;
+    z-index: 3;
     box-sizing: border-box;
-    min-height: $table-search-height;
+    min-height: table-tokens.$table-search-height;
     border-bottom: none;
     display: flex;
     align-items: center;
-    justify-content: end;
     flex-wrap: wrap;
-    padding-right: $table-search-padding-right;
-    background: $white;
+    gap: 12px;
+    padding-right: table-tokens.$table-search-padding-right;
+    background: var(--theme-content-bg);
     max-width: 100%;
-    min-width: $table-min-width;
+    min-width: table-tokens.$table-min-width;
+  }
+
+  .bds-table-toolbar-left-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 
   .bds-table-search-container {
     display: flex;
-    padding-left: $table-search-container-left-padding;
-    padding-top: $table-search-padding-top-bottom;
-    padding-bottom: $table-search-padding-top-bottom;
+    padding-top: table-tokens.$table-search-padding-top-bottom;
+    padding-bottom: table-tokens.$table-search-padding-top-bottom;
 
     .search-container {
-      border-color: $table-search-input-border-color;
+      border-color: var(--theme-border);
+      background-color: var(--theme-content-bg);
+    }
+
+    .search-box::placeholder {
+      color: var(--theme-text-placeholder);
+    }
+
+    .container{
+      padding: 0;
+    }
+
+  }
+
+  .bds-table-bulk-actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .bds-table-left-toolbar-content {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    flex-shrink: 0;
+
+    > * {
+      box-sizing: border-box;
+      height: 32px;
     }
   }
 
+  /**
+   * Sits alongside the search box on .bds-table-search's row; margin-left:
+   * auto pushes it to the far right whether or not a search box is present.
+   */
+  .bds-table-column-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-left: auto;
+    padding: 8px 0;
+  }
+
+  .bds-table-pill-nav-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--bds-table-pill-nav-color);
+    cursor: pointer;
+    flex-shrink: 0;
+    user-select: none;
+
+    &--disabled {
+      color: var(--bds-table-pill-nav-disabled-color);
+      cursor: default;
+    }
+  }
+
+  // A clipping window; the chevrons move the track inside it.
+  .bds-table-hidden-column-pills {
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  // Moved with a transform transition rather than native smooth scrolling,
+  // whose easing and speed can't be set from CSS.
+  .bds-table-hidden-column-pills-track {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: max-content;
+    transition: transform 300ms ease-out;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  .bds-table-hidden-column-pill {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    padding: 4px 12px;
+    border: 1px solid var(--bds-table-hidden-pill-border);
+    border-radius: 999px;
+    background: var(--bds-table-hidden-pill-bg);
+    color: var(--bds-table-hidden-pill-color);
+    font-size: table-tokens.$table-cell-font-size;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--bds-table-hidden-pill-hover-bg);
+    }
+  }
+
+  .bds-table-hidden-column-pill-icon {
+    flex-shrink: 0;
+  }
+
+  .bds-table-column-count-trigger {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    background: transparent;
+    color: var(--theme-text-primary);
+    font-size: table-tokens.$table-cell-font-size;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .bds-table-column-count-trigger-icon {
+    flex-shrink: 0;
+  }
+
+  .bds-table-sort-icon-resize-container {
+    display: flex;
+    align-items: center;
+    /**
+     * Same gap the outer icon container uses, so sort / filter / menu are
+     * spaced like every other pair in the header row instead of sitting flush.
+     */
+    gap: 4px;
+  }
+
+  .bds-table-column-icon-container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .bds-table-header-icon svg {
+    color: inherit;
+    display: block;
+  }
+
+  .bds-table-sort-icon-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /**
+   * Chevron size comes from props; only the overlap lives here, closing the
+   * dead space each glyph carries inside its viewBox.
+   */
+  .bds-table-sort-icon-stack svg + svg {
+    margin-top: calc(-1 * #{table-tokens.$sort-chevron-overlap});
+  }
+
+  .bds-table-header-icon svg .bds-icon-muted {
+    opacity: var(--bds-table-header-icon-muted-opacity);
+  }
+
+  .bds-table-non-selectable-header{
+    user-select: none;
+    -webkit-user-drag: none;
+    touch-action: none;
+  }
+
+  .bds-table-scroll-wrapper {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  /**
+   * Column scroll controls on the header row. A zero-height layer just above
+   * the scroll wrapper, outside it so the wrapper's overflow doesn't clip
+   * them; ColumnScrollButtons sets its top to the middle of the header row
+   * and --bds-table-scroll-nav-height to its height. Lets clicks through to
+   * the header cells. Above pinned header cells (z-index 5).
+   *
+   * Each side is an edge fade holding a chevron, shown while there's more to
+   * scroll that way and faded out at the end it can't pass.
+   */
+  .bds-table-scroll-nav {
+    position: relative;
+    z-index: 6;
+    height: 0;
+    pointer-events: none;
+
+    &__edge {
+      position: absolute;
+      top: 0;
+      display: flex;
+      align-items: center;
+      width: 48px;
+      height: var(--bds-table-scroll-nav-height, #{table-tokens.$table-header-max-height});
+      transform: translateY(-50%);
+      transition: opacity 150ms ease-out;
+
+      &--left {
+        left: var(--bds-table-pinned-left-width, 0px);
+        justify-content: flex-start;
+        background: linear-gradient(to right, var(--bds-table-scroll-nav-bg) 55%, transparent);
+      }
+
+      &--right {
+        right: var(--bds-table-pinned-right-width, 0px);
+        justify-content: flex-end;
+        background: linear-gradient(to left, var(--bds-table-scroll-nav-bg) 55%, transparent);
+      }
+
+      // Faded out at its end; its chevron mustn't keep catching clicks meant
+      // for the header cell underneath.
+      &--hidden {
+        opacity: 0;
+
+        .bds-table-scroll-nav__control {
+          pointer-events: none;
+        }
+      }
+    }
+
+    &__control {
+      // A bare chevron on the edge fade: no hover or pressed fill on the
+      // Button, which is also what would show its rounded corners.
+      --bds-btn-tertiary-tint-bg-hover: transparent;
+      --bds-btn-tertiary-tint-bg-active: transparent;
+      --bds-btn-tertiary-tint-text: var(--bds-table-scroll-nav-color);
+      display: flex;
+      pointer-events: auto;
+    }
+  }
+
+  .bds-table-sticky-header-scroll {
+    position: sticky;
+    top: var(--bds-table-sticky-header-offset, 0px);
+    z-index: 4;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background: var(--theme-content-bg);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .bds-table {
+    min-width: 100%;
+    width: max-content;
+    height: 100%;
+    display: table;
+    position: relative;
+    background: var(--theme-content-bg);
+  }
+
+
   @mixin def-table-cell {
     box-sizing: border-box;
-    padding-left: $table-cell-padding-left-right;
-    padding-right: $table-cell-padding-left-right;
-    color: $table-cell-text-color;
+    padding-left: table-tokens.$table-cell-padding-left-right;
+    padding-right: table-tokens.$table-cell-padding-left-right;
+    color: table-tokens.$table-cell-text-color;
   }
 
   @mixin table-header-common {
     @include def-table-cell;
-    border-bottom: $table-header-border-width solid $table-header-border-color;
+    border-bottom: table-tokens.$table-header-border-width solid table-tokens.$table-header-border-color;
     padding-right: 0;
-    font-size: $table-header-font-size;
-    min-width: $table-header-min-width;
-    height: $table-header-max-height;
+    font-size: table-tokens.$table-header-font-size;
+    height: table-tokens.$table-header-max-height;
+    overflow: hidden;
     position: -webkit-sticky;
     position: sticky;
     top: 0;
-    z-index: 1;
-  }
-
-  table.bds-table thead th {
-    min-width: $table-header-min-width;
+    /**
+     * Header cells outrank every body cell (pinned body cells are 2) so the
+     * sticky header — and the column filter panel inside it — is never
+     * painted over by a pinned column.
+     */
+    z-index: 4;
   }
 
   .bds-table-header-cell {
     @include table-header-common;
-    background: $white;
+    background: var(--bds-table-header-bg);
+    color: var(--theme-text-primary);
+  }
+
+  .bds-table-header-cell:hover {
+    background: var(--bds-table-header-hover-bg);
   }
 
   .bds-table-header-cell-no-background {
@@ -82,8 +680,15 @@
     border-left: none;
   }
 
-  .bds-table-header-cell:last-child {
+  .bds-table-header-cell:last-child,
+  .bds-table-header-cell-no-background:last-child {
     border-right: none;
+    padding-right: table-tokens.$table-cell-padding-left-right;
+  }
+
+  .bds-table-header-cell:has(.filter-menus),
+  .bds-table-header-cell-no-background:has(.filter-menus) {
+    z-index: 2;
   }
 
   .bds-table-header-text-icon {
@@ -93,30 +698,48 @@
     min-width: 0;
     overflow: hidden;
     height: 100%;
+    contain: inline-size;
   }
   .bds-table-resizer {
     display: flex;
-    background: none;
-    width: $resize-width;
-    height: $resize-height;
+    box-sizing: content-box;
+    width: 1px;
+    height: table-tokens.$resize-height;
     min-width: 0;
-    padding: 0 1px;
+    padding: 0 0 0 8px;
     cursor: col-resize;
+    background: none;
+    background-clip: content-box;
   }
 
   .bds-table-resizer-hover {
-    background: $table-border-color;
+    background-color: var(--theme-text-primary);
   }
 
   .bds-table-header-text {
-    font-weight: $table-header-font-weight;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: table-tokens.$table-header-font-weight;
     font-family: $font-type-01;
-    letter-spacing: $table-header-letter-spacing;
+    letter-spacing: table-tokens.$table-header-letter-spacing;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .bds-table-header-left-icons {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  .bds-table-header-text-label {
     overflow: hidden;
     text-overflow: ellipsis;
     -ms-text-overflow: ellipsis;
-    min-width: 0;
     white-space: nowrap;
+    min-width: 0;
   }
 
   .bds-table-header-text-cursor {
@@ -127,28 +750,57 @@
     display: flex;
     align-items: center;
     cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  
+  .bds-table-header-cell:hover .bds-table-header-icon,
+  .bds-table-header-cell-no-background:hover .bds-table-header-icon,
+  .bds-table-header-cell:focus-within .bds-table-header-icon,
+  .bds-table-header-cell-no-background:focus-within .bds-table-header-icon,
+  .bds-table-header-icon-sorted {
+    opacity: 1;
   }
 
   .bds-table-cell {
     @include def-table-cell;
-    font-size: $table-cell-font-size;
+    font-size: table-tokens.$table-cell-font-size;
     font-family: $font-type-01;
-    line-height: $table-cell-line-height;
-    letter-spacing: $table-cell-letter-spacing;
-    padding-top: $table-cell-padding-top;
-    padding-bottom: $table-cell-padding-bottom;
-    border-bottom: $table-cell-border-width solid $table-cell-border-color;
+    line-height: table-tokens.$table-cell-line-height;
+    letter-spacing: table-tokens.$table-cell-letter-spacing;
+    padding-top: table-tokens.$table-cell-padding-top;
+    padding-bottom: table-tokens.$table-cell-padding-bottom;
+    border-bottom: table-tokens.$table-cell-border-width solid table-tokens.$table-cell-border-color;
     max-width: 0;
   }
 
   .bds-table-cell-render {
     @include def-table-cell;
-    font-size: $table-cell-font-size;
+    font-size: table-tokens.$table-cell-font-size;
     font-family: $font-type-01;
-    line-height: $table-cell-line-height;
-    letter-spacing: $table-cell-letter-spacing;
-    border-bottom: $table-cell-border-width solid $table-cell-border-color;
+    line-height: table-tokens.$table-cell-line-height;
+    letter-spacing: table-tokens.$table-cell-letter-spacing;
+    border-bottom: table-tokens.$table-cell-border-width solid table-tokens.$table-cell-border-color;
     max-width: 0;
+  }
+
+  /**
+   * Sticky-positioned pinned cells need an opaque background to mask the
+   * row content scrolling underneath them. Uses var(--theme-content-bg)
+   * directly rather than a dedicated token so it always matches whatever
+   * an unpinned cell shows through to (the ambient content background),
+   * instead of a fixed value that can drift from a consumer's own container.
+   * The transparent border-right prevents a 1px sub-pixel rendering gap
+   * between adjacent pinned columns; bds-table-cell-pinned-last overrides it.
+   */
+  .bds-table-cell-pinned {
+    background: var(--theme-content-bg);
+    border-right: 1px solid transparent;
+    z-index: 2;
+  }
+
+  .bds-table-cell-pinned-last {
+    border-right: 2px solid var(--bds-table-cell-pinned-border);
   }
 
   .bds-table-row-dragging .bds-table-cell,
@@ -157,8 +809,22 @@
   }
 
   .bds-table-expanded-row {
-    background-color: #EEEEEE;
+    background-color: var(--theme-border-subtle);
     transition: height 0.5s ease-in;
+
+    .bds-table-cell {
+      background-color: var(--bds-table-expanded-row-cell-bg) !important;
+      border-bottom: 1px solid var(--bds-table-expanded-row-cell-border) !important;
+    }
+
+    &:hover .bds-table-cell {
+      background-color: var(--bds-table-row-hover-bg) !important;
+    }
+  }
+
+  // Top border separating the first sub-row from its parent row
+  .bds-table-row:not(.bds-table-expanded-row) + .bds-table-expanded-row .bds-table-cell {
+    border-top: 2px solid var(--bds-table-expanded-row-divider) !important;
   }
 
   .bds-table-expanded-row-cell-render {
@@ -166,11 +832,10 @@
   }
 
   .bds-table-expanded-row-content-render {
-    background-color: #f9f9f9;
-    border-top: 2px solid #9a9696;
+    background-color: var(--theme-content-bg);
+    border-top: 2px solid var(--theme-border);
     vertical-align: baseline;
   }
-  
   .bds-table-expanded-row-no-data-found {
     display: flex;
     justify-content: space-around;
@@ -180,6 +845,99 @@
     display: flex;
     gap: 2px;
     align-items: center;
+  }
+
+  .bds-table-cell-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    width: table-tokens.$cell-icon-size;
+    height: table-tokens.$cell-icon-size;
+    min-width: table-tokens.$cell-icon-size;
+    min-height: table-tokens.$cell-icon-size;
+    max-width: table-tokens.$cell-icon-size;
+    max-height: table-tokens.$cell-icon-size;
+    border: 1px solid var(--theme-border);
+    border-radius: table-tokens.$cell-icon-radius;
+    overflow: hidden;
+    padding: 2px;
+    margin-right: 5px;
+    > * {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
+
+  td.bds-table-cell.bds-table-cell-expandable {
+    height: auto;
+    min-height: table-tokens.$table-cell-height;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    vertical-align: middle;
+  }
+
+  .bds-table-cell-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+    word-break: break-word;
+    width: 100%;
+  }
+
+  /**
+   * The fade sits on the wrapper, not on .bds-table-cell-clamp: generated
+   * content inside a -webkit-box participates in -webkit-line-clamp and gets
+   * clamped away with the overflowing text.
+   */
+  .bds-table-cell-clamp-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+
+    &--faded::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2em;
+      background: linear-gradient(to bottom, transparent, var(--bds-table-cell-clamp-fade-end));
+      pointer-events: none;
+    }
+
+    &--expanded {
+      padding-bottom: 1.5em;
+    }
+  }
+
+  .bds-table-cell-toggle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: var(--bds-table-cell-toggle-bg);
+    border: 1px solid var(--bds-table-cell-toggle-border);
+    border-radius: 10px;
+    padding: 2px 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--bds-table-cell-toggle-color);
+    line-height: 1.5;
+    outline: none;
+    white-space: nowrap;
+    transition: background-color 0.15s ease;
+    z-index: 1;
+
+    &:hover {
+      background-color: var(--theme-hover-bg);
+    }
   }
 
   .bds-table-expand-row-icons {
@@ -195,6 +953,8 @@
     width: 100%;
     border-left: none;
     overflow: hidden;
+    display: flex;
+    align-items: center;
   }
 
   .bds-table-row td:last-child .bds-table-cell-custom {
@@ -209,33 +969,144 @@
     cursor: pointer;
   }
 
+  .bds-table-cell-actions {
+    background: var(--theme-content-bg);
+    position: sticky;
+    right: 0;
+    z-index: 2;
+  }
+
+  td.bds-table-cell.bds-table-cell-actions {
+    height: auto;
+    min-height: table-tokens.$table-cell-height;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .bds-table-header-cell-actions {
+    background: var(--bds-table-header-bg);
+    position: sticky;
+    right: 0;
+    z-index: 5;
+    min-width: 0;
+
+    .bds-table-header-text-label {
+      overflow: visible;
+      text-overflow: unset;
+      white-space: nowrap;
+      min-width: unset;
+    }
+  }
+
+  .bds-table-header-cell-actions--collapsed {
+    padding: 0;
+
+    .bds-table-action-column-header {
+      justify-content: center;
+      padding: 0;
+    }
+  }
+
+  // Action column header: "Action >" / "<"
+  .bds-table-action-column-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .bds-table-action-column-chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    color: inherit;
+    line-height: 1;
+
+    &:hover {
+      background: var(--bds-table-action-chevron-hover-bg);
+    }
+  }
+
+  // Action icon buttons (expanded inline mode and collapsed ⋮ mode)
+  .bds-table-action-icons-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .bds-table-action-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    line-height: 1;
+    color: var(--bds-table-action-icon-color);
+
+    &:hover {
+      background: var(--bds-table-action-icon-hover-bg);
+      color: var(--bds-table-action-icon-hover-color);
+    }
+  }
+
   .bds-table-row-highlighted {
-    background-color: $table-row-hover-background;
+    background-color: var(--bds-table-row-hover-bg);
+  }
+
+  .bds-table-row-highlighted .bds-table-cell-pinned {
+    background-color: var(--bds-table-row-hover-bg);
+  }
+
+  .bds-table-row-highlighted .bds-table-cell-actions,
+  .bds-table-row:hover .bds-table-cell-actions {
+    background-color: var(--bds-table-row-hover-bg);
   }
 
   .bds-table-row:hover {
-    background-color: $table-row-hover-background;
+    background-color: var(--bds-table-row-hover-bg);
   }
 
-  .bds-table-row:hover .bds-table-cell,
-  .bds-table-cell-render {
-    border-right-color: $table-row-hover-background;
-    border-left-color: $table-row-hover-background;
+  .bds-table-row:hover .bds-table-cell-pinned {
+    background-color: var(--bds-table-row-hover-bg);
+  }
+
+  .bds-table-row-checked,
+  .bds-table-row-checked:hover {
+    background-color: var(--bds-table-row-checked-bg);
+  }
+
+  .bds-table-row-checked .bds-table-cell-pinned,
+  .bds-table-row-checked .bds-table-cell-actions,
+  .bds-table-row-checked:hover .bds-table-cell-pinned,
+  .bds-table-row-checked:hover .bds-table-cell-actions {
+    background-color: var(--bds-table-row-checked-bg);
   }
 
   .bds-overflow-menu-item {
-    font-size: $overflow-menu-font-size;
+    font-size: table-tokens.$overflow-menu-font-size;
     font-family: $font-type-01;
   }
 
   .bds-overflow-menu-item:hover {
-    background-color: $overflow-menu-item-hover-background;
-    letter-spacing: $overflow-menu-item-letter-spacing;
+    background-color: table-tokens.$overflow-menu-item-hover-background;
+    letter-spacing: table-tokens.$overflow-menu-item-letter-spacing;
   }
 
   .bds-table-row-dragging {
-    background-color: $table-row-hover-background;
-    border-bottom: $table-cell-border-width solid $table-cell-border-color;
+    background-color: var(--bds-table-row-hover-bg);
+    border-bottom: table-tokens.$table-cell-border-width solid table-tokens.$table-cell-border-color;
   }
 
   table,
@@ -260,21 +1131,12 @@
     overflow: hidden;
     text-overflow: ellipsis;
     -ms-text-overflow: ellipsis;
-    height: $table-cell-height;
+    height: table-tokens.$table-cell-height;
     white-space: nowrap;
   }
 
   table.bds-table {
     table-layout: fixed;
-  }
-
-  .table-infinite-scroll-inside-modal {
-    &::-webkit-scrollbar {
-      display: none;
-    }
-
-    -ms-overflow-style: none;
-    scrollbar-width: none;
   }
 
   .bds-add-new-row {
@@ -283,8 +1145,16 @@
     table,
     th,
     td {
-      background-color: #F4F4F4;
+      background-color: var(--theme-content-bg);
       border: none;
+    }
+
+    .bds-table-row:hover,
+    .bds-table-row:hover .bds-table-cell,
+    .bds-table-row:hover .bds-table-cell-render,
+    .bds-table-row:hover .bds-table-cell-pinned,
+    .bds-table-row:hover .bds-table-cell-actions {
+      background-color: var(--theme-content-bg);
     }
 
     th {
@@ -306,63 +1176,143 @@
   .bds-table-column-filter {
     display: flex;
     align-items: center;
-    margin-top: 0px;
   }
 
-  .filter-menus {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    color: #333333;
-    border-radius: 6px;
-    position: absolute;
-    min-width: 200px;
-    right: 0px;
-    top: 50px;
-  
-    &-menu-divider {
-      border: 0;
-      border-top: 1px solid rgba(0, 0, 0, .1);
+  .bds-table-column-menu {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    /**
+     * overflow-menu pins its trigger to --bds-overflow-menu-icon; inherit
+     * instead so the dots match the header text in every theme, as the pin
+     * and filter glyphs already do.
+     */
+    .icon-wrapper {
+      color: inherit;
     }
-    
-    &-filter-list {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      overflow-y: auto;
-      max-height: 280px;
-    }
-    
-    &-action-btns {
-      margin-right: 8px;
-      margin-bottom: 8px;
-      justify-content: flex-end;
-      display: flex;
-      flex-direction: row;
-      gap: 10px;
-    }
-    
-    &-no-data-found {
-      padding: 8px 12px;
-    }
-    
-    &-filter-menus-list {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      padding: 8px 12px;
-    }
-    
-    &-clear-all {
-      margin-left: 13px;
-      margin-top: 10px;
-      margin-bottom: 10px;
+
+    /**
+     * The overflow-menu trigger is a fit-content box around an inline <svg>,
+     * so it picks up the line box's descender gap and ends up taller than
+     * the other header glyphs — centring the boxes then leaves it off by
+     * half that gap. Size comes from the iconSize prop; only the gap fix
+     * belongs here.
+     */
+    .icon-wrapper svg {
+      display: block;
     }
   }
-  
+
+  .bds-table-pin-icon {
+    flex-shrink: 0;
+    color: inherit;
+    display: block;
+  }
+
+  .bds-table-header-cell-pinned {
+    background: var(--bds-table-header-pinned-bg);
+    border-right: 1px solid var(--bds-table-header-pinned-bg);
+    z-index: 5;
+  }
+
+  .bds-table-header-cell-pinned-last {
+    border-right: none;
+    box-shadow: inset -1px 0 0 var(--bds-table-header-pinned-border);
+  }
+
+  // Extra inset makes room for the divider border above, except on the
+  // action column, which already has its own fixed padding (see .bds-table-header-cell-actions).
+  .bds-table-header-cell-pinned-right-first:not(.bds-table-header-cell-actions) {
+    padding-left: 24px;
+  }
+
+  .bds-table-header-cell-pinned-right-first {
+    border-left: 2px solid var(--bds-table-header-pinned-border);
+  }
+
+  .bds-table-cell-pinned-right-first {
+    border-left: 2px solid var(--bds-table-cell-pinned-border);
+  }
+
+  /**
+   * The separators above are structural and always paint. The shadow is the
+   * part that means "content is passing underneath this column", so it only
+   * appears while the table can still scroll that way. TableGrid.jsx puts
+   * these classes on the scroll wrapper(s).
+   */
+  .bds-table-scrolled-from-start {
+    .bds-table-cell-pinned-last {
+      box-shadow: 2px 0 4px var(--bds-table-actions-shadow);
+    }
+
+    .bds-table-header-cell-pinned-last {
+      box-shadow: inset -1px 0 0 var(--bds-table-header-pinned-border),
+        2px 0 4px var(--bds-table-actions-shadow);
+    }
+  }
+
+  .bds-table-scrollable-to-end {
+    .bds-table-cell-actions,
+    .bds-table-header-cell-actions {
+      box-shadow: -2px 0 4px var(--bds-table-actions-shadow);
+    }
+  }
+
+  .bds-table-compact-cell-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+    /**
+     * Flex items shrink by default, so the glyph would be squeezed whenever
+     * the cell is: a dragged row is transformed and has its max-width cap
+     * lifted, which resizes the drag handle mid-drag.
+     */
+    > * {
+      flex-shrink: 0;
+    }
+  }
+
+
   .filter-icon {
-    width: 22px;
-    height: 22px;
+    display: flex;
+    align-items: center;
     cursor: pointer;
+
+    /**
+     * Size comes from width/height props on the icon; only leave the rules
+     * an attribute cannot express, since a CSS rule would override those
+     * props.
+     */
+    svg {
+      color: inherit;
+      display: block;
+    }
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Dark theme ([data-theme='dark'])
+   --------------------------------------------------------------------------- */
+[data-theme='dark'] .bds-table-container {
+  .bds-table-expanded-row {
+    background-color: tokens.$neutral-80;
+
+    &:hover .bds-table-cell {
+      background-color: tokens.$neutral-60 !important;
+    }
+  }
+
+  .bds-table-row:hover .bds-table-cell,
+  .bds-table-row:hover .bds-table-cell-render {
+    border-right-color: var(--theme-hover-bg);
+    border-left-color: var(--theme-hover-bg);
+  }
+
+  .bds-table-row-dragging {
+    border-bottom-color: var(--theme-border);
+  }
+}
+ 

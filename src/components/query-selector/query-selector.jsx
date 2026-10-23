@@ -6,10 +6,10 @@ import Typography from '../typography';
 import Autocomplete from '../autocomplete/autocomplete';
 import { classes } from './constants';
 import { isEmpty } from 'lodash';
-import cancel from '../../assets/icons/cancel.svg';
-import close from '../../assets/icons/close.svg';
-import checkLight from '../../assets/icons/check-light.svg';
-import checkGreen from '../../assets/icons/check-green.svg';
+import Cancel from '../../assets/icons/cancel.svg?react';
+import Close from '../../assets/icons/close.svg?react';
+import CheckLight from '../../assets/icons/check-light.svg?react';
+import CheckGreen from '../../assets/icons/check-green.svg?react';
 
 import './query-selector.scss';
 
@@ -205,13 +205,17 @@ const QuerySelector = ({
                     className={classes.cancelIconBox}
                     onClick={() => checkHandleClick(queryId)}
                   >
-                    <img src={isQueryEmpty() ? checkLight : checkGreen} />
+                    {isQueryEmpty() ? (
+                      <CheckLight aria-hidden focusable="false" />
+                    ) : (
+                      <CheckGreen aria-hidden focusable="false" />
+                    )}
                   </div>
                   <div
                     className={classes.cancelIconBox}
                     onClick={() => resetHandleClick(queryId)}
                   >
-                    <img src={cancel} />
+                    <Cancel aria-hidden focusable="false" />
                   </div>
                 </>
               )}
@@ -220,7 +224,7 @@ const QuerySelector = ({
                   className={classes.cancelIconBox}
                   onClick={deleteHandleClick}
                 >
-                  <img src={close} />
+                  <Close aria-hidden focusable="false" />
                 </div>
               }
             </div>

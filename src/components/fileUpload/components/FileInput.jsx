@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import React from 'react';
 import { IoWarningOutline } from 'react-icons/io5';
-import UploadIcon from '../../../assets/icons/cloud-upload.svg';
+import UploadIcon from '../../../assets/icons/cloud-upload.svg?react';
 import Typography from '../../typography';
 import {
-  altTextFileUpload, defaultErrorIconSize,
+  altTextFileUpload, defaultIconSize,
   imageRole, UploadFormClasses
 } from '../constants';
 
@@ -42,7 +42,7 @@ const FileInput = ({
         type='file'
         onChange={handleFileSelect}
       />
-      <img role={imageRole} src={UploadIcon} alt={altTextFileUpload} />
+      <UploadIcon role={imageRole} aria-label={altTextFileUpload} />
       <div className={UploadFormClasses.uploadFormInstructText}>
         <Typography variant='heading6'>{uploadPromptText}</Typography>
       </div>
@@ -52,7 +52,7 @@ const FileInput = ({
       {(sizeError || otherErrors) && (
         <div className={UploadFormClasses.uploadFormErrorText}>
           <IoWarningOutline
-            size={defaultErrorIconSize}
+            size={defaultIconSize}
             className={UploadFormClasses.uploadErrorIcon}
           />
           {sizeError && (

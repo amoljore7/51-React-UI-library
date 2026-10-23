@@ -6,10 +6,10 @@ export const classes = {
   smallLoader: 'bds-loader-small',
   mediumLoader: 'bds-loader-medium',
   largeLoader: 'bds-loader-large',
-};
+}
 
 export const spinnerSize = {
   small: 'small',
   medium: 'medium',
   large: 'large',
-};
+}

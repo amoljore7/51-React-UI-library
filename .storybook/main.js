@@ -1,17 +1,27 @@
-module.exports = {
-  "stories": [
-    "../src/**/*.stories.mdx",
-    "../src/**/*.stories.@(js|jsx|ts|tsx)"
-  ],
-  "addons": [
-    '@storybook/addon-links',
-    '@storybook/addon-essentials',
-    '@storybook/preset-create-react-app',
-    '@storybook/addon-a11y',
-    '@storybook/addon-storysource',
-  ],
-  "framework": "@storybook/react",
-  "core": {
-    "builder": "@storybook/builder-webpack5"
-  }
+import react from '@vitejs/plugin-react'
+import svgr from 'vite-plugin-svgr'
+
+export default {
+  stories: ['../src/**/*.stories.@(js|jsx)'],
+  addons: ['@storybook/addon-a11y', '@storybook/addon-docs'],
+  framework: '@storybook/react-vite',
+  viteFinal: async config => {
+    config.plugins = [
+      ...(config.plugins || []),
+      react({ jsxRuntime: 'automatic' }),
+      svgr({
+        svgrOptions: {
+          replaceAttrValues: {
+            '#161616': 'currentColor',
+            '#393939': 'currentColor',
+          },
+        },
+      }),
+    ]
+    config.css = {
+      ...config.css,
+      preprocessorOptions: { scss: { api: 'modern-compiler' } },
+    }
+    return config
+  },
 }

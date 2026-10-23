@@ -20,17 +20,17 @@ export const UploadFormClasses = {
   uploadFormDraggedOverContainer: 'bds-upload-form-dragged-over-container',
   uploadFormDraggedOver: 'bds-upload-form-dragged-over',
   uploadFormErrorBorder: 'bds-upload-form-container-error-border',
-};
+}
 export const defaultUploadPromptText =
-  'Drag & Drop a file here or click to upload';
-export const defaultMaxFileSizeMessage = 'Max size';
+  'Drag & Drop a file here or click to upload'
+export const defaultMaxFileSizeMessage = 'Max size'
 export const defaultUploadFailureMessage =
-  'An error has occurred during upload, please try again';
+  'An error has occurred during upload, please try again'
 export const defaultFileSizeExceededMessage =
-  'File size exceeds the maximum permissible limit';
-export const defaultIconSize = '16';
-export const smallIconSize = '12';
-export const imageRole = 'img';
-export const altTextFileUpload = 'Upload file';
-export const fileUploaded = 'file-uploaded';
-export const replaceFile = 'Replace';
+  'File size exceeds the maximum permissible limit'
+export const defaultIconSize = '16'
+export const smallIconSize = '12'
+export const imageRole = 'img'
+export const altTextFileUpload = 'Upload file'
+export const fileUploaded = 'file-uploaded'
+export const replaceFile = 'Replace'

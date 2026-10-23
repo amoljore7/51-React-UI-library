@@ -4,7 +4,7 @@
 // By manipulating opacity, you can achieve effects that vary from subtle to bold, enhancing visual interest
 // and ensuring that colors blend seamlessly with the overall design.
 @function getOpacity($opacity) {
-  @return $opacity/100;
+  @return $opacity*0.01;
 }
 
 $tint-primary-100: #181143;
@@ -26,7 +26,7 @@ $tint-primary-5: rgba($tint-primary-100, getOpacity(5));
 $neutral-140: #000000;
 $neutral-120: #01000b;
 $neutral-100: #040520;
-$neutral-80: #36374d;
+$neutral-80: #0a0b2e;
 $neutral-60: #686979;
 $neutral-40: #9b9ba6;
 $neutral-20: #cdcdd2;
@@ -127,3 +127,11 @@ $feedback-negative-20: #f6d2d0;
 $feedback-negative-10: #fbeeee;
 $feedback-negative-5: #fef7f6;
 $feedback-negative-2: #fffafa;
+
+// Blue
+// Accent blue for selection-style chips (the table's hidden-column pills).
+// Not the same hue as global-style/color.scss's legacy $blue-60 (#0561a7),
+// which is still used for the back-to-top button and the table header.
+
+$blue-20: #d0e2ff;
+$blue-60: #4573d2;

@@ -24,14 +24,12 @@ export const classes = {
   autocompleteSingleSelectContainerFocus: 'bds-autocomplete-single-select-container-focus',
   pillsAndInputWrapper: 'bds-pills-input-wrapper',
   pillWrapper: 'bds-pill-wrapper',
-  optionsContainer: 'bds-options-container',
-  reverseOptionsContainer: 'bds-reverse-options-container',
   autocompleteErrorMessage: 'bds-autocomplete-error-message',
   autocompleteIcon: 'bds-autocomplete-icon',
   autocompleteIconDisabled: 'bds-autocomplete-icon-disabled',
-};
+}
 
-export const defaultTabIndex = '0';
-export const defaultIconSize = 24;
-export const autocompletePortalId = 'autocomplete-options';
-export const defaultPlaceholder = 'Enter Text';
+export const defaultTabIndex = '0'
+export const defaultIconSize = 24
+export const autocompletePortalId = 'autocomplete-options'
+export const defaultPlaceholder = 'Enter Text'

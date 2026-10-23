@@ -1,93 +1,128 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
+@use '../../global-style/font-family.scss' as *;
 
-//radio styles
-$radio-label-margin-bottom: getRem(8px);
-$radio-label-height: getRem(19px);
-$radio-label-font-size: getRem(14px);
-$radio-label-letter-spacing: getRem(0.32px);
-$radio-icon-height: 20px;
-$radio-icon-width: 20px;
-$radio-button-opacity: 0;
-$radio-icon-opacity: 1;
-$radio-container-height: getRem(20px);
-$radio-container-margin-right: getRem(24px);
-$radio-container-vertical-margin-bottom: getRem(8px);
-$radio-container-vertical-margin-right: getRem(0px);
-$radio-button-width: 100%;
-$radio-button-height: 100%;
+// Radio: 24px hit area, 18px circle (align with checkbox), pure CSS – no image
+$size-hit: 24px;
+$size-circle: 18px;
+$border-width: 2px;
+$transition-duration: 0.2s;
+$inner-dot-size: 8px;
+
+// Theme variables — structural (border/disabled) derived from theme text/bg vars;
+// brand/accent tokens defined per-theme below.
+// Custom theme / unthemed defaults: all tokens derived from surface variables so
+// any custom theme gets correct values. [data-theme='light'] restores original
+// brand colors; [data-theme='dark'] keeps its own overrides.
+// Also declared for [data-theme] so the structural tokens — which the light and
+// dark blocks below do not repeat — recompute inside a nested themed subtree
+// instead of inheriting the values resolved against :root.
+:root,
+[data-theme] {
+  // Structural: auto-adapt to --theme-text-primary / --theme-content-bg
+  --bds-radio-border:         color-mix(in srgb, var(--theme-text-primary) 37%, var(--theme-content-bg));
+  --bds-radio-border-hover:   color-mix(in srgb, var(--theme-text-primary) 62%, var(--theme-content-bg));
+  --bds-radio-disabled-border: color-mix(in srgb, var(--theme-text-primary) 37%, var(--theme-content-bg));
+  --bds-radio-disabled-bg:    color-mix(in srgb, var(--theme-text-primary) 6%, var(--theme-content-bg));
+  --bds-radio-disabled-fill:  color-mix(in srgb, var(--theme-text-primary) 37%, var(--theme-content-bg));
+  // Brand/accent: text-primary as the accent; content-bg for the inner dot
+  --bds-radio-fill:           var(--theme-text-primary);
+  --bds-radio-fill-hover:     color-mix(in srgb, var(--theme-text-primary) 85%, var(--theme-content-bg));
+  --bds-radio-dot:            var(--theme-content-bg);
+  --bds-radio-hover-bg:       var(--theme-hover-bg);
+  --bds-radio-disabled-dot:   var(--theme-text-secondary);
+  --bds-radio-focus-ring:     var(--theme-text-primary);
+}
+
+// Light theme — restore original brand values so light mode is unchanged.
+[data-theme='light'] {
+  --bds-radio-fill:           #{tokens.$tint-primary-80};
+  --bds-radio-fill-hover:     #{tokens.$tint-primary-100};
+  --bds-radio-dot:            #{tokens.$neutral-0};
+  --bds-radio-hover-bg:       #{tokens.$tint-primary-5};
+  --bds-radio-disabled-dot:   #{tokens.$neutral-80};
+  --bds-radio-focus-ring:     #{tokens.$tint-primary-80};
+}
+
+[data-theme='dark'] {
+  // Brand/accent overrides only
+  --bds-radio-fill:           #{tokens.$tint-primary-60};
+  --bds-radio-fill-hover:     #{tokens.$tint-primary-40};
+  --bds-radio-dot:            #{tokens.$neutral-0};
+  --bds-radio-hover-bg:       #{tokens.$tint-primary-10};
+  --bds-radio-disabled-dot:   #{tokens.$neutral-20};
+  --bds-radio-focus-ring:     #{tokens.$tint-primary-80};
+}
+
+// Layout
+$radio-label-margin-bottom: global-style.getRem(8px);
+$radio-label-height: global-style.getRem(19px);
+$radio-label-font-size: global-style.getRem(14px);
+$radio-label-letter-spacing: global-style.getRem(0.32px);
+$radio-container-height: global-style.getRem(20px);
+$radio-container-margin-right: global-style.getRem(24px);
+$radio-container-vertical-margin-bottom: global-style.getRem(8px);
+$radio-container-vertical-margin-right: global-style.getRem(0px);
 $radio-container-last-child-margin-right: 0;
-$radio-icon-margin-right: getRem(8px);
-$radio-btn-border: getRem(1px);
-$radio-btn-border-hover: getRem(2.5px);
-$radio-btn-height: 14px;
-$radio-btn-width: 14px;
-$radio-btn-checked-before-height: 6px;
-$radio-btn-checked-before-width: 6px;
-$radio-btn-margin-right:8px;
-$radio-btn-margin-bottom: getRem(4px);
-$radio-btn-label-gap: getRem(2px);
+$radio-btn-label-gap: global-style.getRem(8px);
 $main-label-font-weight: 600;
-$radio-btn-border-radius: 50%;
-$bds-radio-btn-margin-vertical: 1px;
 
-// Main container for the entire radio group
 .bds-radio-group {
-  // Styles for the optional label above the group
   .main-label {
     display: flex;
     height: $radio-label-height;
     font-size: $radio-label-font-size;
     letter-spacing: $radio-label-letter-spacing;
     font-family: $font-type-01;
-    color: $primary-txt-color;
+    color: var(--theme-text-primary);
     text-align: left;
     margin-bottom: $radio-label-margin-bottom;
     font-weight: $main-label-font-weight;
   }
 
-  // Applies horizontal layout to the radio buttons
   .horizontal-align {
     display: flex;
   }
 
-  // Applies vertical layout to the radio buttons
   .vertical-align {
     flex-direction: column;
   }
 
-  // Wrapper for individual radio button and label
   .radio-container {
     display: flex;
-    height: $radio-container-height;
+    align-items: center;
+    min-height: $radio-container-height;
     margin-right: $radio-container-margin-right;
     margin-bottom: $radio-label-margin-bottom;
+    flex-shrink: 0;
 
-    // Removes right margin from the last radio item in a row
     &:last-child {
       margin-right: $radio-container-last-child-margin-right;
     }
 
-    // Adjusts margins for vertical layout alignment
-    .radio-container-vertical {
+    &.radio-container-vertical {
       margin-bottom: $radio-container-vertical-margin-bottom;
       margin-right: $radio-container-vertical-margin-right;
     }
 
-    // Styles for the label associated with a radio button
     .label-container {
       font-size: $radio-label-font-size;
       letter-spacing: $radio-label-letter-spacing;
       font-family: $font-type-01;
-      color: $secondary-txt-color;
+      color: var(--theme-text-primary);
       text-align: left;
       margin: inherit;
     }
 
-    // Styles applied to labels when the corresponding radio is disabled
     .disable-label {
-      color: $ui-disabled-01;
+      color: var(--bds-radio-disabled-fill);
+
+      [data-theme='dark'] & {
+        color: tokens.$neutral-60;
+      }
     }
-    // Custom radio button wrapper with icon and label alignment
+
     .bds-radio-custom-btn {
       display: flex;
       align-items: center;
@@ -95,52 +130,115 @@ $bds-radio-btn-margin-vertical: 1px;
     }
   }
 }
-.bds-radio-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  appearance: none;
-  -webkit-appearance: none;
-  width: $radio-btn-height;
-  height: $radio-btn-height;
-  border: $radio-btn-border solid $primary-txt-color;
-  border-radius: $radio-btn-border-radius;
-  cursor: pointer;
-  vertical-align: middle;
-  background-color: $white;
-  margin-top: $bds-radio-btn-margin-vertical;
-  margin-bottom: $bds-radio-btn-margin-vertical;
-  margin-right: $radio-btn-margin-right;
+
+// Hit area wrapper (like checkbox icon container) – min 24px so label has room, no overlap
+.bds-radio-custom-btn {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: $size-hit;
+  min-height: $size-hit;
+  flex-shrink: 0;
+}
 
-  // Focus or hover effect on radio input
-  &:hover,
-  &:focus {
-    outline: $radio-btn-border-hover solid $blue-60-hover;
-  }
+// Native radio: invisible, full hit area
+.bds-radio-btn {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
 
-  // Style when the radio is checked
-  &:checked {
-    border-color: $primary-txt-color;
-    background-color: $primary-txt-color;
-  }
-
-  // Inner white circle shown when checked
-  &:before {
-    content: '';
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: $radio-btn-checked-before-width;
-    height: $radio-btn-checked-before-height;
-    background: $white;
-    border-radius: $radio-btn-border-radius;
-  }
-
-  // Styles when radio is disabled
   &:disabled {
-    border: $radio-btn-border solid $gray-50;
     cursor: default;
-    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--bds-radio-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+// Visual circle (CSS only – no image), styled from input state via adjacent sibling
+.bds-radio-visual {
+  position: relative;
+  width: $size-circle;
+  height: $size-circle;
+  flex-shrink: 0;
+  border: $border-width solid var(--bds-radio-border);
+  border-radius: 50%;
+  box-sizing: border-box;
+  transition:
+    border-color $transition-duration ease,
+    background-color $transition-duration ease;
+  pointer-events: none;
+}
+
+// Hover background (like checkbox), only when not disabled
+.bds-radio-custom-btn:has(.bds-radio-btn:not(:disabled)):hover .bds-radio-visual::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: $size-hit;
+  height: $size-hit;
+  margin-left: -($size-hit * 0.5);
+  margin-top: -($size-hit * 0.5);
+  border-radius: 50%;
+  background-color: var(--bds-radio-hover-bg);
+  pointer-events: none;
+  z-index: -1;
+}
+
+// Unchecked hover: stronger border
+.bds-radio-btn:not(:checked):not(:disabled) + .bds-radio-visual {
+  .bds-radio-custom-btn:hover & {
+    border-color: var(--bds-radio-border-hover);
+  }
+}
+
+// Checked: fill + inner dot (CSS)
+.bds-radio-btn:checked + .bds-radio-visual {
+  border-color: var(--bds-radio-fill);
+  background-color: var(--bds-radio-fill);
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: $inner-dot-size;
+    height: $inner-dot-size;
+    margin-left: -($inner-dot-size * 0.5);
+    margin-top: -($inner-dot-size * 0.5);
+    background-color: var(--bds-radio-dot);
+    border-radius: 50%;
+    box-sizing: border-box;
+  }
+}
+
+// Checked hover
+.bds-radio-custom-btn:hover .bds-radio-btn:checked:not(:disabled) + .bds-radio-visual {
+  border-color: var(--bds-radio-fill-hover);
+  background-color: var(--bds-radio-fill-hover);
+}
+
+// Disabled: unchecked
+.bds-radio-btn:disabled + .bds-radio-visual {
+  border-color: var(--bds-radio-disabled-border);
+  background-color: var(--bds-radio-disabled-bg);
+}
+
+// Disabled: checked
+.bds-radio-btn:checked:disabled + .bds-radio-visual {
+  border-color: var(--bds-radio-disabled-fill);
+  background-color: var(--bds-radio-disabled-fill);
+
+  &::after {
+    background-color: var(--bds-radio-disabled-dot);
   }
 }

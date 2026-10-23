@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './button.scss';
 import classNames from 'classnames';
-import { useLocalStorage } from 'usehooks-ts'
 import Tooltip from '../tooltip';
+import { renderSvgGraphic } from '../../utils/renderSvgGraphic';
+import { FaChevronDown } from 'react-icons/fa';
 import {
   classes,
-  classesV2,
   largeProp,
   mediumProp,
   primaryProp,
@@ -15,40 +15,62 @@ import {
   textOnlyProp,
   defaultSize,
   defaultVariant,
-  iconBtnMargin,
+  defaultColor,
+  colorTint,
+  colorNeutral,
+  colorNegative,
+  colorPositive,
 } from './constants';
 
+function renderIcon(icon, alt) {
+  if (icon == null) return null;
+  if (React.isValidElement(icon)) return icon;
+  return renderSvgGraphic(icon, {
+    alt: alt || 'icon',
+    'aria-label': alt || 'icon',
+    role: 'img',
+  });
+}
+
 const ButtonWrapper = (props) => {
-  const buttonComp =
+  const buttonComp = (
     <button
-      data-testid='button'
-      className={classNames({ ...props.btnClass })}
+      data-testid={props.testId}
+      className={classNames(props.btnClass)}
       onClick={props.onClick}
       disabled={props.disabled}
       type={props.type}
+      aria-pressed={props.toggled != null ? props.toggled : undefined}
       value={props.value}
       name={props.name}
       {...props.extraProps}
     >
       {props.children}
     </button>
+  );
 
-    if (props.tooltipText) {
-      return (
-        <div>
-          <Tooltip title={props.tooltipText} position={props.tooltipPosition}>
-            {buttonComp}
-          </Tooltip>
-        </div>
-      )
-    }
+  if (!props.tooltipText) return buttonComp;
 
-    return buttonComp
-}
+  // The tooltip listens for the hover on its child. A disabled button has pointer-events: none
+  // and never gets it, so the wrapper div is the child. One tree for both states, so toggling
+  // `disabled` doesn't remount the button; it stays `div > button`, which ButtonGroup selects.
+  return (
+    <Tooltip title={props.tooltipText} position={props.tooltipPosition}>
+      <div
+        className={classNames(classes.tooltipAnchor, {
+          [classes.tooltipAnchorDisabled]: props.disabled,
+        })}
+      >
+        {buttonComp}
+      </div>
+    </Tooltip>
+  );
+};
 
 const Button = ({
   variant = defaultVariant,
   size = defaultSize,
+  color = defaultColor,
   children,
   onClick,
   disabled = false,
@@ -60,32 +82,42 @@ const Button = ({
   tooltipText,
   tooltipPosition = 'top',
   extraProps,
+  dropdown = false,
+  badge = false,
+  loading = false,
+  toggled = false,
+  iconOnly,
+  testId = 'button',
 }) => {
-  const [isNewUx] = useLocalStorage('new-ux', true)
+  const hasIcon = Boolean(leftSVGIcon || rightSVGIcon);
+  const hasContent = children != null && children !== '';
+  const isIconOnly = iconOnly === true || (!hasContent && hasIcon);
 
-  let btnClass = {
-    [classes.button]: true,
-    [classes.buttonPrimary]: variant === primaryProp,
-    [classes.buttonSecondary]: variant === secondaryProp,
-    [classes.buttonTextOnly]: variant === textOnlyProp,
-    [classes.buttonSmall]: size === smallProp,
-    [classes.buttonMedium]: size === mediumProp,
-    [classes.buttonLarge]: size === largeProp,
-    [classes.disabled]: disabled,
+  const colorClass = {
+    [classes.buttonColorTint]: color === colorTint,
+    [classes.buttonColorNeutral]: color === colorNeutral,
+    [classes.buttonColorNegative]: color === colorNegative,
+    [classes.buttonColorPositive]: color === colorPositive,
   };
 
-  if (isNewUx) {
-    btnClass = {
-      [classesV2.button]: true,
-      [classesV2.buttonPrimary]: variant === primaryProp,
-      [classesV2.buttonSecondary]: variant === secondaryProp,
-      [classesV2.buttonTertiary]: variant === textOnlyProp,
-      [classesV2.buttonSmall]: size === smallProp,
-      [classesV2.buttonMedium]: size === mediumProp,
-      [classesV2.buttonLarge]: size === largeProp,
-      [classesV2.disabled]: disabled,
-    }
-  }
+  const btnClass = classNames(
+    classes.button,
+    {
+      [classes.buttonPrimary]: variant === primaryProp,
+      [classes.buttonSecondary]: variant === secondaryProp,
+      [classes.buttonTertiary]: variant === textOnlyProp,
+      [classes.buttonSmall]: size === smallProp,
+      [classes.buttonMedium]: size === mediumProp,
+      [classes.buttonLarge]: size === largeProp,
+      [classes.disabled]: disabled,
+      [classes.iconOnly]: isIconOnly,
+      [classes.dropdown]: dropdown,
+      [classes.badge]: badge,
+      [classes.loading]: loading,
+      [classes.toggled]: toggled,
+    },
+    colorClass
+  );
 
   const buttonProps = {
     btnClass,
@@ -97,17 +129,26 @@ const Button = ({
     tooltipText,
     tooltipPosition,
     extraProps,
-  }
+    toggled,
+    testId,
+  };
 
   return (
     <ButtonWrapper {...buttonProps}>
-      {leftSVGIcon && !rightSVGIcon &&  (
-        <img src={leftSVGIcon} alt='left Icon' style={{ marginRight: iconBtnMargin }} />
-      )}
-      {children}
-      {/* show only right icon if both props are added */}
-      {rightSVGIcon && (
-        <img src={rightSVGIcon} alt='right Icon' style={{ marginLeft: iconBtnMargin }} />
+      <span className={classes.content}>
+        {leftSVGIcon && !rightSVGIcon && renderIcon(leftSVGIcon, 'left Icon')}
+        {children}
+        {rightSVGIcon && renderIcon(rightSVGIcon, 'right Icon')}
+        {dropdown && (
+          <span className={classes.caret} aria-hidden>
+            <FaChevronDown size={12} />
+          </span>
+        )}
+      </span>
+      {loading && (
+        <span className={classes.spinner} aria-hidden>
+          <span className={classes.spinnerInner} />
+        </span>
       )}
     </ButtonWrapper>
   );
@@ -116,6 +157,7 @@ const Button = ({
 Button.propTypes = {
   variant: PropTypes.string,
   size: PropTypes.string,
+  color: PropTypes.oneOf([colorTint, colorNeutral, colorNegative, colorPositive]),
   children: PropTypes.any,
   onClick: PropTypes.func,
   disabled: PropTypes.bool,
@@ -126,8 +168,13 @@ Button.propTypes = {
   name: PropTypes.string,
   tooltipText: PropTypes.string,
   tooltipPosition: PropTypes.string,
-  color: PropTypes.string,
   extraProps: PropTypes.object,
+  dropdown: PropTypes.bool,
+  badge: PropTypes.bool,
+  loading: PropTypes.bool,
+  toggled: PropTypes.bool,
+  iconOnly: PropTypes.bool,
+  testId: PropTypes.string,
 };
 
 export default Button;

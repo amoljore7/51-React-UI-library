@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from '../button';
 import './flexibleMenu.scss';
-import closeX from '../../assets/icons/close-x.svg';
+import CloseX from '../../assets/icons/close-x.svg?react';
 
 const FlexibleMenu = ({
   maxHeight = false,
@@ -19,13 +19,12 @@ const FlexibleMenu = ({
         <div className="bds-flexible-menu-header">
           <span>{title}</span>
           <Button
-            variant="textOnly"
-            color="primary"
+            variant="secondary"
             size="medium"
             aria-label="Close"
             onClick={onClose}
           >
-            <img src={closeX} />
+            <CloseX aria-hidden focusable="false" />
           </Button>
         </div>
       )}
@@ -34,7 +33,7 @@ const FlexibleMenu = ({
       </div>
       {footer?.text && (
         <div className="bds-flexible-menu-footer">
-          <Button variant="textOnly" color="primary" onClick={footer?.onClick}>
+          <Button variant="secondary" onClick={footer?.onClick}>
             {footer.text}
           </Button>
         </div>

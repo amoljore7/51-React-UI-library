@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import closeIcon from '../../../assets/icons/close-file-viewer.svg';
-import DownloadIcon from '../../../assets/icons/small-download-icon.svg';
-import ZoomIn from '../../../assets/icons/zoom-in.svg';
-import ZoomOut from '../../../assets/icons/zoom-out.svg';
+import CloseIcon from '../../../assets/icons/close-file-viewer.svg?react';
+import DownloadIcon from '../../../assets/icons/small-download-icon.svg?react';
+import ZoomIn from '../../../assets/icons/zoom-in.svg?react';
+import ZoomOut from '../../../assets/icons/zoom-out.svg?react';
 import Typography from '../../../components/typography';
 import { classes } from '../constants';
 
@@ -68,15 +68,17 @@ const FullScreen = ({ file, setIsOpen }) => {
 const BottomPanel = ({ onZoomIn, onZoomOut, percentageZoom }) => (
   <div className={classes.fullScreenBottomPanel}>
     <div className={classes.fullScreenBottomPanelZoom}>
-      <img
+      <ZoomOut
         className={classes.fullScreenBottomPanelZoomIn}
-        src={ZoomOut}
         onClick={onZoomOut}
+        aria-hidden
+        focusable="false"
       />
-      <img
+      <ZoomIn
         className={classes.fullScreenBottomPanelZoomOut}
-        src={ZoomIn}
         onClick={onZoomIn}
+        aria-hidden
+        focusable="false"
       />
       {percentageZoom && (
         <div className={classes.fullScreenBottomPanelZoomPercentage}>
@@ -104,12 +106,20 @@ const TopPanel = ({ file, base64File, onCloseClick }) => (
     </div>
     <div className={classes.fullScreenTopPanelNameButtons}>
       <a href={base64File} download={file.name}>
-        <img src={DownloadIcon} />
+        <DownloadIcon aria-hidden focusable="false" />
       </a>
-      <img
+      <CloseIcon
         className={classes.fullscreenTopPanelCloseFile}
-        src={closeIcon}
         onClick={onCloseClick}
+        aria-label="Close"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onCloseClick();
+          }
+        }}
       />
     </div>
   </div>

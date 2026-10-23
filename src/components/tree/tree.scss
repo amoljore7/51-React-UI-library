@@ -1,14 +1,16 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
 
-$tree-container-left-border-color: $gray-40;
-$tree-container-right-border-width: getRem(2px);
+$tree-container-left-border-color: var(--theme-border);
+$tree-container-right-border-width: global-style.getRem(2px);
 $tree-container-right-hover-border: $blue-70;
-$tree-resize-line-margin-left: getRem(1px);
-$tree-scroll-width: getRem(8px);
-$tree-scroll-background: $gray-30;
-$tree-scroll-background-hover: $gray-60;
-$tree-scroll-border-radius: getRem(10px);
-$tree-width: getRem(304px);
+$tree-resize-line-margin-left: global-style.getRem(1px);
+$tree-scroll-width: global-style.getRem(8px);
+$tree-scroll-background: var(--theme-border);
+$tree-scroll-background-hover: var(--theme-border-strong);
+$tree-scroll-border-radius: global-style.getRem(10px);
+$tree-width: global-style.getRem(304px);
 
 .tree-bounding-container {
   position: relative;

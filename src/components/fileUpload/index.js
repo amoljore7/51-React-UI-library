@@ -1,2 +1,2 @@
-import FileUpload from "./FileUpload"
-export default FileUpload;
+import FileUpload from './FileUpload'
+export default FileUpload

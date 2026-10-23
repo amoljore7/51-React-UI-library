@@ -1,8 +1,11 @@
-@import "../../global-style/index.scss";
+@use "../../global-style/index.scss" as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
 $bds-progress-bar-leading-color: $success-color;
 $bds-progress-bar-trailing-color: $gray-10;
-$bds-progress-bar-value-left-margin: getRem(8px);
+$bds-progress-bar-value-left-margin: global-style.getRem(8px);
 
 .bds-progress-bar-parent-container {
   display: flex;
@@ -28,5 +31,15 @@ $bds-progress-bar-value-left-margin: getRem(8px);
   .bds-progress-bar-value {
     display: flex;
     margin-left: $bds-progress-bar-value-left-margin;
+  }
+}
+
+[data-theme='dark'] {
+  .bds-progress-bar-parent-container {
+    color: var(--theme-text-primary);
+
+    .bds-progress-bar-trailing {
+      background-color: var(--theme-border);
+    }
   }
 }

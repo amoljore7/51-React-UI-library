@@ -1,0 +1,105 @@
+import React from 'react'
+import { fireEvent, render } from '@testing-library/react'
+import ButtonGroup from './buttonGroup'
+import Button from '../button'
+
+const getButtonGroupElements = () => {
+  return (
+    <ButtonGroup size="large">
+      <Button variant="primary" onClick={ () => {} }>
+        one
+      </Button>
+      <Button variant="primary" onClick={ () => {} }>
+        Two
+      </Button>
+      <Button variant="primary" onClick={ () => {} }>
+        Three
+      </Button>
+    </ButtonGroup>
+  )
+}
+
+const clickHandler = vi.fn()
+const getButtonGroupElementsWithRadioType = defaultValue => {
+  return (
+    <ButtonGroup type="radio" onClick={value => { clickHandler(value) }} defaultValue={defaultValue}>
+      <Button variant="secondary" value="one">
+        one
+      </Button>
+      <Button variant="secondary" value="two">
+        Two
+      </Button>
+    </ButtonGroup>
+  )
+}
+
+describe('ButtonGroup component unit test cases', () => {
+
+  it('Should render the container with the correct class', () => {
+    const { container } = render(getButtonGroupElements())
+    expect(container.firstChild.classList.contains('bds-btn-group')).toBe(true)
+  })
+
+  it('Should render the count of buttons correctly in the group', () => {
+    const { queryAllByRole } = render(getButtonGroupElements())
+    const button = queryAllByRole('button')
+    expect(button.length).toBe(3)
+  })
+
+  it('Should render the size of buttons correctly in the group', () => {
+    const { queryAllByRole } = render(getButtonGroupElements())
+    const button = queryAllByRole('button')
+    expect(button[0].className.includes('bds-btn--large')).toBe(true)
+  })
+
+})
+
+describe('ButtonGroup component unit test cases when the type is radio.', () => {
+
+  it('Should render the container with the correct class', () => {
+    const { container } = render(getButtonGroupElementsWithRadioType())
+    expect(container.firstChild.classList.contains('bds-btn-group')).toBe(true)
+  })
+
+  it('Should render the button classes correctly', () => {
+    const { queryAllByRole } = render(getButtonGroupElementsWithRadioType())
+    const button = queryAllByRole('button')
+
+    expect(button[0].className.includes('bds-btn--secondary')).toBe(true)
+    expect(button[0].className.includes('bds-btn--toggled')).toBe(true)
+    expect(button[1].className.includes('bds-btn--secondary')).toBe(true)
+    expect(button[1].className.includes('bds-btn--toggled')).toBe(false)
+  })
+
+  it('Should toggle selection (toggled) on click.', () => {
+    const { queryAllByRole } = render(getButtonGroupElementsWithRadioType())
+    const button = queryAllByRole('button')
+
+    fireEvent.click(button[1])
+    expect(button[0].className.includes('bds-btn--toggled')).toBe(false)
+    expect(button[1].className.includes('bds-btn--toggled')).toBe(true)
+    expect(button[0].className.includes('bds-btn--secondary')).toBe(true)
+    expect(button[1].className.includes('bds-btn--secondary')).toBe(true)
+  })
+
+  it('Should get the value of the button clicked.', () => {
+    const { queryAllByRole } = render(getButtonGroupElementsWithRadioType())
+    const button = queryAllByRole('button')
+
+    fireEvent.click(button[1])
+    expect(clickHandler).toBeCalledWith('two')
+  })
+
+})
+
+describe('ButtonGroup component unit test cases when the type is radio and a default value is present.', () => {
+  it('should render the second button as selected (toggled).', () => {
+    const { queryAllByRole } = render(getButtonGroupElementsWithRadioType('two'))
+    const button = queryAllByRole('button')
+
+    expect(button[0].className.includes('bds-btn--secondary')).toBe(true)
+    expect(button[0].className.includes('bds-btn--toggled')).toBe(false)
+    expect(button[1].className.includes('bds-btn--secondary')).toBe(true)
+    expect(button[1].className.includes('bds-btn--toggled')).toBe(true)
+  })
+})

@@ -1,8 +1,11 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
 $back-to-top-border-radius: 50%;
-$back-to-top-height: getRem(56px);
-$back-to-top-width: getRem(56px);
+$back-to-top-height: global-style.getRem(56px);
+$back-to-top-width: global-style.getRem(56px);
 $back-to-top-arrow-fill-color: white;
 
 .bds-back-to-top-container {
@@ -36,4 +39,14 @@ $back-to-top-arrow-fill-color: white;
   height: fit-content;
   min-height: 0;
   z-index: 29;
+}
+
+[data-theme='dark'] {
+  .bds-back-to-top-container {
+    background-color: tokens.$feedback-information-80;
+
+    &:hover {
+      background-color: tokens.$feedback-information-60;
+    }
+  }
 }

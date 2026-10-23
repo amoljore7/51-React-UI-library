@@ -1,2 +1,2 @@
-import FileViewer from "./FileViewer";
-export default FileViewer;
+import FileViewer from './FileViewer'
+export default FileViewer

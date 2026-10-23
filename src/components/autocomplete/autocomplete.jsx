@@ -425,6 +425,7 @@ const Autocomplete = ({
           getOptionSublabel={getOptionSublabel}
           disablePortal={disablePortal}
           groupPropertyName={groupPropertyName}
+          themeSourceRef={autocompleteRef}
         />
       )}
       {error ? (

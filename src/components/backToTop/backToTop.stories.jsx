@@ -1,0 +1,208 @@
+import React, { useEffect, useRef } from 'react'
+import ModalPopup from '../modal-popup/modal-popup'
+import Textfield from '../textfield'
+import BackToTop from './'
+import { DarkStoryDocument, DarkStorySurface } from '../../story-assets/story-theme'
+
+export default {
+  title: 'design-components/BackToTop',
+  component: BackToTop,
+}
+
+export const BackToTopSimple = () => {
+  const parentContainer = useRef()
+
+  // hide the scroll bar for this story
+  useEffect(() => {
+    const earlier = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => (document.body.style.overflow = earlier)
+  }, [])
+  const containerStyles = {
+    borderLeft: '2px solid #1EA7FD',
+    width: '800px',
+    height: '100vh',
+    overflow: 'auto',
+    margin: 'auto',
+    paddingTop: '15px',
+    paddingBottom: '15px',
+    backgroundColor: '#E9E8E2',
+  }
+  const pageStyles = {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '600px',
+    height: '100vh',
+    margin: 'auto',
+    marginBottom: '32px',
+    background: 'white',
+    textAlign: 'center',
+    fontSize: '32px',
+  }
+
+  const textStyle = {
+    verticalAlign: 'center',
+    display: 'flex',
+  }
+
+  return (
+    <>
+      <div style={containerStyles} ref={parentContainer}>
+        <div style={pageStyles}>
+          <div style={textStyle}>Section 1</div>
+        </div>
+        <div style={pageStyles}>
+          <div style={textStyle}>Section 2</div>
+        </div>
+        <div style={pageStyles}>
+          <div style={textStyle}>Section 3</div>
+        </div>
+        <div style={pageStyles}>
+          <div style={textStyle}>Section 4</div>
+        </div>
+      </div>
+      {/*
+        Add Back to top as a sibling
+        (just below the div) jsx element
+        wherever scrolling is to happen.
+      */}
+      {/*
+        DO NOT add the back to top inside
+        the scrolling div.
+      */}
+      {/*
+        Pass the ref of dom element inside
+        which button is to be used.
+      */}
+      <BackToTop id="some-id" parentRef={parentContainer} />
+    </>
+  )
+}
+
+export const BackToTopModalPopup = () => {
+  const parentContainer = useRef()
+  // hide the scroll bar for this story
+  useEffect(() => {
+    const earlier = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => (document.body.style.overflow = earlier)
+  }, [])
+  const buttons = [
+    {
+      text: 'Ok',
+      variant: 'primary',
+      onClick: () => console.log('Ok button clicked'),
+      size: 'large',
+    },
+    {
+      text: 'Cancel',
+      variant: 'secondary',
+      onClick: () => console.log('Cancel button clicked'),
+      size: 'large',
+    },
+  ]
+
+  return (
+    <div
+      className="testname"
+      style={{
+        width: '100vw',
+        height: '100vh',
+        marginRight: '200px',
+        backgroundColor: 'red',
+      }}
+    >
+      <ModalPopup
+        ref={parentContainer}
+        width={464}
+        title={'Add Permission'}
+        buttons={buttons}
+        onCancel={() => console.log('Cancel button clicked')}
+      >
+        <>
+          <div>
+            {Array(50)
+              .fill()
+              .map((_, i) => (
+                <div style={{marginTop: 32}}>
+                  <Textfield
+                    label={`Value ${i}`}
+                    value={`Some values ${i}`}
+                    onChange={() => {}}
+                  />
+                </div>
+                
+              ))}
+          </div>
+        </>
+      </ModalPopup>
+      <BackToTop id={'#123'} parentRef={parentContainer} />
+    </div>
+  )
+}
+
+export const DarkTheme = () => {
+  const parentContainer = useRef()
+
+  useEffect(() => {
+    const earlier = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => (document.body.style.overflow = earlier)
+  }, [])
+
+  const containerStyles = {
+    borderLeft: '2px solid #5b8def',
+    width: '800px',
+    height: '100vh',
+    overflow: 'auto',
+    margin: 'auto',
+    paddingTop: '15px',
+    paddingBottom: '15px',
+    backgroundColor: '#1a1b2e',
+  }
+  const pageStyles = {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '600px',
+    height: '100vh',
+    margin: 'auto',
+    marginBottom: '32px',
+    background: '#2a2b3d',
+    color: '#e6e6e9',
+    textAlign: 'center',
+    fontSize: '32px',
+  }
+
+  const textStyle = {
+    verticalAlign: 'center',
+    display: 'flex',
+  }
+
+  return (
+    <DarkStoryDocument>
+      <DarkStorySurface style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center' }}>
+        <div style={containerStyles} ref={parentContainer}>
+          <div style={pageStyles}>
+            <div style={textStyle}>Section 1</div>
+          </div>
+          <div style={pageStyles}>
+            <div style={textStyle}>Section 2</div>
+          </div>
+          <div style={pageStyles}>
+            <div style={textStyle}>Section 3</div>
+          </div>
+          <div style={pageStyles}>
+            <div style={textStyle}>Section 4</div>
+          </div>
+        </div>
+        <BackToTop id="back-to-top-dark" parentRef={parentContainer} />
+      </DarkStorySurface>
+    </DarkStoryDocument>
+  )
+}
+
+DarkTheme.storyName = 'Dark theme'

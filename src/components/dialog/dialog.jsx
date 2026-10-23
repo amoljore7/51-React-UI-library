@@ -8,13 +8,13 @@ import {
   alertColor,
   classes,
   errorColor,
-  iconColor,
   iconSize,
   dialogType,
   zIndex,
   defaultWidth,
   defaultHeight,
 } from './constants';
+import { mountPortalRootWithThemeSync } from '../../utils/resolve-portal-data-theme';
 
 import './dialog.scss';
 
@@ -30,6 +30,9 @@ const DialogPopup = ({
   onCancel,
   children,
   primaryButtonDisabled = false,
+  themeSourceRef,
+  primaryButtonTestId = 'dialog-primary-btn',
+  secondaryButtonTestId = 'dialog-secondary-btn',
 }) => {
   const [dialogEl] = useState(document.createElement('div'));
   dialogEl.id = 'dialog-popup';
@@ -37,10 +40,8 @@ const DialogPopup = ({
   dialogEl.style.zIndex = zIndex;
 
   useEffect(() => {
-    const bodyElement = document.getElementsByTagName('body')[0];
-    bodyElement.appendChild(dialogEl);
-    return () => bodyElement.removeChild(dialogEl);
-  }, [dialogEl]);
+    return mountPortalRootWithThemeSync(dialogEl, themeSourceRef);
+  }, [dialogEl, themeSourceRef]);
 
   const getStrapColor = () => {
     switch (type) {
@@ -70,7 +71,12 @@ const DialogPopup = ({
           <Typography variant="heading4">{title}</Typography>
         </div>
         <div className={classes.iconContainer}>
-          <FiX color={iconColor} size={iconSize} onClick={onCancel} style={{ cursor: 'pointer' }} />
+          <FiX
+            size={iconSize}
+            onClick={onCancel}
+            style={{ cursor: 'pointer' }}
+            data-testid="dialog-popup-close-icon"
+          />
         </div>
       </div>
     );
@@ -90,17 +96,30 @@ const DialogPopup = ({
   const getDialogButton = () => {
     return (
       <div className={classes.buttonContainer}>
-        {secondaryButtonText && getActionButton('secondary', secondaryButtonText, onCancel)}
+        {secondaryButtonText &&
+          getActionButton('secondary', secondaryButtonText, onCancel, false, secondaryButtonTestId)}
         {primaryButtonText &&
-          getActionButton('primary', primaryButtonText, onSubmit, primaryButtonDisabled)}
+          getActionButton(
+            'primary',
+            primaryButtonText,
+            onSubmit,
+            primaryButtonDisabled,
+            primaryButtonTestId
+          )}
       </div>
     );
   };
 
-  const getActionButton = (type, buttonText, clickHandler, primaryButtonDisabled) => {
+  const getActionButton = (type, buttonText, clickHandler, primaryButtonDisabled, testId) => {
     return (
       <div className={classes.buttonWrapper}>
-        <Button variant={type} size="large" onClick={clickHandler} disabled={primaryButtonDisabled}>
+        <Button
+          variant={type}
+          size="large"
+          onClick={clickHandler}
+          disabled={primaryButtonDisabled}
+          testId={testId}
+        >
           {buttonText}
         </Button>
       </div>
@@ -138,6 +157,9 @@ DialogPopup.propTypes = {
   onCancel: PropTypes.func,
   children: PropTypes.oneOfType([PropTypes.elementType, PropTypes.func]),
   primaryButtonDisabled: PropTypes.bool,
+  themeSourceRef: PropTypes.shape({ current: PropTypes.any }),
+  primaryButtonTestId: PropTypes.string,
+  secondaryButtonTestId: PropTypes.string,
 };
 
 export default DialogPopup;

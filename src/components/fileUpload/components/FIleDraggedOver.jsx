@@ -1,5 +1,5 @@
 import React from 'react';
-import DraggedOverIcon from '../../../assets/icons/file-upload-dragged-over.svg';
+import DraggedOverIcon from '../../../assets/icons/file-upload-dragged-over.svg?react';
 import { UploadFormClasses } from '../constants';
 
 const FileDraggedOver = ({ handleFileDragLeave, handleFileDrop, width }) => {
@@ -12,9 +12,10 @@ const FileDraggedOver = ({ handleFileDragLeave, handleFileDrop, width }) => {
       onDragOver={(e) => e.preventDefault()}
       style={width ? { width } : undefined}
     >
-      <img
+      <DraggedOverIcon
         className={UploadFormClasses.uploadFormDraggedOver}
-        src={DraggedOverIcon}
+        aria-hidden
+        focusable="false"
       />
     </div>
   );

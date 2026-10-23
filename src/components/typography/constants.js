@@ -15,7 +15,7 @@ export const classes = {
   heading5: 'typography-heading-05',
   heading6: 'typography-heading-06',
   heading7: 'typography-heading-07',
-};
+}
 
 export const typographyVariants = {
   code1: 'code1',
@@ -34,9 +34,9 @@ export const typographyVariants = {
   heading5: 'heading5',
   heading6: 'heading6',
   heading7: 'heading7',
-};
+}
 
-export const headingRole = 'heading';
-export const figureRole = 'figure';
-export const codeAriaLabelledBy = 'code-text';
-export const dataAttributeName = 'data-auto-id';
+export const headingRole = 'heading'
+export const figureRole = 'figure'
+export const codeAriaLabelledBy = 'code-text'
+export const dataAttributeName = 'data-auto-id'

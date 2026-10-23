@@ -5,4 +5,4 @@ export const classes = {
   wrapper: 'bds-multi-textfield-wrapper',
   crossBtnWrapper: 'bds-multi-textfield-cross-btn-wrapper',
 
-};
+}

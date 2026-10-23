@@ -1,26 +1,29 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
-$font-size: getRem(14px);
-$font-size-menu-title: getRem(20px);
+$font-size: global-style.getRem(14px);
+$font-size-menu-title: global-style.getRem(20px);
 
-$drawer-width: getRem(304px);
+$drawer-width: global-style.getRem(304px);
 $drawer-height: 100vh;
 
-$icon-width: getRem(24px);
-$icon-height: getRem(24px);
-$height-nav-list: getRem(24px);
-$height-group-header: getRem(48px);
-$width-scrollbar: getRem(10px);
-$height-menu-title: getRem(70px);
+$icon-width: global-style.getRem(24px);
+$icon-height: global-style.getRem(24px);
+$height-nav-list: global-style.getRem(24px);
+$height-group-header: global-style.getRem(48px);
+$width-scrollbar: global-style.getRem(10px);
+$height-menu-title: global-style.getRem(70px);
 
-$padding-top-nav-list: getRem(20px);
-$padding-bottom-nav-list: getRem(20px);
-$padding-top-menu-title: getRem(26px);
-$padding-left-items: getRem(32px);
+$padding-top-nav-list: global-style.getRem(20px);
+$padding-bottom-nav-list: global-style.getRem(20px);
+$padding-top-menu-title: global-style.getRem(26px);
+$padding-left-items: global-style.getRem(32px);
 
-$border-bottom-menu-title: getRem(3px);
-$border-radius-scrollbar: getRem(5px);
-$border-right-drawer: getRem(2px);
+$border-bottom-menu-title: global-style.getRem(3px);
+$border-radius-scrollbar: global-style.getRem(5px);
+$border-right-drawer: global-style.getRem(2px);
 
 @mixin nav-list {
   display: flex;
@@ -35,9 +38,9 @@ $border-right-drawer: getRem(2px);
 
 .drawer {
   font-family: $font-type-01;
-  background-color: $primary-container-bg;
+  background-color: var(--theme-content-bg);
   width: $drawer-width;
-  border-right: $border-right-drawer solid $med-contrast-border;
+  border-right: $border-right-drawer solid var(--theme-border);
   position: relative;
   top: 0;
   left: -100%;
@@ -60,7 +63,7 @@ $border-right-drawer: getRem(2px);
 
 .nav-list {
   @include nav-list();
-  color: $secondary-txt-color;
+  color: var(--theme-text-primary);
 }
 .nav-list:hover {
   background-color: $ui-selected-color;
@@ -75,7 +78,7 @@ $border-right-drawer: getRem(2px);
 
 .group-header {
   text-decoration: none;
-  color: $secondary-icn-color;
+  color: var(--theme-text-primary);
   font-size: $font-size;
   display: flex;
   align-items: center;
@@ -87,12 +90,12 @@ $border-right-drawer: getRem(2px);
   text-decoration: none;
   padding-top: $padding-top-nav-list;
   padding-bottom: $padding-bottom-nav-list;
-  color: $secondary-txt-color;
+  color: var(--theme-text-primary);
   font-size: $font-size-menu-title;
   display: flex;
   align-items: center;
   padding-left: $padding-left-items;
-  border-bottom: $border-bottom-menu-title solid $med-contrast-border;
+  border-bottom: $border-bottom-menu-title solid var(--theme-border);
 }
 
 .nav-list-items {
@@ -115,5 +118,21 @@ $border-right-drawer: getRem(2px);
 
 .drawer-items::-webkit-scrollbar-thumb {
   border-radius: $border-radius-scrollbar;
-  background-color: $scroll-bar-color;
+  background-color: var(--theme-border);
+}
+
+[data-theme='dark'] {
+  .drawer {
+    background-color: var(--theme-content-bg);
+    border-right-color: var(--theme-border);
+    color: var(--theme-text-primary);
+  }
+
+  .drawer-items::-webkit-scrollbar-thumb {
+    background-color: var(--theme-border);
+  }
+
+  .nav-icon {
+    color: var(--theme-text-primary);
+  }
 }

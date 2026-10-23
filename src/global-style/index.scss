@@ -1,7 +1,9 @@
-@import './color.scss';
-@import './font-family.scss';
+@use "sass:math";
+
+@use 'color.scss';
+@use 'font-family.scss';
 
 @function getRem($value) {
-  $remUnit: ($value/16px) + rem;
+  $remUnit: math.div($value, 16px) + rem;
   @return $remUnit;
 }

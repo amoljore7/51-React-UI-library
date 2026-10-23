@@ -13,17 +13,16 @@ const Pill = ({
   label,
   onDelete,
   pillColor,
+  noBorder = false,
 }) => {
   const hasCustomColor = !!pillColor;
   const isDark = pillColor ? isColorDark(pillColor) : false;
   const useDarkText = pillColor ? !isDark : true;
 
-  const customStyle = hasCustomColor
-    ? {
-        backgroundColor: pillColor,
-        color: useDarkText ? '#000' : '#fff',
-      }
-    : {};
+  const customStyle = {
+    ...(hasCustomColor ? { backgroundColor: pillColor, color: useDarkText ? '#000' : '#fff' } : {}),
+    ...(noBorder ? { border: 'none' } : {}),
+  };
 
   const pillContainerClasses = {
     [classes.container]: true,
@@ -52,7 +51,7 @@ const Pill = ({
 
   return (
     <div className={classNames(pillContainerClasses)} style={customStyle}>
-      <div title={label} className={classNames(pillLabelClasses)} style={customStyle}>
+      <div title={typeof label === 'string' ? label : undefined} className={classNames(pillLabelClasses)} style={customStyle}>
         {label}
       </div>
       {!readOnly ? (
@@ -76,9 +75,10 @@ Pill.propTypes = {
   disabled: PropTypes.bool,
   readOnly: PropTypes.bool,
   error: PropTypes.bool,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
   onDelete: PropTypes.func,
   pillColor: PropTypes.string,
+  noBorder: PropTypes.bool,
 };
 
 export default Pill;

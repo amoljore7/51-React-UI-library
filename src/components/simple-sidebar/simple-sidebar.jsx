@@ -1,8 +1,8 @@
 import React from 'react';
 import { classes } from './constants';
 import classNames from 'classnames';
-import chevronLeft from '../../assets/icons/chevron-left.svg';
-import chevronRight from '../../assets/icons/chevron-right.svg';
+import ChevronLeft from '../../assets/icons/chevron-left.svg?react';
+import ChevronRight from '../../assets/icons/chevron-right.svg?react';
 import './simple-sidebar.scss';
 
 const SimpleSidebar = ({ isOpen, onToggle, children, width, height}) => {
@@ -14,7 +14,23 @@ const SimpleSidebar = ({ isOpen, onToggle, children, width, height}) => {
   return (
     <div className={classNames({ ...drawerClass })}
     style={{ height, ...isOpen ? { width }: {}}}>
-      <img data-testid="toggle" className={classes.arrow} src={isOpen ? chevronLeft : chevronRight} onClick={onToggle}/>
+      {isOpen ? (
+        <ChevronLeft
+          data-testid="toggle"
+          className={classes.arrow}
+          onClick={onToggle}
+          aria-hidden
+          focusable="false"
+        />
+      ) : (
+        <ChevronRight
+          data-testid="toggle"
+          className={classes.arrow}
+          onClick={onToggle}
+          aria-hidden
+          focusable="false"
+        />
+      )}
       {isOpen && children}
     </div>
   );

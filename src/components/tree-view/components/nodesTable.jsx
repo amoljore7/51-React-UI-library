@@ -7,6 +7,7 @@ import { getDisplayDate, getNodesToRender, prepareDataForTable } from '../utils'
 import { SHOW_SELECTED, TreeNodeClasses, asc, unsorted } from '../constants';
 import { LabelIcon } from './labelIcon';
 import { RadioButton } from '../../radio/radio';
+import Pill from '../../pill/pill';
 
 const NodesTable = ({
   nodes,
@@ -22,6 +23,7 @@ const NodesTable = ({
   allowRootSelection = true,
   showCreatedDate,
   rootLeafNodesFirst = false,
+  showTags = false,
 }) => {
   const [tableData, setTableData] = useState([])
 
@@ -56,6 +58,7 @@ const NodesTable = ({
     const parentNodeClass = {
       [TreeNodeClasses.tableNameCellContent]: true,
       [TreeNodeClasses.disabledRow]: isRowDisable,
+      [TreeNodeClasses.restrictedRow]: row?.disabledIcon,
     };
     const textNodeClass = {
       [TreeNodeClasses.parentText]: true,
@@ -99,6 +102,7 @@ const NodesTable = ({
           tooltip={row?.rightIcon?.tooltip}
           onClick={row?.rightIcon?.onClick}
         />
+        {row.disabledIcon}
       </div>
     )
   }
@@ -132,6 +136,14 @@ const NodesTable = ({
     })
   }
 
+  if (showTags) {
+    columns.push({
+      headerName: 'Tags',
+      sortable: false,
+      renderColumn: row => row.tableNodeTagContent ?? null
+    })
+  }
+
   let rows = tableData
   if (allowOnlyLeafSelection) {
     rows = tableData.filter(data => data.type === 'leaf' || (allowRootSelection && data._id === '0'))
@@ -154,6 +166,7 @@ const NodesTable = ({
       sortHandler={handleSorting}
       columns={columns}
       {...(singleSelect ? singleSelectTableProps : {})}
+      disableColumnManagement
     />
   )
 }

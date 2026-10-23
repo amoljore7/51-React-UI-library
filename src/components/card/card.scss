@@ -1,25 +1,28 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/color.scss' as *;
+@use '../../global-style/font-family.scss' as *;
+@use '../../global-style/tokens/colors.scss' as tokens;
 
-$card-width: getRem(130px);
-$card-height: getRem(130px);
-$image-container-height-width: getRem(40px);
-$card-title-width: getRem(114px);
-$card-title-height: getRem(49px);
-$card-border-width: getRem(0.5px);
-$card-border-radius: getRem(3px);
-$card-title-letter-spacing: getRem(0.32px);
-$card-title-text-color: $gray-80;
+$card-width: global-style.getRem(130px);
+$card-height: global-style.getRem(130px);
+$image-container-height-width: global-style.getRem(40px);
+$card-title-width: global-style.getRem(114px);
+$card-title-height: global-style.getRem(49px);
+$card-border-width: global-style.getRem(0.5px);
+$card-border-radius: global-style.getRem(3px);
+$card-title-letter-spacing: global-style.getRem(0.32px);
+$card-title-text-color: var(--theme-text-primary);
 
-$image-margin-top: getRem(16px);
-$image-margin-bottom: getRem(10px);
-$image-margin-left-right: getRem(45px);
-$card-title-margin: getRem(8px);
-$title-font-size: getRem(12px);
-$title-line-height: getRem(16px);
+$image-margin-top: global-style.getRem(16px);
+$image-margin-bottom: global-style.getRem(10px);
+$image-margin-left-right: global-style.getRem(45px);
+$card-title-margin: global-style.getRem(8px);
+$title-font-size: global-style.getRem(12px);
+$title-line-height: global-style.getRem(16px);
 $image-height-width: 100%;
-$box-shadow-disabled: getRem(3px);
-$box-shadow-container: getRem(5px);
-$box-shadow-hover: getRem(10px);
+$box-shadow-disabled: global-style.getRem(3px);
+$box-shadow-container: global-style.getRem(5px);
+$box-shadow-hover: global-style.getRem(10px);
 
 .card-container {
   box-sizing: border-box;
@@ -66,5 +69,33 @@ $box-shadow-hover: getRem(10px);
   }
   .card-title-style {
     color: $ui-disabled-01;
+  }
+}
+
+[data-theme='dark'] {
+  .card-container {
+    background-color: var(--theme-content-bg);
+    box-shadow: 0px 0px $box-shadow-container rgba(tokens.$neutral-0, 0.12);
+    &:hover {
+      box-shadow: 0px 0px $box-shadow-hover rgba(tokens.$neutral-0, 0.2);
+    }
+  }
+
+  .card-title-style {
+    color: var(--theme-text-primary);
+  }
+
+  .container-disabled {
+    box-shadow: 0px 0px $box-shadow-disabled rgba(tokens.$neutral-0, 0.08);
+    &:hover {
+      box-shadow: 0px 0px $box-shadow-disabled rgba(tokens.$neutral-0, 0.08);
+    }
+    .card-title-style {
+      color: tokens.$neutral-40;
+    }
+  }
+
+  .img-style {
+    color: tokens.$neutral-20;
   }
 }

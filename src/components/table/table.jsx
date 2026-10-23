@@ -1,54 +1,71 @@
 import classNames from 'classnames';
-import { isEqual, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import SortedAscending from '../../assets/icons/column-ascending.svg';
-import Unsorted from '../../assets/icons/column-unsorted.svg';
-import SortedDescending from '../../assets/icons/columns-descending.svg';
-import DragAndDrop from '../../assets/icons/drag-and-drop.svg';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import ChevronLeft from '../../assets/icons/chevron-left.svg?react';
+import ChevronRight from '../../assets/icons/chevron-right.svg?react';
+import ColumnLayout from '../../assets/icons/column-layout.svg?react';
+import DragAndDrop from '../../assets/icons/drag-and-drop.svg?react';
+import EyeIcon from '../../assets/icons/eye.svg?react';
+import Button from '../button';
 import SearchInput from '../search';
+import Select from '../select';
+import Tooltip from '../tooltip';
+import { statusTypeList } from '../status-badge/constants';
+import ColumnSettingsDrawer from './components/ColumnSettingsDrawer';
 import {
-  HUNDRED_DECIMAL,
+  bulkActionsDisabledTooltipText,
   classes,
-  columnMinWidth,
-  columnMinWidthPixels,
-  mousedownEvent,
-  mousemoveEvent,
-  mouseupEvent,
+  compactColumnWidth,
+  dragHandleField,
   navigationRole,
-  resizeEvent,
-  resizerWidth,
+  hiddenPillsWidthRatio,
   searchBarSize,
-  sortIconSuffix,
-  sortingType,
+  showAllColumnsText,
   tabIndex,
-  tableAriaLabel,
-  tableCellPrefix,
-  tableHeaderPrefix,
-  tableRole,
-  tableRowPrefix,
-  tableSearchHeight,
 } from './constants';
 import './table.scss';
-import Filter from './ColumnFilter';
-import ExpandRowIcon from './ExpandRowIcon';
-import TableWithNoData from './TableWithNoData';
+import TableGrid from './components/TableGrid';
+import useColumnState from './hooks/useColumnState';
 
-const useTableWidth = () => {
+/**
+ * Reads width from the caller's own tableNode ref, not a global
+ * document.getElementsByClassName(classes.table)[0] lookup — that always
+ * grabbed the first .bds-table anywhere in the document, so a page with more
+ * than one Table on it (or a Table nested inside another, e.g. an expanded
+ * row's content) would size this table off a different instance entirely.
+ /**
+ * Observe the table itself so toolbar width updates when the table changes
+ * without a window resize (e.g. column resize, hide/pin, or redistribution).
+ * Retry on the next frame if the table ref isn't attached yet.
+ */
+const useTableWidth = (tableNodeRef) => {
   const [width, setWidth] = useState(0);
   useLayoutEffect(() => {
-    const element = document.getElementsByClassName(classes.table)[0];
+    if (typeof ResizeObserver === 'undefined') return;
+    let observer;
+    let rafId;
     const updateWidth = () => {
+      const element = tableNodeRef.current;
       if (element?.offsetWidth) {
         setWidth(element.offsetWidth);
       }
     };
-    window.addEventListener(resizeEvent, updateWidth);
-    updateWidth();
-    return () => window.removeEventListener(resizeEvent, updateWidth);
-  }, []);
+    const trySetup = () => {
+      const element = tableNodeRef.current;
+      if (!element) {
+        rafId = requestAnimationFrame(trySetup);
+        return;
+      }
+      observer = new ResizeObserver(updateWidth);
+      observer.observe(element);
+      updateWidth();
+    };
+    trySetup();
+    return () => {
+      if (rafId != null) cancelAnimationFrame(rafId);
+      observer?.disconnect();
+    };
+  }, [tableNodeRef]);
   return width;
 };
 
@@ -58,11 +75,6 @@ const Table = ({
   sortHandler,
   searchBar,
   resizableColumns,
-  nextPageLink,
-  hasInfiniteScroll,
-  onScrollEnd,
-  infiniteScrollLoadingText,
-  isInsideModal = false,
   allowRowSelect = false,
   onRowSelect,
   highlightedRow,
@@ -76,24 +88,311 @@ const Table = ({
   expandedContent,
   expandedRows: controlledExpandedRows,
   onExpandedRowsChange,
+  isNewRowTable = false,
+  checkedRows,
+  allowCheckbox = false,
+  allowSelectAll = true,
+  onCheckboxChange,
+  isCheckboxDisabled,
+  bulkActions,
+  columnConfig,
+  getRowId,
+  leftToolbarContent,
+  stickyHeader = false,
+  disableColumnManagement = false,
+  reserveDragHandleColumn = false,
 }) => {
+  const rowList = rows ?? [];
+  /**
+   * Resolves isCheckboxDisabled once per row per render instead of letting
+   * every consumer of it (selectableRowList/actionableCheckedRows below, and
+   * TableGrid's per-row disableCheckbox) call the consumer's predicate again
+   * for the same row. Keyed by reference, matching how checked-row membership
+   * is already tracked elsewhere.
+   */
+  const checkboxDisabledByRow = useMemo(
+    () => new Map(rowList.map(row => [row, isCheckboxDisabled?.(row) ?? false])),
+    [rowList, isCheckboxDisabled]
+  )
   const tableNode = useRef();
   const containerNode = useRef();
+  const toolbarNode = useRef();
+
+  /**
+   * Keeps the sticky table header offset in sync with the toolbar height
+   * so the header stays positioned correctly.
+   */
+  useLayoutEffect(() => {
+    if (!stickyHeader) return
+    const toolbarEl = toolbarNode.current
+    const containerEl = containerNode.current
+    if (!toolbarEl || !containerEl || typeof ResizeObserver === 'undefined') return
+    const updateOffset = () => {
+      containerEl.style.setProperty('--bds-table-sticky-header-offset', `${toolbarEl.offsetHeight}px`)
+    }
+    updateOffset()
+    const observer = new ResizeObserver(updateOffset)
+    observer.observe(toolbarEl)
+    return () => observer.disconnect()
+  }, [stickyHeader])
+
+  /**
+   * columnConfig exposes useColumnState's hidden/pinned state as a single
+   * Table prop. pinnedColumns is a flat array here — the settings drawer
+   * only ever pins left (ColumnSettingsDrawer.jsx's togglePin always passes
+   * 'left'; right is reserved for the forced action column) — so the
+   * { left, right } split stays an internal useColumnState detail.
+   *
+   * pinnedColumns/hiddenColumns are a hybrid, not a strict controlled prop:
+   * useColumnState always renders from its own internal state, so the
+   * drawer stays fully interactive whether or not a consumer ever supplies
+   * onColumnConfigChange or feeds a value back through it. Passing these
+   * lets a consumer *optionally* steer that internal state from outside —
+   * useColumnState adopts a new value only when it actually changes
+   * (compared by contents, not reference) from one render to the next, so
+   * a genuine external update (a "reset filters" action, or a proper
+   * round-trip through onColumnConfigChange) still takes effect, while an
+   * unchanged value passed on every render (whether because the consumer
+   * never updates it, or hands back a fresh array/object literal with the
+   * same contents) is correctly left alone rather than overriding whatever
+   * the drawer just did. defaultPinnedColumns/defaultHiddenColumns behave
+   * the same way but only ever seed the initial value — there's no
+   * "controlled" counterpart to compare later renders against, so they're
+   * simply not read again after mount.
+   */
+  const handleColumnSettingsChange = useCallback(
+    ({ order, hidden, pinned }) => {
+      columnConfig?.onColumnConfigChange?.({
+        order,
+        hidden,
+        pinned: pinned?.left ?? [],
+      });
+    },
+    [columnConfig]
+  );
+
+  const {
+    visibleColumns,
+    orderedColumns,
+    toggleVisibility,
+    showAll,
+    togglePin,
+    reorderField,
+    resetAll,
+  } = useColumnState({
+    columns,
+    hiddenColumns: columnConfig?.hiddenColumns,
+    pinnedColumns:
+      columnConfig?.pinnedColumns !== undefined
+        ? { left: columnConfig.pinnedColumns, right: [] }
+        : undefined,
+    defaultHiddenColumns: columnConfig?.defaultHiddenColumns,
+    defaultPinnedColumns:
+      columnConfig?.defaultPinnedColumns !== undefined
+        ? { left: columnConfig.defaultPinnedColumns, right: [] }
+        : undefined,
+    onColumnSettingsChange: handleColumnSettingsChange,
+  });
+  const hiddenColumns = orderedColumns.filter((column) => column.hidden);
+  const [isColumnDrawerOpen, setIsColumnDrawerOpen] = useState(false);
+  const [widthResetKey, setWidthResetKey] = useState(0);
+  const handleResetAll = useCallback(() => {
+    resetAll();
+    setWidthResetKey((key) => key + 1);
+  }, [resetAll]);
   const headerProps = {
     sortHandler,
-    columns,
     tableNode,
+    // Sticky mode uses separate header/body tables, so offsets go on their shared ancestor.
+    pinnedOffsetNode: stickyHeader ? containerNode : undefined,
     resizableColumns,
-    isSearchVisible: Boolean(searchBar),
+    toggleVisibility,
+    togglePin,
   };
-  const tableWidth = useTableWidth();
-  const [searchText, setSearchText] = useState('');
+  const tableWidth = useTableWidth(tableNode);
+  const [searchText, setSearchText] = useState(searchBar?.value ?? '');
   const [internalExpandedRows, setInternalExpandedRows] = useState([]);
+  const [isActionColumnCollapsed, setIsActionColumnCollapsed] = useState(false);
+  /**
+   * Toggles the action column between its full width and a compact,
+   * icon-only strip.
+   */
+  const handleToggleActionColumn = useCallback(
+    () => setIsActionColumnCollapsed(prev => !prev),
+    []
+  );
+
+  const [internalCheckedRows, setInternalCheckedRows] = useState([]);
+  // Prefer the controlled prop; fall back to internal state for uncontrolled use.
+  const activeCheckedRows = checkedRows ?? internalCheckedRows
+  /**
+    * Rows can become disabled after being checked. Exclude them from bulk
+    * actions while preserving the consumer's checked state. Fall back to the
+    * row predicate when no cached disabled state exists.
+  */
+  const actionableCheckedRows = activeCheckedRows.filter(
+    row => !(checkboxDisabledByRow.has(row) ? checkboxDisabledByRow.get(row) : isCheckboxDisabled?.(row))
+  )
+  const [bulkActionKey, setBulkActionKey] = useState(0);
+  const pillScrollRef = useRef(null);
+  const pillTrackRef = useRef(null);
+  const [pillScroll, setPillScroll] = useState({ atStart: true, atEnd: true });
+  const [pillMaxWidth, setPillMaxWidth] = useState(null);
+  const toolbarLeftGroupRef = useRef(null);
+  const columnToolbarRef = useRef(null);
+
+  /**
+   * The pill strip may take hiddenPillsWidthRatio of the table's visible
+   * width, but never more than the room left in the toolbar row beside the
+   * left-hand controls and the rest of the column toolbar, so the pills alone
+   * never push the toolbar onto a second line. Measured on the container
+   * rather than the toolbar, which is sized to the table's full scroll width
+   * and so grows when columns overflow.
+   */
+  useLayoutEffect(() => {
+    const container = containerNode.current
+    const toolbar = toolbarNode.current
+    if (!container || !toolbar) return
+    const measure = () => {
+      const strip = pillScrollRef.current
+      const toolbarStyle = getComputedStyle(toolbar)
+      const rowWidth = container.clientWidth
+        - parseFloat(toolbarStyle.paddingLeft) - parseFloat(toolbarStyle.paddingRight)
+      const widthOf = el => el?.getBoundingClientRect().width ?? 0
+      const leftWidth = widthOf(toolbarLeftGroupRef.current)
+      // The column toolbar without the strip itself: chevrons, Show All, count.
+      const restWidth = widthOf(columnToolbarRef.current) - widthOf(strip)
+      const gap = parseFloat(toolbarStyle.columnGap) || 0
+      // Rounded against the strip, plus a pixel: offsetWidth-style rounding
+      // put the total a fraction over the row and wrapped it anyway.
+      const roomInRow = Math.floor(rowWidth - Math.ceil(leftWidth) - gap - Math.ceil(restWidth)) - 1
+      const ratioWidth = Math.floor(container.clientWidth * hiddenPillsWidthRatio)
+      // No room at all means the toolbar wraps regardless, and on its own
+      // line the column toolbar can have its full share again.
+      setPillMaxWidth(roomInRow > 0 ? Math.min(ratioWidth, roomInRow) : ratioWidth)
+    }
+    measure()
+    if (typeof ResizeObserver === 'undefined') return
+    const observer = new ResizeObserver(measure)
+    ;[container, toolbarLeftGroupRef.current, columnToolbarRef.current, pillTrackRef.current]
+      .filter(Boolean)
+      .forEach(el => observer.observe(el))
+    return () => observer.disconnect()
+  }, [])
+
+  /**
+   * The pills sit on a track inside the clipped strip and move with a CSS
+   * transform transition rather than native scrolling, whose easing and
+   * speed can't be set from CSS. pillOffset is how far the track is shifted.
+   */
+  const [pillOffset, setPillOffset] = useState(0);
+  const getPillMaxOffset = () => Math.max(
+    0,
+    (pillTrackRef.current?.offsetWidth ?? 0) - (pillScrollRef.current?.clientWidth ?? 0),
+  )
+
+  /**
+   * Each chevron shows only while the pills overflow the strip and there's
+   * more to move its way. Read from the offset rather than a pill count or
+   * page index, so it stays honest when a pill is restored mid-way or pill
+   * labels vary in length.
+   */
+  const syncPillScroll = useCallback(() => {
+    const maxOffset = getPillMaxOffset()
+    // Restoring a pill leaves less to move; don't leave a gap at the end.
+    if (pillOffset > maxOffset) {
+      setPillOffset(maxOffset)
+      return
+    }
+    setPillScroll({ atStart: pillOffset <= 0, atEnd: pillOffset >= maxOffset - 1 })
+  }, [pillOffset])
+
+  useLayoutEffect(syncPillScroll, [syncPillScroll, hiddenColumns.length, pillMaxWidth])
+  // Pills can change size with no count or cap change (a font that loads
+  // late), which would otherwise leave them overflowing with no chevrons.
+  useEffect(() => {
+    if (typeof ResizeObserver === 'undefined') return
+    const observer = new ResizeObserver(syncPillScroll)
+    ;[pillScrollRef.current, pillTrackRef.current]
+      .filter(Boolean)
+      .forEach(el => observer.observe(el))
+    return () => observer.disconnect()
+  }, [syncPillScroll])
+  // At both ends at once means the pills fit their strip: no chevrons.
+  const pillsOverflow = !(pillScroll.atStart && pillScroll.atEnd)
+
+  /**
+   * Moves the hidden-column pills by one strip width in the given direction
+   * (-1 left, 1 right), used by the chevron nav buttons.
+   */
+  const scrollPills = direction => {
+    const stripWidth = pillScrollRef.current?.clientWidth ?? 0
+    const maxOffset = getPillMaxOffset()
+    setPillOffset(offset => Math.min(Math.max(offset + direction * stripWidth, 0), maxOffset))
+  }
+  
+  const activeCheckedRowsRef = useRef(activeCheckedRows)
+  activeCheckedRowsRef.current = activeCheckedRows
+  const rowListRef = useRef(rowList)
+  rowListRef.current = rowList
+
+  /**
+   * Toggles a single row's checked state and reports the full checked list
+   * to the consumer. Matches by reference, not value: two rows with
+   * identical data are still distinct row instances in rowList, and
+   * value-equality would check/uncheck every row sharing that data at once.
+   */
+  const handleCheckRow = useCallback((row) => {
+    const current = activeCheckedRowsRef.current
+    const newChecked = current.some(r => r === row)
+      ? current.filter(r => r !== row)
+      : [...current, row]
+    if (checkedRows === undefined) setInternalCheckedRows(newChecked)
+    onCheckboxChange?.(newChecked)
+  }, [checkedRows, onCheckboxChange])
+
+  /**
+   * Selects every selectable row, or clears the selection if all of them are
+   * already checked — the header checkbox's select-all/clear-all behaviour.
+   * A row isCheckboxDisabled marks as disabled is excluded from the set
+   * select-all produces, so it can never be checked via the header control
+   * (matching its own checkbox being disabled), and from the "is everything
+   * checked" test, so it never blocks the header from reading "all checked"
+   * just because it itself stays unchecked. Bails when nothing is
+   * selectable — with every visible row disabled, allChecked would read
+   * false (an empty array is vacuously not "every row checked"), sending an
+   * unsolicited onCheckboxChange([]) on a header checkbox the consumer
+   * couldn't tell was live.
+   */
+  const handleCheckAll = useCallback(() => {
+    const checked = new Set(activeCheckedRowsRef.current)
+    const selectableRows = rowListRef.current.filter(row => !isCheckboxDisabled?.(row))
+    if (selectableRows.length === 0) return
+    const allChecked = selectableRows.every(row => checked.has(row))
+    const newChecked = allChecked ? [] : [...selectableRows]
+    if (checkedRows === undefined) setInternalCheckedRows(newChecked)
+    onCheckboxChange?.(newChecked)
+  }, [checkedRows, onCheckboxChange, isCheckboxDisabled])
+
+  /**
+   * Runs the selected bulk action against the checked rows, then resets the
+   * dropdown by remounting it via bulkActionKey.
+   */
+  const handleBulkActionChange = (_event, option) => {
+    option.onClick?.(actionableCheckedRows)
+    setBulkActionKey(prev => prev + 1)
+  }
 
   const expandedRows = controlledExpandedRows ?? internalExpandedRows;
-  const handleExpandedRows = (expandedRowId, onExpand = () => {}, row = {}) => {
+  /**
+   * Memoized so it doesn't get a new reference on every Table re-render
+   * (e.g. a checkbox click) — it's passed down to every TableCell, and an
+   * unstable reference there would defeat TableCell's React.memo on every
+   * unrelated state change.
+   */
+  const handleExpandedRows = useCallback((expandedRowId, onExpand = () => {}, row = {}) => {
     const expandedRowsList = [...expandedRows];
-    var index = expandedRowsList?.indexOf(expandedRowId);
+    const index = expandedRowsList?.indexOf(expandedRowId);
     if (index !== -1) {
       expandedRowsList?.splice(index, 1);
     } else {
@@ -105,7 +404,7 @@ const Table = ({
     } else {
       setInternalExpandedRows(expandedRowsList);
     }
-  };
+  }, [expandedRows, onExpandedRowsChange]);
 
   const onChangeSearch = (e) => {
     setSearchText(e.target.value);
@@ -125,728 +424,290 @@ const Table = ({
     }
   }, [searchBar?.isSearchEmpty]);
 
-  const columnContent = [...columns];
-  if (columns && allowDraggableRow) {
-    columnContent.splice(0, 0, {
-      field: 'dragNDrop',
+  /**
+   * Narrow the action column when collapsed; width comes from the column's
+   * own collapsedWidth prop, falling back to a compact default.
+   */
+  const effectiveColumns = useMemo(() => {
+    /**
+     * No renderColumn/renderHeader closure here — deliberately. Both used to
+     * read activeCheckedRows directly, which forced effectiveColumns to be
+     * rebuilt (and every TableRow's columns prop to change) on every
+     * checkbox click. isChecked/onCheckRow now reach TableCell as their own
+     * explicit props (threaded through TableRow), and TableCell/
+     * TableHeaderCell special-case isCheckboxColumn to render the checkbox
+     * — see table.scss's compactCellWrapper usage there. That keeps this
+     * column (and effectiveColumns as a whole) stable across checkbox
+     * clicks, so unrelated rows can bail out of React.memo entirely.
+     */
+    const checkboxCol = allowCheckbox ? {
+      field: '__checkbox__',
       headerName: '',
-      sortable: false,
-      renderColumn: () => {
-        return <img src={DragAndDrop} />;
-      },
-      width: '50px',
-    });
-    headerProps.columns = columnContent;
-  }
+      width: compactColumnWidth,
+      pinned: 'left',
+      pinLocked: true,
+      hideLocked: true,
+      isCompact: true,
+      columnKey: '__checkbox__',
+      isCheckboxColumn: true,
+      allowSelectAll,
+    } : null
+
+    const base = checkboxCol ? [checkboxCol, ...visibleColumns] : [...visibleColumns]
+
+    /**
+     * Drag handle always leads, even ahead of the checkbox column.
+     *
+     * reserveDragHandleColumn renders the same column empty. It exists for
+     * the add-new-row table below, which needs a leading cell of identical
+     * width to line its inputs up with the header. A column declared by the
+     * consumer can't do that job: it goes through useColumnState, which
+     * un-pins anything it wasn't told to pin, and an unpinned column is
+     * floored at columnMinWidth and handed a share of the table's leftover
+     * width — so the spacer renders far wider than the handle it mirrors.
+     */
+    const withDragHandle = allowDraggableRow || reserveDragHandleColumn
+      ? [
+          {
+            field: dragHandleField,
+            headerName: '',
+            sortable: false,
+            isCompact: true,
+            pinned: 'left',
+            pinLocked: true,
+            hideLocked: true,
+            columnKey: dragHandleField,
+            renderColumn: () => (
+              allowDraggableRow ? (
+                <div className={classes.compactCellWrapper}>
+                  <DragAndDrop aria-hidden focusable="false" />
+                </div>
+              ) : null
+            ),
+            width: compactColumnWidth,
+          },
+          ...base,
+        ]
+      : base
+
+    return isActionColumnCollapsed
+      ? withDragHandle.map(col =>
+          col.isActions ? { ...col, width: col.collapsedWidth ?? compactColumnWidth } : col
+        )
+      : withDragHandle
+  }, [
+    allowCheckbox, allowSelectAll,
+    isActionColumnCollapsed, visibleColumns, allowDraggableRow,
+    reserveDragHandleColumn,
+  ]);
+
+  /**
+   * Counts membership (by reference, matching handleCheckRow's own ===
+   * comparison), not raw array length. Comparing lengths alone assumes
+   * every entry in activeCheckedRows is actually one of rowList's current
+   * rows — if a consumer's checkedRows still holds stale references (rows
+   * from before a page/filter change) that happen to number the same as
+   * rowList, allRowsChecked would read true with zero current rows
+   * actually checked, and any other stale count in between would show an
+   * incorrectly indeterminate header checkbox.
+   *
+   * selectableRowList excludes isCheckboxDisabled rows from both counts —
+   * otherwise a permanently unchecked disabled row would keep allRowsChecked
+   * false forever, even once every row the user can actually act on is
+   * checked.
+   */
+  const selectableRowList = rowList.filter(row => !checkboxDisabledByRow.get(row))
+  const activeCheckedRowsSet = new Set(activeCheckedRows)
+  const checkedRowsInList =
+    selectableRowList.filter(row => activeCheckedRowsSet.has(row)).length
+  const allRowsChecked = selectableRowList.length > 0 && checkedRowsInList === selectableRowList.length
+  const someRowsChecked = checkedRowsInList > 0 && checkedRowsInList < selectableRowList.length
+
+  headerProps.columns = effectiveColumns;
   headerProps.hideNewRowHeader = hideNewRowHeader;
   headerProps.noHeaderBackground = noHeaderBackground;
-
-  const renderTable = () =>
-    allowDraggableRow ? (
-      <DragDropContext onDragEnd={onDragEnd}>
-        <table
-          ref={tableNode}
-          className={classes.table}
-          role={tableRole}
-          aria-label={tableAriaLabel}
-        >
-          <TableHeader {...headerProps} />
-          <Droppable droppableId="droppable-container">
-            {(provider) => (
-              <tbody
-                ref={provider.innerRef}
-                {...provider.droppableProps}
-                tabIndex={tabIndex}
-              >
-                {rows && rows.length > 0 ? (
-                  rows.map((row, index) => {
-                    const props = {
-                      row,
-                      rowIndex: index,
-                      columns: columnContent,
-                      highlightedRow,
-                      allowRowSelect,
-                      allowDraggableRow,
-                      handleExpandedRows,
-                      expandedRows,
-                      noDataMessage,
-                      expandedContent,
-                    };
-
-                    if (allowRowSelect) {
-                      props.onClick = (e) => onRowSelect(row, e);
-                    }
-
-                    return (
-                      <TableRow key={`${tableRowPrefix}-${index}`} {...props} />
-                    );
-                  })
-                ) : (
-                  <TableWithNoData noDataMessage={noDataMessage} columns={columns} />
-                )}
-                {provider.placeholder}
-              </tbody>
-            )}
-          </Droppable>
-        </table>
-      </DragDropContext>
-    ) : (
-      <table
-        ref={tableNode}
-        className={classes.table}
-        role={tableRole}
-        aria-label={tableAriaLabel}
-      >
-        <TableHeader {...headerProps} />
-        <tbody tabIndex={tabIndex}>
-          {rows && rows.length > 0 ? (
-            rows.map((row, index) => {
-              const props = {
-                row,
-                rowIndex: index,
-                columns: columnContent,
-                highlightedRow,
-                allowRowSelect,
-                allowDraggableRow,
-                handleExpandedRows,
-                expandedRows,
-                noDataMessage,
-                expandedContent
-              };
-
-              if (allowRowSelect) {
-                props.onClick = (e) => onRowSelect(row, e);
-              }
-
-              return <TableRow key={`${tableRowPrefix}-${index}`} {...props} />;
-            })
-          ) : (
-            <TableWithNoData noDataMessage={noDataMessage} columns={columns} />
-          )}
-        </tbody>
-      </table>
-    );
-
-  let infiniteModalProps = {};
-  if (isInsideModal) {
-    infiniteModalProps = {
-      height: 'calc(100vh - 160px)',
-      className: classes.infiniteScrollInsideModal,
-    };
-  }
+  headerProps.isActionColumnCollapsed = isActionColumnCollapsed;
+  headerProps.onToggleActionColumn = handleToggleActionColumn;
+  headerProps.isNewRowTable = isNewRowTable;
+  headerProps.allRowsChecked = allRowsChecked;
+  headerProps.someRowsChecked = someRowsChecked;
+  headerProps.onCheckAll = handleCheckAll;
+  headerProps.checkAllDisabled = selectableRowList.length === 0;
+  headerProps.disableColumnManagement = disableColumnManagement;
+  headerProps.widthResetKey = widthResetKey;
 
   return (
     <div ref={containerNode} className={classes.container}>
-      {searchBar && (
+      {((searchBar || bulkActions || !isNewRowTable) && !disableColumnManagement) && (
         <div
+          ref={toolbarNode}
           className={classes.search}
           style={getWidth() ? { width: getWidth() } : {}}
           role={navigationRole}
           tabIndex={tabIndex}
         >
-          <div className={classes.searchContainer}>
-            <SearchInput
-              value={searchText}
-              onChange={onChangeSearch}
-              disabled={Boolean(searchBar?.isDisabled)}
-              width={searchBarSize}
-              placeholder={searchBar?.placeholder || ''}
-            />
-          </div>
+          {!isNewRowTable && (
+            <>
+              <div className={classes.toolbarLeftGroup} ref={toolbarLeftGroupRef}>
+                {leftToolbarContent && (
+                  <div className={classes.leftToolbarContent}>{leftToolbarContent}</div>
+                )}
+                {bulkActions && (
+                  <div className={classes.bulkActionsContainer}>
+                    <Tooltip
+                      title={actionableCheckedRows.length === 0 ? bulkActionsDisabledTooltipText : null}
+                      position="top"
+                    >
+                      <div>
+                        <Select
+                          key={bulkActionKey}
+                          options={bulkActions.options}
+                          onChange={handleBulkActionChange}
+                          getOptionLabel={opt => opt.label}
+                          placeholder="Bulk Actions"
+                          disabled={actionableCheckedRows.length === 0}
+                          size="small"
+                          width={bulkActions.width ?? '160px'}
+                          height="32px"
+                        />
+                      </div>
+                    </Tooltip>
+                  </div>
+                )}
+                {searchBar && (
+                  <div className={classes.searchContainer}>
+                    <SearchInput
+                      value={searchText}
+                      onChange={onChangeSearch}
+                      disabled={Boolean(searchBar?.isDisabled)}
+                      width={searchBarSize}
+                      height="32px"
+                      placeholder={searchBar?.placeholder || ''}
+                    />
+                  </div>
+                )}
+              </div>
+              {!disableColumnManagement && (
+                <div className={classes.columnToolbar} ref={columnToolbarRef}>
+                  {pillsOverflow && (
+                    <div
+                      className={classNames(classes.pillNavButton, {
+                        [classes.pillNavButtonDisabled]: pillScroll.atStart,
+                      })}
+                      onClick={() => !pillScroll.atStart && scrollPills(-1)}
+                    >
+                      <ChevronLeft width={20} height={20} aria-hidden focusable="false" />
+                    </div>
+                  )}
+                  <div
+                    ref={pillScrollRef}
+                    className={classes.hiddenColumnPills}
+                    style={pillMaxWidth != null ? { maxWidth: pillMaxWidth } : undefined}
+                  >
+                    <div
+                      ref={pillTrackRef}
+                      className={classes.hiddenColumnPillsTrack}
+                      style={{ transform: `translateX(-${pillOffset}px)` }}
+                    >
+                      {hiddenColumns.map(column => (
+                        <div
+                          key={column.columnKey}
+                          className={classes.hiddenColumnPill}
+                          onClick={() => toggleVisibility(column.columnKey)}
+                        >
+                          <EyeIcon width={14} height={14} className={classes.hiddenColumnPillIcon} />
+                          {column.headerName}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {pillsOverflow && (
+                    <div
+                      className={classNames(classes.pillNavButton, {
+                        [classes.pillNavButtonDisabled]: pillScroll.atEnd,
+                      })}
+                      onClick={() => !pillScroll.atEnd && scrollPills(1)}
+                    >
+                      <ChevronRight width={20} height={20} aria-hidden focusable="false" />
+                    </div>
+                  )}
+                  {hiddenColumns.length > 0 && (
+                    <Button
+                      type="button"
+                      variant="textOnly"
+                      size="small"
+                      onClick={showAll}
+                      testId="table-show-all-columns"
+                    >
+                      {showAllColumnsText}
+                    </Button>
+                  )}
+                  <div
+                    className={classes.columnCountTrigger}
+                    onClick={() => setIsColumnDrawerOpen(true)}
+                  >
+                    {`${visibleColumns.length} of ${columns.length} columns visible`}
+                    <ColumnLayout
+                      className={classes.columnCountTriggerIcon}
+                    />
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       )}
-      {hasInfiniteScroll && rows.length !== 0 ? (
-        <InfiniteScroll
-          dataLength={rows?.length || 0}
-          hasMore={!!nextPageLink}
-          next={onScrollEnd}
-          loader={infiniteScrollLoadingText}
-          scrollThreshold={1}
-          {...infiniteModalProps}
-        >
-          {renderTable()}
-        </InfiniteScroll>
-      ) : (
-        renderTable()
+      {!isNewRowTable && !disableColumnManagement && (
+        <ColumnSettingsDrawer
+          isOpen={isColumnDrawerOpen}
+          onClose={() => setIsColumnDrawerOpen(false)}
+          orderedColumns={orderedColumns.filter(column => column.field || column.isActions)}
+          toggleVisibility={toggleVisibility}
+          togglePin={togglePin}
+          reorderField={reorderField}
+          resetAll={handleResetAll}
+          showAll={showAll}
+        />
       )}
+      <TableGrid
+        stickyHeader={stickyHeader}
+        allowDraggableRow={allowDraggableRow}
+        onDragEnd={onDragEnd}
+        tableNode={tableNode}
+        headerProps={headerProps}
+        rowList={rowList}
+        getRowId={getRowId}
+        effectiveColumns={effectiveColumns}
+        highlightedRow={highlightedRow}
+        allowRowSelect={allowRowSelect}
+        onRowSelect={onRowSelect}
+        handleExpandedRows={handleExpandedRows}
+        expandedRows={expandedRows}
+        noDataMessage={noDataMessage}
+        expandedContent={expandedContent}
+        isActionColumnCollapsed={isActionColumnCollapsed}
+        activeCheckedRows={activeCheckedRows}
+        onCheckRow={handleCheckRow}
+        checkboxDisabledByRow={checkboxDisabledByRow}
+        isNewRowTable={isNewRowTable}
+      />
       {addNewRow && (
         <div
-          className={`${classes.addNewRow} ${rows?.length === 0 ? classes.emptyNewRowHeader : {}
+          className={`${classes.addNewRow} ${rows?.length === 0 ? classes.emptyNewRowHeader : ""
             }`}
         >
-          <Table hideNewRowHeader={rows?.length === 0} columns={columnsForNewRow} />
+          <Table
+            hideNewRowHeader={rows?.length === 0}
+            columns={columnsForNewRow}
+            isNewRowTable
+            reserveDragHandleColumn={allowDraggableRow}
+          />
         </div>
       )}
     </div>
   );
 };
 
-/***
- *  Resizing will take the delta of current cursor position and initial cursor
- *  position when mousedown event (press down and Drag) ocurred.
- *
- *  InitialCursorPosition = right of the column/header Bounding client rect
- *
- *  deltaMousePosition = InitialCursorPosition - currentCursorPosition
- *  = Length the mouse has moved.
- *
- *  The width of the current column:
- *  (current width of column/header cell)  + (Length the mouse has moved.)
- *
- *  The width of the adjacent column:
- *
- * (current width of adjacent column/header cell) - (length the mouse has moved.)
- *
- *  Resizing is done only if both column width are >= 88 pixels
- */
-const resizeHelper = ({
-  currentColumn,
-  adjacentColumn,
-  currentCursorPosition,
-  tableWidth,
-}) => {
-  // obtain current header cell width and right of the bounding element rectangle
-  const {
-    width: currentColumnWidth,
-    right: currentColumnRight,
-  } = currentColumn.getBoundingClientRect();
-  // obtain the adjacent column width from bounding client Rect
-  const { width: adjacentColumnWidth } = adjacentColumn.getBoundingClientRect();
-
-  const initialMousePosition =
-    currentColumnRight + window.pageXOffset - resizerWidth;
-  const deltaMousePosition = currentCursorPosition - initialMousePosition;
-
-  // the length of mouse moved is added to current header width
-  // the same is subtracted from adjacent column width
-  const currentColumnNewWidth = currentColumnWidth + deltaMousePosition;
-  const adjacentColumnNewWidth = adjacentColumnWidth - deltaMousePosition;
-
-  if (
-    currentColumnNewWidth >= columnMinWidth &&
-    adjacentColumnNewWidth >= columnMinWidth
-  ) {
-    // plug in width percentage value for responsiveness
-    currentColumn.style.width = `${(currentColumnNewWidth / tableWidth) * HUNDRED_DECIMAL
-      }%`;
-    adjacentColumn.style.width = `${((adjacentColumnWidth - deltaMousePosition) / tableWidth) * HUNDRED_DECIMAL
-      }%`;
-  }
-};
-
-const TableHeader = ({
-  columns,
-  sortHandler,
-  tableNode,
-  resizableColumns,
-  isSearchVisible,
-  hideNewRowHeader,
-  noHeaderBackground,
-}) => {
-  const [sortedColumn, setSortedColumn] = useState('');
-  const headerSortHandler = (fieldName) => {
-    sortedColumn !== fieldName && setSortedColumn(fieldName);
-  };
-  const [headerRefs] = useState(columns.map(() => useRef()));
-  const [resizerFocus, setResizerFocus] = useState(false);
-  const [filterValues, setFilterValues] = useState({});
-
-  const resizeHandler = (event, index) => {
-    if (!resizableColumns) return;
-    const currentColumn = headerRefs[index]?.current;
-    const adjacentColumn = headerRefs[index + 1].current;
-    const tableElement = tableNode.current;
-    const currentCursorPosition = event.pageX;
-    const tableWidth = tableElement.offsetWidth;
-
-    if (!tableElement && !currentColumn && !adjacentColumn) return;
-    resizeHelper({
-      currentColumn,
-      adjacentColumn,
-      currentCursorPosition,
-      tableWidth,
-    });
-  };
-
-  useEffect(() => {
-    // convert all width to percentage for responsiveness
-    // this will run only once since the refs would be defined on mount
-    // only once through out the component lifecycle
-    const tableElement = tableNode?.current;
-    if (tableElement && resizableColumns) {
-      columns.map((_, columnNo) => {
-        const headerElement = headerRefs[columnNo]?.current;
-        if (headerElement) {
-          const origWidth = headerElement.offsetWidth;
-          const tableWidth = tableElement.offsetWidth;
-          headerElement.style.width = `${(origWidth / tableWidth) * HUNDRED_DECIMAL
-            }%`;
-          if (isSearchVisible) {
-            headerElement.style.top = tableSearchHeight;
-          }
-        }
-      });
-    }
-  }, [tableNode, ...headerRefs]);
-
-  return (
-    <thead tabIndex={tabIndex}>
-      <tr
-        tabIndex={tabIndex}
-        className={classes.header}
-        onMouseLeave={() => setResizerFocus(false)}
-        onMouseOver={() => setResizerFocus(true)}
-      >
-        {columns &&
-          columns.map((column, index) => {
-            const { headerName, sortable, field, renderHeader } = column;
-            const reset = sortedColumn !== field;
-
-            const iconProps = {
-              sortHandler,
-              field,
-              reset,
-              headerSortHandler,
-            };
-            const tableHeaderCellProp = {
-              column,
-              columnLength: columns.length,
-              index,
-              headerName,
-              renderHeader,
-              sortable,
-              iconProps,
-              resizeHandler,
-              resizableColumns,
-              resizerFocus,
-              setResizerFocus,
-            };
-            return (
-              <TableHeaderCell
-                key={`${index}`}
-                ref={headerRefs[index]}
-                {...tableHeaderCellProp}
-                filterValues={filterValues}
-                setFilterValues={setFilterValues}
-                hideNewRowHeader={hideNewRowHeader}
-                noHeaderBackground={noHeaderBackground}
-              />
-            );
-          })}
-      </tr>
-    </thead>
-  );
-};
-
-const TableHeaderCell = React.forwardRef(
-  (
-    {
-      column,
-      index,
-      headerName,
-      renderHeader,
-      sortable,
-      iconProps,
-      resizeHandler,
-      columnLength,
-      resizableColumns,
-      setResizerFocus,
-      resizerFocus,
-      filterValues,
-      setFilterValues,
-      hideNewRowHeader,
-      noHeaderBackground,
-    },
-    tableHeaderRef
-  ) => {
-    const columnFilterRef = useRef();
-    const parentResizeHandler = (e) => {
-      e.stopPropagation();
-      if (!resizableColumns) return;
-      setResizerFocus(true);
-      resizeHandler(e, index);
-    };
-    const resizerClasses = {
-      [classes.resizer]: true,
-      [classes.resizerHover]: resizerFocus,
-    };
-
-    const resizeInit = (_) => {
-      document.addEventListener(mousemoveEvent, parentResizeHandler);
-    };
-
-    useLayoutEffect(() => {
-      if (
-        index !== columnLength - 1 &&
-        tableHeaderRef?.current &&
-        resizableColumns
-      ) {
-        tableHeaderRef.current.addEventListener(mousedownEvent, resizeInit);
-        document.addEventListener(mouseupEvent, () => {
-          setResizerFocus(false);
-          if (tableHeaderRef && tableHeaderRef.current)
-            document.removeEventListener(mousemoveEvent, parentResizeHandler);
-        });
-      }
-    }, [tableHeaderRef]);
-
-    useEffect(() => {
-      if (columnFilterRef?.current) {
-        columnFilterRef.current.addEventListener(mousedownEvent, (e) => {
-          // To prevent resize event from being triggered
-          e.stopPropagation();
-        });
-      }
-    }, [columnFilterRef]);
-
-    const [sortType, setSortType] = useState(sortingType.unsorted);
-    useEffect(() => {
-      iconProps.reset && setSortType(sortingType.unsorted);
-    }, [iconProps.reset]);
-
-    useEffect(() => {
-      setFilterValues(column.filter?.selectedFilters)
-    }, [JSON.stringify(column.filter?.selectedFilters)]);
-
-    const getSortIcon = (sortType) => {
-      switch (sortType) {
-        case sortingType.ascending:
-          return SortedAscending;
-        case sortingType.descending:
-          return SortedDescending;
-        default:
-          return Unsorted;
-      }
-    };
-    const getNextType = () => {
-      switch (sortType) {
-        case sortingType.ascending:
-          return sortingType.descending;
-        case sortingType.descending:
-          return sortingType.unsorted;
-        case sortingType.unsorted:
-          return sortingType.ascending;
-        default:
-          return sortingType.unsorted;
-      }
-    };
-
-    const clickHandler = () => {
-      const nextType = getNextType();
-      iconProps.headerSortHandler(iconProps.field);
-      setSortType(nextType);
-      iconProps.sortHandler(nextType, iconProps.field);
-    };
-
-    const sortClasses = {
-      [classes.headerTextIconContainer]: true,
-      [classes.headerCursor]: sortable,
-    };
-
-    const handleOnApply = (field, currentFilterValues) => {
-      const columnFilters = { ...filterValues };
-      // To store filter values based on column name
-      columnFilters[field] = currentFilterValues;
-      setFilterValues(columnFilters);
-      column.filter.onApply(columnFilters);
-    };
-
-    return (
-
-      <th
-        className={noHeaderBackground ? classes.headerCellNoBackground : classes.headerCell}
-        style={{ width: column.width, minWidth: columnMinWidthPixels }}
-        key={`${tableHeaderPrefix}-${index}`}
-        tabIndex={tabIndex}
-        title={headerName}
-        ref={tableHeaderRef}
-      >
-        {!hideNewRowHeader && (
-          <>
-            {typeof renderHeader === 'function' ? renderHeader() :
-              (
-                <div className={classNames(sortClasses)}>
-                  <div className={classes.headerText} tabIndex={tabIndex} onClick={() => sortable && clickHandler()}>
-                    {headerName}
-                  </div>
-                  <div
-                  >
-                    <div className={classes.sortIconResizeContainer}>
-                      {sortable && (
-                        <span
-                          className={classes.headerIcon}
-                          tabIndex={tabIndex}
-                          onClick={() => clickHandler()}
-                          onMouseEnter={() => setResizerFocus(false)}
-                          onMouseOver={(e) => e.stopPropagation()}
-                        >
-                          <img
-                            src={getSortIcon(sortType)}
-                            alt={`${sortType}-${sortIconSuffix}`}
-                            title={`${sortType}`}
-                          />
-                        </span>
-                      )}
-                      {column.showFilter && (
-                        <div
-                          ref={columnFilterRef}
-                          className={classes.columnFilter}
-                          onMouseEnter={() => setResizerFocus(false)}
-                          onMouseOver={(e) => e.stopPropagation()}
-                        >
-                          <Filter
-                            onApply={(currentFilterValues) =>
-                              handleOnApply(column.field, currentFilterValues)
-                            }
-                            options={column.filter.options}
-                            singleSelector={column.filter.singleSelector}
-                            values={filterValues?.[column.field]}
-                          />
-                        </div>
-                      )}
-                      {index !== columnLength - 1 && resizableColumns && (
-                        <div
-                          className={classNames(resizerClasses)}
-                          onClick={(e) => e.stopPropagation()}
-                        />
-
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-          </>
-        )}
-      </th>
-    );
-  }
-);
-const renderTableRow = (
-  row,
-  columns,
-  rowIndex,
-  dragHandleProps = {},
-  handleExpandedRows = () => {},
-  expandedRows = [],
-  isSubRow = false
-) => {
-  const arrTableCells = [];
-
-  for (let fieldIndex = 0; fieldIndex < columns.length; fieldIndex++) {
-    const column = columns[fieldIndex];
-    arrTableCells.push(
-      <TableCell
-        key={`${tableCellPrefix}${rowIndex}-${fieldIndex}`}
-        value={row[column.field]}
-        horizontalAlignment={column.horizontalAlignment}
-        width={column.width}
-        renderColumn={column.renderColumn}
-        allowExpand={column.allowExpand}
-        row={row}
-        dragHandleProps={dragHandleProps}
-        index={rowIndex}
-        handleExpandedRows={handleExpandedRows}
-        renderTableRow={renderTableRow}
-        expandedRows={expandedRows}
-        onExpand={column.onExpand}
-        isSubRow={isSubRow}
-      />
-    );
-  }
-  return arrTableCells;
-};
-const TableRow = ({
-  row,
-  columns,
-  rowIndex,
-  highlightedRow,
-  allowRowSelect,
-  allowDraggableRow,
-  handleExpandedRows,
-  expandedRows,
-  noDataMessage,
-  expandedContent,
-  ...restProps
-}) => {
-  const isHighlighted = isEqual(row, highlightedRow);
-  const isExpanded = expandedRows.includes(rowIndex);
-
-  return allowDraggableRow ? (
-    <Draggable
-      key={rowIndex}
-      draggableId={rowIndex.toString()}
-      index={rowIndex}
-    >
-      {(provider, snapshot) => (
-        <>
-          <tr
-            {...provider.draggableProps}
-            ref={provider.innerRef}
-            data-testid={classes.row}
-            className={`${classes.row} ${snapshot.isDragging ? classes.dragging : ""
-              }`}
-            {...provider.dragHandleProps} // or apply dragHandleProps on drag icon only
-            style={provider.draggableProps.style}
-            {...restProps}
-          >
-            {row &&
-              renderTableRow(
-                row,
-                columns,
-                rowIndex,
-                snapshot.isDragging ? {} : provider.dragHandleProps, // pass dragHandleProps to drag icon only if needed
-                handleExpandedRows,
-                expandedRows
-              )}
-          </tr>
-          {isExpanded && (
-            <>
-              {expandedContent && (
-                <tr className={classes.row}>
-                  <td
-                    colSpan={columns.length}
-                    style={{ backgroundColor: "#f9f9f9", padding: "0px" }}
-                  >
-                    {expandedContent(row)}
-                  </td>
-                </tr>
-              )}
-              {!row?.subRows?.length && !expandedContent && (
-                <tr className={classes.row}>
-                  <td colSpan={columns.length} className={classes.noDataFound}>
-                    {noDataMessage}
-                  </td>
-                </tr>
-              )}
-            </>
-          )}
-        </>
-      )}
-    </Draggable>
-  ) : (
-    <>
-      <tr
-        data-testid={classes.row}
-        className={`${classes.row} ${isHighlighted ? classes.rowHighlighted : ''} ${allowRowSelect ? classes.rowSelectable : ''
-          }`}
-        {...restProps}
-      >
-        {row &&
-          renderTableRow(
-            row,
-            columns,
-            rowIndex,
-            {},
-            handleExpandedRows,
-            expandedRows
-          )}
-      </tr>
-      {expandedRows?.includes(rowIndex) &&
-        (row?.subRows?.length > 0 ? (
-          row.subRows.map((subRow, index) => {
-            return (
-              <tr
-                key={`${rowIndex}-${index}`}
-                className={`${classes.row} ${classes.expandedRow}`}
-              >
-                {renderTableRow(subRow, columns, subRow?.id, {}, () => {}, [], true)}
-              </tr>
-            );
-          })
-        ) : (
-          <tr className={classes.row}>
-            <td
-              className={
-                expandedContent
-                  ? `${classes.expandedContentRender}`
-                  : `${classes.expandedCellRender} ${classes.render}`
-              }
-              colSpan={columns?.length}
-            >
-              {expandedContent && <>{expandedContent(row)}</>}
-              {!row?.subRows?.length && !expandedContent && (
-                <div className={classes.noDataFound}>{noDataMessage}</div>
-              )}
-            </td>
-          </tr>
-        ))}
-    </>
-  );
-};
-
-const TableCell = ({
-  value,
-  horizontalAlignment,
-  width,
-  renderColumn,
-  row,
-  dragHandleProps = {},
-  index,
-  handleExpandedRows = () => {},
-  allowExpand,
-  expandedRows,
-  onExpand = () => {},
-  isSubRow = false,
-}) => {
-  const cellClasses = {
-    [classes.cell]: !renderColumn,
-    [classes.render]: renderColumn,
-  };
-
-  const isRowExpandable =
-    typeof allowExpand === 'boolean'
-      ? allowExpand
-      : typeof allowExpand === 'function'
-        ? allowExpand(row)
-        : false;
-
-  const isExpanded = expandedRows?.includes(index);
-
-  const handleMouseDown = (mouseDownEvent) => {
-    if (isEmpty(dragHandleProps)) {
-      return;
-    }
-    mouseDownEvent.currentTarget.focus();
-  };
-
-  return (
-    <td
-      style={{
-        width: width,
-        textAlign: horizontalAlignment,
-        paddingLeft:
-          allowExpand && (!isRowExpandable || isSubRow) ? '2.625rem' : '1rem',
-      }}
-      className={classNames(cellClasses)}
-      tabIndex={tabIndex}
-      title={value}
-      {...dragHandleProps}
-      onMouseDown={handleMouseDown}
-    >
-      {(renderColumn && (
-        <div tabIndex={tabIndex} className={classes.cellRender}>
-          {isRowExpandable && !isSubRow && (
-            <ExpandRowIcon
-              isExpanded={isExpanded}
-              onClick={() => handleExpandedRows(index, onExpand, row)}
-            />
-          )}
-          {renderColumn(row, value, index)}
-        </div>
-      )) || (
-          <div className={classes.expandRow}>
-            {isRowExpandable && !isSubRow && (
-              <ExpandRowIcon
-                isExpanded={isExpanded}
-                onClick={() => handleExpandedRows(index, onExpand, row)}
-              />
-            )}
-            <span>{value}</span>
-          </div>
-        )}
-    </td>
-  );
-};
 
 Table.propTypes = {
   columns: PropTypes.arrayOf(
@@ -859,6 +720,23 @@ Table.propTypes = {
       horizontalAlignment: PropTypes.string,
       onExpand: PropTypes.func,
       allowExpand: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
+      isActions: PropTypes.bool,
+      actions: PropTypes.oneOfType([PropTypes.array, PropTypes.func]),
+      actionsMenuWidth: PropTypes.string,
+      actionsAlignment: PropTypes.oneOf(['start', 'end', 'center']),
+      actionsDirection: PropTypes.oneOf(['row', 'column']),
+      disableTruncation: PropTypes.bool,
+      disableColumnMenu: PropTypes.bool,
+      isStatus: PropTypes.bool,
+      statusType: PropTypes.oneOfType([PropTypes.oneOf(statusTypeList), PropTypes.func]),
+      statusIcon: PropTypes.oneOfType([
+        PropTypes.elementType,
+        PropTypes.element,
+        PropTypes.string,
+        PropTypes.func,
+      ]),
+      statusLabel: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+      statusHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     })
   ).isRequired,
   rows: PropTypes.arrayOf(PropTypes.object),
@@ -866,14 +744,42 @@ Table.propTypes = {
   searchBar: PropTypes.shape({
     onSearch: PropTypes.func.isRequired,
     placeholder: PropTypes.string,
+    value: PropTypes.string,
   }),
-  verticalScroll: PropTypes.bool,
-  horizontalScroll: PropTypes.bool,
-  isInsideModal: PropTypes.bool,
   allowRowSelect: PropTypes.bool,
   onRowSelect: PropTypes.func,
   highlightedRow: PropTypes.object,
   noDataMessage: PropTypes.string,
+  checkedRows: PropTypes.arrayOf(PropTypes.object),
+  allowCheckbox: PropTypes.bool,
+  allowSelectAll: PropTypes.bool,
+  onCheckboxChange: PropTypes.func,
+  isCheckboxDisabled: PropTypes.func,
+  bulkActions: PropTypes.shape({
+    options: PropTypes.arrayOf(
+      PropTypes.shape({
+        label: PropTypes.string.isRequired,
+        value: PropTypes.any,
+        onClick: PropTypes.func,
+      })
+    ).isRequired,
+    width: PropTypes.string,
+  }),
+  columnConfig: PropTypes.shape({
+    pinnedColumns: PropTypes.arrayOf(PropTypes.string),
+    hiddenColumns: PropTypes.arrayOf(PropTypes.string),
+    defaultPinnedColumns: PropTypes.arrayOf(PropTypes.string),
+    defaultHiddenColumns: PropTypes.arrayOf(PropTypes.string),
+    onColumnConfigChange: PropTypes.func,
+  }),
+  getRowId: PropTypes.func,
+  leftToolbarContent: PropTypes.node,
+  stickyHeader: PropTypes.bool,
+  disableColumnManagement: PropTypes.bool,
+  // Internal: set by the add-new-row table so its leading cell matches the
+  // parent's drag handle.
+  reserveDragHandleColumn: PropTypes.bool,
 };
 
 export default Table;
+ 

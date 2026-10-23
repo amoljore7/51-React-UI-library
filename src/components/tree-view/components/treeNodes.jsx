@@ -23,6 +23,11 @@ const TreeNodes = ({
   allowOnlyLeafSelection,
   allowRootSelection = true,
   rootLeafNodesFirst = false,
+  showTags = false,
+  tagIcon,
+  tagIconTooltip,
+  tagIconClassName,
+  onTagsClick,
 }) => {
   const [modifiedNodes, setModifiedNodes] = useState([])
   const [filteredNodes, setFilteredNodes] = useState([])
@@ -72,6 +77,11 @@ const TreeNodes = ({
           singleSelectRadio={singleSelectRadio}
           allowOnlyLeafSelection={allowOnlyLeafSelection}
           allowRootSelection={allowRootSelection}
+          showTags={showTags}
+          tagIcon={tagIcon}
+          tagIconClassName={tagIconClassName}
+          tagIconTooltip={tagIconTooltip}
+          onTagsClick={onTagsClick}
           key={`tree-node-${node._id}`}
         />
       )}

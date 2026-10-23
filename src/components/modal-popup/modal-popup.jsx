@@ -13,10 +13,11 @@ import {
   enterCode,
   crossIconRole,
 } from './constants';
+import { mountPortalRootWithThemeSync } from '../../utils/resolve-portal-data-theme';
 
 import './modal-popup.scss';
 
-const ModalPopup = React.forwardRef(({ width, title, buttons, onCancel, children, classNamePrefix },ref) => {
+const ModalPopup = React.forwardRef(({ width, title, buttons, onCancel, children, classNamePrefix, themeSourceRef }, ref) => {
   const [modalEl] = useState(document.createElement('div'));
   modalEl.id = modalPopupId;
   modalEl.style.zIndex = 100;
@@ -25,10 +26,8 @@ const ModalPopup = React.forwardRef(({ width, title, buttons, onCancel, children
   }
 
   useEffect(() => {
-    const bodyElement = document.getElementsByTagName('body')[0];
-    bodyElement.appendChild(modalEl);
-    return () => bodyElement.removeChild(modalEl);
-  }, [modalEl]);
+    return mountPortalRootWithThemeSync(modalEl, themeSourceRef);
+  }, [modalEl, themeSourceRef]);
 
   const getClassNames = (elementClassName) => {
     let finalClassName = elementClassName
@@ -64,6 +63,7 @@ const ModalPopup = React.forwardRef(({ width, title, buttons, onCancel, children
             onKeyDown={crossIconKeyDownHandler}
             className={getClassNames(classes.icon)}
             role={crossIconRole}
+            data-testid="modal-popup-close-icon"
           />
         </div>
       </div>
@@ -87,6 +87,7 @@ const ModalPopup = React.forwardRef(({ width, title, buttons, onCancel, children
                   disabled={item?.disabled}
                   leftSVGIcon={item?.leftSVGIcon}
                   rightSVGIcon={item?.rightSVGIcon}
+                  testId={item?.testId}
                 >
                   {item.text}
                 </Button>
@@ -124,10 +125,12 @@ ModalPopup.propTypes = {
       variant: PropTypes.string,
       size: PropTypes.string.isRequired,
       onClick: PropTypes.func.isRequired,
+      testId: PropTypes.string,
     })
   ),
   onCancel: PropTypes.func.isRequired,
   classNamePrefix: PropTypes.string,
+  themeSourceRef: PropTypes.shape({ current: PropTypes.any }),
 };
 
 export default ModalPopup;

@@ -1,8 +1,8 @@
 import React, { Children, useState } from 'react';
 import Typography from '../typography';
 import { classes } from './constants';
-import chevronUp from '../../assets/icons/chevron-up.svg';
-import chevronDown from '../../assets/icons/chevron-down.svg';
+import ChevronUp from '../../assets/icons/chevron-up.svg?react';
+import ChevronDown from '../../assets/icons/chevron-down.svg?react';
 import './accordion.scss'
 
 const Accordion = ({
@@ -21,7 +21,11 @@ const Accordion = ({
         className={hideUnderline ? classes.headerWithoutUnderline : classes.headerWithUnderline}
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <img src={isExpanded ? chevronUp : chevronDown} />
+        {isExpanded ? (
+          <ChevronUp aria-hidden focusable="false" />
+        ) : (
+          <ChevronDown aria-hidden focusable="false" />
+        )}
         <Typography variant="pageSectionHeader">{title}</Typography>
       </div>
       <div

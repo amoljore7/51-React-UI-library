@@ -1,0 +1,12 @@
+#Pipeline to trigger a build on jenkins for every commit on the develop branch
+
+image: public.ecr.aws/v8v7u4y4/britive-devops/bitbucket-build-pipeline:latest
+
+pipelines:
+  branches:
+    '{develop}':
+    - step:
+        oidc: true
+        script:
+        - eval $(pybritive checkout "AWS - Britive/922164044846 (britive-dev)/BitbucketInvokeLambda" --tenant britive.corp --federation-provider bitbucket --mode env --silent)
+        - aws lambda invoke --function-name $LAMBDA_NAME --region us-west-2 --log-type Tail ~/outputfile.txt

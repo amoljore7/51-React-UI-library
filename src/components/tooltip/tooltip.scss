@@ -1,19 +1,159 @@
-@import '../../global-style/index.scss';
+@use '../../global-style/index.scss' as global-style;
+@use '../../global-style/tokens/colors.scss';
+@use '../../global-style/tokens/elevations.scss' as elevations;
 
-$tooltip-border-radius: getRem(2px);
-$tooltip-padding-left-right: getRem(8px);
-$tooltip-padding-top: getRem(4px);
-$tooltip-padding-bottom: getRem(6px);
+// Figma: Tooltip (node 1454-5380) — design tokens
+$tooltip-radius: global-style.getRem(6px);
+$tooltip-padding-y: global-style.getRem(8px);
+$tooltip-padding-x: global-style.getRem(12px);
+$tooltip-arrow-size: global-style.getRem(8px);
 
 .bds-tooltip-container {
-  border-radius: $tooltip-border-radius;
+  position: relative;
+  overflow: visible;
+  border-radius: $tooltip-radius;
   width: fit-content;
-  height: fit-content;
-  padding-top: $tooltip-padding-top;
-  padding-bottom: $tooltip-padding-bottom;
-  padding-right: $tooltip-padding-left-right;
-  padding-left: $tooltip-padding-left-right;
-  color: $gray-20;
-  background: $gray-80;
+  max-width: 100%;
+  padding: $tooltip-padding-y $tooltip-padding-x;
+  color: colors.$neutral-0;
+  background: colors.$neutral-100;
   box-sizing: border-box;
+  @include elevations.elevation-2;
+}
+
+// Arrow: triangle (same style for all positions)
+.bds-tooltip-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  pointer-events: none;
+}
+
+// Top: arrow at bottom center, pointing down
+.bds-tooltip-container--top {
+  .bds-tooltip-arrow {
+    bottom: calc(-1 * $tooltip-arrow-size);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: $tooltip-arrow-size $tooltip-arrow-size 0 $tooltip-arrow-size;
+    border-color: colors.$neutral-100 transparent transparent transparent;
+  }
+}
+
+// Bottom: arrow at top center, pointing up
+.bds-tooltip-container--bottom {
+  .bds-tooltip-arrow {
+    top: calc(-1 * $tooltip-arrow-size);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0 $tooltip-arrow-size $tooltip-arrow-size $tooltip-arrow-size;
+    border-color: transparent transparent colors.$neutral-100 transparent;
+  }
+}
+
+// Left: arrow at right center, pointing right
+.bds-tooltip-container--left {
+  .bds-tooltip-arrow {
+    top: 50%;
+    right: calc(-1 * $tooltip-arrow-size);
+    transform: translateY(-50%);
+    border-width: $tooltip-arrow-size 0 $tooltip-arrow-size $tooltip-arrow-size;
+    border-color: transparent transparent transparent colors.$neutral-100;
+  }
+}
+
+// Right: arrow at left center, pointing left
+.bds-tooltip-container--right {
+  .bds-tooltip-arrow {
+    top: 50%;
+    left: calc(-1 * $tooltip-arrow-size);
+    transform: translateY(-50%);
+    border-width: $tooltip-arrow-size $tooltip-arrow-size $tooltip-arrow-size 0;
+    border-color: transparent colors.$neutral-100 transparent transparent;
+  }
+}
+
+// Mixed: triangle arrow at corner (same visual as center positions)
+// top-left: arrow at bottom-right, pointing down
+.bds-tooltip-container--top-left {
+  .bds-tooltip-arrow {
+    bottom: calc(-1 * $tooltip-arrow-size);
+    right: $tooltip-padding-x;
+    border-width: $tooltip-arrow-size $tooltip-arrow-size 0 $tooltip-arrow-size;
+    border-color: colors.$neutral-100 transparent transparent transparent;
+  }
+}
+
+// top-right: arrow at bottom-left, pointing down
+.bds-tooltip-container--top-right {
+  .bds-tooltip-arrow {
+    bottom: calc(-1 * $tooltip-arrow-size);
+    left: $tooltip-padding-x;
+    border-width: $tooltip-arrow-size $tooltip-arrow-size 0 $tooltip-arrow-size;
+    border-color: colors.$neutral-100 transparent transparent transparent;
+  }
+}
+
+// bottom-left: arrow at top-right, pointing up
+.bds-tooltip-container--bottom-left {
+  .bds-tooltip-arrow {
+    top: calc(-1 * $tooltip-arrow-size);
+    right: $tooltip-padding-x;
+    border-width: 0 $tooltip-arrow-size $tooltip-arrow-size $tooltip-arrow-size;
+    border-color: transparent transparent colors.$neutral-100 transparent;
+  }
+}
+
+// bottom-right: arrow at top-left, pointing up
+.bds-tooltip-container--bottom-right {
+  .bds-tooltip-arrow {
+    top: calc(-1 * $tooltip-arrow-size);
+    left: $tooltip-padding-x;
+    border-width: 0 $tooltip-arrow-size $tooltip-arrow-size $tooltip-arrow-size;
+    border-color: transparent transparent colors.$neutral-100 transparent;
+  }
+}
+
+// Dark mode: container and arrow use light fill
+[data-theme='dark'] .bds-tooltip-container,
+.bds-tooltip-container--dark {
+  color: colors.$neutral-100;
+  background: colors.$neutral-5;
+}
+
+[data-theme='dark'] .bds-tooltip-container--top,
+[data-theme='dark'] .bds-tooltip-container--top-left,
+[data-theme='dark'] .bds-tooltip-container--top-right,
+.bds-tooltip-container--dark.bds-tooltip-container--top,
+.bds-tooltip-container--dark.bds-tooltip-container--top-left,
+.bds-tooltip-container--dark.bds-tooltip-container--top-right {
+  .bds-tooltip-arrow {
+    border-color: colors.$neutral-5 transparent transparent transparent;
+  }
+}
+
+[data-theme='dark'] .bds-tooltip-container--bottom,
+[data-theme='dark'] .bds-tooltip-container--bottom-left,
+[data-theme='dark'] .bds-tooltip-container--bottom-right,
+.bds-tooltip-container--dark.bds-tooltip-container--bottom,
+.bds-tooltip-container--dark.bds-tooltip-container--bottom-left,
+.bds-tooltip-container--dark.bds-tooltip-container--bottom-right {
+  .bds-tooltip-arrow {
+    border-color: transparent transparent colors.$neutral-5 transparent;
+  }
+}
+
+[data-theme='dark'] .bds-tooltip-container--left,
+.bds-tooltip-container--dark.bds-tooltip-container--left {
+  .bds-tooltip-arrow {
+    border-color: transparent transparent transparent colors.$neutral-5;
+  }
+}
+
+[data-theme='dark'] .bds-tooltip-container--right,
+.bds-tooltip-container--dark.bds-tooltip-container--right {
+  .bds-tooltip-arrow {
+    border-color: transparent colors.$neutral-5 transparent transparent;
+  }
 }

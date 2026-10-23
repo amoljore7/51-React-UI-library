@@ -1,2 +1,2 @@
-import QuerySelector from './query-selector';
-export default QuerySelector;
+import QuerySelector from './query-selector'
+export default QuerySelector

@@ -4,6 +4,8 @@ import { classes, optionRole, defaultTabIndex } from "./constants";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import "./menu-options-container.scss";
+import { renderSvgGraphic } from "../renderSvgGraphic";
+import { mountPortalRootWithThemeSync } from "../resolve-portal-data-theme";
 
 const MenuOptions = ({
   options,
@@ -17,6 +19,7 @@ const MenuOptions = ({
   portalContainerId,
   disablePortal = false,
   groupPropertyName,
+  themeSourceRef,
 }) => {
   const [optionsContainerHeight, setOptionsContainerHeight] = useState(0);
   const [optionsContainerWidth, setOptionsContainerWidth] = useState(0);
@@ -28,10 +31,13 @@ const MenuOptions = ({
     document.documentElement.clientWidth || 0,
     window.innerWidth || 0,
   );
-  const [optionsEl] = useState(document.createElement("div"));
-  optionsEl.id = `${portalContainerId}`;
-  optionsEl.style.zIndex = 3000;
-  optionsEl.style.backgroundColor = "white";
+  const [optionsEl] = useState(() => {
+    const el = document.createElement("div");
+    el.id = portalContainerId;
+    el.className = "bds-menu-options-portal";
+    el.style.zIndex = 3000;
+    return el;
+  });
 
   let bottomWidth, rightWidth, left, top;
   if (!disablePortal) {
@@ -60,15 +66,17 @@ const MenuOptions = ({
 
   useEffect(() => {
     if (!disablePortal) {
-      const bodyElement = document.getElementsByTagName("body")[0];
-      bodyElement.appendChild(optionsEl);
+      const unmountPortalRoot = mountPortalRootWithThemeSync(
+        optionsEl,
+        themeSourceRef,
+      );
       const optionsElHeight = optionsEl.getBoundingClientRect().height;
       const optionsElWidth = optionsEl.getBoundingClientRect().width;
       setOptionsContainerHeight(optionsElHeight);
       setOptionsContainerWidth(optionsElWidth);
-      return () => bodyElement.removeChild(optionsEl);
+      return unmountPortalRoot;
     }
-  }, [optionsEl, options]);
+  }, [optionsEl, options, disablePortal, themeSourceRef]);
 
   const optionsListProps = {
     options,
@@ -184,7 +192,7 @@ const OptionsList = ({
         width: width,
         ...(disablePortal
           ? {
-              backgroundColor: "white",
+              backgroundColor: "var(--bds-menu-options-bg)",
               position: "absolute",
               top: 0,
               left: 0,
@@ -214,17 +222,19 @@ const OptionsList = ({
                     ...optionClasses,
                     [classes.selectedOption]: isOptionSelected(item),
                     [classes.highlightOption]: item.highlight,
+                    [classes.disabledOption]: isOptionDisabled(item),
                   })}
                   onMouseDown={(event) => event.preventDefault()}
                   key={`filter-option-${index}`}
-                  onClick={(event) => onChange(event, item)}
+                  onClick={(event) => !isOptionDisabled(item) && onChange(event, item)}
                 >
                   {getOptionIcon && (
                     <div className={classNames({ ...optionIconClasses })}>
-                      <img
-                        src={getOptionIcon(item)}
-                        alt={getOptionLabel(item)}
-                      />
+                      {renderSvgGraphic(getOptionIcon(item), {
+                        alt: getOptionLabel(item),
+                        "aria-label": getOptionLabel(item),
+                        role: "img",
+                      })}
                     </div>
                   )}
                   <div className={classes.optionLabelSublabelContainer}>
@@ -237,7 +247,7 @@ const OptionsList = ({
                     >
                       {getOptionLabel(item)}
                     </div>
-                    {getOptionSublabel && (
+                    {getOptionSublabel && getOptionSublabel(item) && (
                       <div className={classes.optionSublabel}>
                         {getOptionSublabel(item)}
                       </div>
@@ -264,6 +274,7 @@ MenuOptions.propTypes = {
   portalContainerId: PropTypes.string.isRequired,
   disablePortal: PropTypes.bool,
   groupPropertyName: PropTypes.string,
+  themeSourceRef: PropTypes.shape({ current: PropTypes.any }),
 };
 
 export default MenuOptions;

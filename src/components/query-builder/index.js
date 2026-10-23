@@ -1,2 +1,2 @@
-import QueryBuilder from './query-builder';
-export default QueryBuilder;
+import QueryBuilder from './query-builder'
+export default QueryBuilder

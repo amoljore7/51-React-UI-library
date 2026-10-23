@@ -1,5 +1,5 @@
-import Tree from './tree';
-import Node from './components/node';
+import Tree from './tree'
+import Node from './components/node'
 
-export default Tree;
+export default Tree
 export { Node }
