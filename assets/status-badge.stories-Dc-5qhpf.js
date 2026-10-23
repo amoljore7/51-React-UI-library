@@ -1,0 +1,17 @@
+import{j as e,C as k,a as W,b as A}from"./iframe-DSshnrLJ.js";import{S as s}from"./StatusBadge-CcVr-86s.js";import{S as C,a as B,b as w}from"./warning-B-srIOQH.js";import{S as p}from"./info-XWXRQWYd.js";import"./preload-helper-Dp1pzeXC.js";import"./index-BWW3-H0m.js";import"./index-DyAci3dY.js";import"./renderSvgGraphic-DA9DnIUH.js";const z={title:"design-components/StatusBadge",component:s},n={display:"flex",gap:"12px",alignItems:"center",flexWrap:"wrap"},_={display:"flex",flexDirection:"column",gap:"16px"},i=()=>e.jsxs("div",{style:n,children:[e.jsx(s,{type:"success",label:"Success"}),e.jsx(s,{type:"error",label:"Failed"}),e.jsx(s,{type:"warning",label:"Timed Out"}),e.jsx(s,{type:"info",label:"In Progress"}),e.jsx(s,{label:"Draft"})]}),l=()=>e.jsxs("div",{style:n,children:[e.jsx(s,{type:"success",label:"Success",icon:C}),e.jsx(s,{type:"error",label:"Failed",icon:B}),e.jsx(s,{type:"warning",label:"Timed Out",icon:w}),e.jsx(s,{type:"info",label:"In Progress",icon:p}),e.jsx(s,{label:"Draft",icon:p})]}),t=()=>e.jsx(i,{}),o=()=>e.jsx(l,{}),r=()=>e.jsxs("div",{style:n,children:[e.jsx(s,{type:"success",label:"20px",height:20}),e.jsx(s,{type:"success",label:"28px",height:28}),e.jsx(s,{type:"success",label:"2rem",height:"2rem",icon:C})]}),a=()=>e.jsx(A,{children:e.jsxs("div",{style:_,children:[e.jsx(i,{}),e.jsx(l,{})]})}),c=()=>e.jsx(k,{children:e.jsx(W,{children:e.jsxs("div",{style:_,children:[e.jsx(i,{}),e.jsx(l,{})]})})});t.__docgenInfo={description:"",methods:[],displayName:"Types"};o.__docgenInfo={description:"",methods:[],displayName:"WithIcon"};r.__docgenInfo={description:"",methods:[],displayName:"CustomHeight"};a.__docgenInfo={description:"",methods:[],displayName:"DarkTheme"};c.__docgenInfo={description:"",methods:[],displayName:"CustomTheme"};var m,d,u;t.parameters={...t.parameters,docs:{...(m=t.parameters)==null?void 0:m.docs,source:{originalSource:"() => <AllTypes />",...(u=(d=t.parameters)==null?void 0:d.docs)==null?void 0:u.source}}};var y,h,x;o.parameters={...o.parameters,docs:{...(y=o.parameters)==null?void 0:y.docs,source:{originalSource:"() => <AllTypesWithIcons />",...(x=(h=o.parameters)==null?void 0:h.docs)==null?void 0:x.source}}};var g,S,j;r.parameters={...r.parameters,docs:{...(g=r.parameters)==null?void 0:g.docs,source:{originalSource:`() => <div style={row}>
+    <StatusBadge type="success" label="20px" height={20} />
+    <StatusBadge type="success" label="28px" height={28} />
+    <StatusBadge type="success" label="2rem" height="2rem" icon={SuccessIcon} />
+  </div>`,...(j=(S=r.parameters)==null?void 0:S.docs)==null?void 0:j.source}}};var f,T,b;a.parameters={...a.parameters,docs:{...(f=a.parameters)==null?void 0:f.docs,source:{originalSource:`() => <DarkStoryDocument>
+    <div style={stack}>
+      <AllTypes />
+      <AllTypesWithIcons />
+    </div>
+  </DarkStoryDocument>`,...(b=(T=a.parameters)==null?void 0:T.docs)==null?void 0:b.source}}};var I,v,D;c.parameters={...c.parameters,docs:{...(I=c.parameters)==null?void 0:I.docs,source:{originalSource:`() => <CustomStoryDocument>
+    <CustomStorySurface>
+      <div style={stack}>
+        <AllTypes />
+        <AllTypesWithIcons />
+      </div>
+    </CustomStorySurface>
+  </CustomStoryDocument>`,...(D=(v=c.parameters)==null?void 0:v.docs)==null?void 0:D.source}}};const G=["Types","WithIcon","CustomHeight","DarkTheme","CustomTheme"];export{r as CustomHeight,c as CustomTheme,a as DarkTheme,t as Types,o as WithIcon,G as __namedExportsOrder,z as default};

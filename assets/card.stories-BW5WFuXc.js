@@ -1,0 +1,34 @@
+import{j as t,R as W,r as e,D as L}from"./iframe-DSshnrLJ.js";import{P as n}from"./index-BWW3-H0m.js";import{c as j}from"./index-DyAci3dY.js";import"./preload-helper-Dp1pzeXC.js";const r={container:"card-container",imgContainer:"card-img-container",imgStyle:"img-style",titleStyle:"card-title-style",containerDisabled:"container-disabled"},m=0,p="img",o=({title:a,image:d,clickHandler:w,disabled:g=!1})=>{const T={[r.container]:!0,[r.containerDisabled]:g};return t.jsxs("div",{"data-testid":"card",className:j({...T}),onClick:g?null:w,tabIndex:m,children:[t.jsx("div",{className:r.imgContainer,children:typeof d=="function"?W.createElement(d,{tabIndex:m,role:p,className:r.imgStyle,"aria-label":a}):t.jsx("img",{tabIndex:m,role:p,className:r.imgStyle,src:d,alt:a,"aria-label":a})}),t.jsx("div",{className:r.titleStyle,children:a})]})};o.propTypes={title:n.string.isRequired,image:n.oneOfType([n.string,n.elementType]).isRequired,clickHandler:n.func.isRequired};o.__docgenInfo={description:"",methods:[],displayName:"Card",props:{disabled:{defaultValue:{value:"false",computed:!1},required:!1},title:{description:"",type:{name:"string"},required:!0},image:{description:"",type:{name:"union",value:[{name:"string"},{name:"elementType"}]},required:!0},clickHandler:{description:"",type:{name:"func"},required:!0}}};const R=""+new URL("britive-logo-BFYsUFU3.jpg",import.meta.url).href,_=a=>e.createElement("svg",{xmlns:"http://www.w3.org/2000/svg",width:40.5,height:40,viewBox:"0 0 40.5 40",...a},e.createElement("g",{id:"Britive_Vault_Details","data-name":"Britive Vault Details",transform:"translate(0.5)"},e.createElement("g",{id:"Group_1991","data-name":"Group 1991"},e.createElement("rect",{id:"Rectangle_346","data-name":"Rectangle 346",width:40,height:40,fill:"none"}),e.createElement("path",{id:"Vector",d:"M2.221,0H0",transform:"translate(34.47 21.217) rotate(-90)",fill:"none",stroke:"#0c5389",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:1}),e.createElement("path",{id:"Vector-2","data-name":"Vector",d:"M5.931,0H0",transform:"translate(0 13.171)",fill:"none",stroke:"#0c5389",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:1}),e.createElement("path",{id:"Vector-3","data-name":"Vector",d:"M5.931,0H0",transform:"translate(0 27.503)",fill:"none",stroke:"#0c5389",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:1}),e.createElement("g",{id:"Rectangle_248","data-name":"Rectangle 248",transform:"translate(0.494 3)",fill:"none",stroke:"#0c5389",strokeWidth:1},e.createElement("rect",{width:39.505,height:33.75,rx:4,stroke:"none"}),e.createElement("rect",{x:.5,y:.5,width:38.505,height:32.75,rx:3.5,fill:"none"})),e.createElement("g",{id:"Rectangle_248-2","data-name":"Rectangle 248",transform:"translate(3.75 6.741)",fill:"none",stroke:"#0c5389",strokeWidth:1},e.createElement("rect",{width:32.941,height:26.814,rx:4,stroke:"none"}),e.createElement("rect",{x:.5,y:.5,width:31.941,height:25.814,rx:3.5,fill:"none"})),e.createElement("path",{id:"Path_1397","data-name":"Path 1397",d:"M14.084,11a2.977,2.977,0,1,0,2.984,2.977A2.962,2.962,0,0,0,14.084,11Zm0,5.1a2.127,2.127,0,1,1,2.132-2.127A2.108,2.108,0,0,1,14.084,16.1Z",transform:"translate(6.156 6.429)",fill:"#0c5389"}),e.createElement("path",{id:"Path_1398","data-name":"Path 1398",d:"M14.414,7.4l-1.129-.383-.242-.638.564-1.106a.745.745,0,0,0-.121-.808L12.52,3.446a.651.651,0,0,0-.766-.128l-1.048.6-.6-.255L9.739,2.468A.66.66,0,0,0,9.134,2H7.764a.575.575,0,0,0-.564.51L6.837,3.7a1.724,1.724,0,0,0-.645.255l-1.048-.6a.651.651,0,0,0-.766.128L3.411,4.51a.745.745,0,0,0-.121.808l.524,1.063c-.081.213-.161.468-.242.681l-1.129.383A.688.688,0,0,0,2,8.082V9.529a.671.671,0,0,0,.484.638l1.129.383.242.638L3.29,12.293a.745.745,0,0,0,.121.808l.967,1.021a.651.651,0,0,0,.766.128l1.048-.6.6.255.363,1.233a.66.66,0,0,0,.6.468h1.37a.66.66,0,0,0,.6-.468L10.1,13.91l.6-.255,1.048.6a.651.651,0,0,0,.766-.128l.967-1.021a.745.745,0,0,0,.121-.808l-.564-1.106.242-.638,1.169-.383a.688.688,0,0,0,.443-.638V8.082a.724.724,0,0,0-.484-.681Zm-.322,2-1.451.468-.04.213-.363.893-.121.213.725,1.4-.806.851-1.33-.766-.2.128a3.723,3.723,0,0,1-.846.383l-.2.043L9.013,14.76H7.885l-.443-1.531-.2-.043L6.393,12.8l-.2-.128-1.33.766-.806-.851.725-1.4-.121-.213a4.16,4.16,0,0,1-.363-.893l-.04-.213L2.806,9.4V8.21l1.37-.425.081-.213a3.725,3.725,0,0,1,.363-.936l.121-.213-.685-1.4.806-.851,1.29.766.2-.128a3.323,3.323,0,0,1,.887-.383l.2-.085.443-1.489H9.013l.443,1.489.2.085a3.723,3.723,0,0,1,.846.383l.2.128,1.33-.766.806.851-.725,1.4.121.213a4.16,4.16,0,0,1,.363.893l.04.213,1.451.468Z",transform:"translate(11.75 11.601)",fill:"#0c5389"})))),N={title:"design-components/Card",component:o},i={args:{title:"Static Secret Templates",image:_,clickHandler:a=>{a.preventDefault(),alert("Card with title Static Secret Templates has been clicked")}}},s={args:{title:"Secret Governance",image:R,disabled:!0,clickHandler:a=>{a.preventDefault(),alert("Card with title Secret Governance has been clicked")}}},l={render:a=>t.jsx(L,{children:t.jsx(o,{...a})}),args:{...i.args}};l.storyName="Card with image (dark theme)";const c={render:a=>t.jsx(L,{children:t.jsx(o,{...a})}),args:{...s.args}};c.storyName="Card disabled (dark theme)";var h,u,f;i.parameters={...i.parameters,docs:{...(h=i.parameters)==null?void 0:h.docs,source:{originalSource:`{
+  args: {
+    title: 'Static Secret Templates',
+    image: DetailsIcon,
+    clickHandler: event => {
+      event.preventDefault();
+      alert('Card with title Static Secret Templates has been clicked');
+    }
+  }
+}`,...(f=(u=i.parameters)==null?void 0:u.docs)==null?void 0:f.source}}};var k,S,v;s.parameters={...s.parameters,docs:{...(k=s.parameters)==null?void 0:k.docs,source:{originalSource:`{
+  args: {
+    title: 'Secret Governance',
+    image: britiveLogo,
+    disabled: true,
+    clickHandler: event => {
+      event.preventDefault();
+      alert('Card with title Secret Governance has been clicked');
+    }
+  }
+}`,...(v=(S=s.parameters)==null?void 0:S.docs)==null?void 0:v.source}}};var y,x,C;l.parameters={...l.parameters,docs:{...(y=l.parameters)==null?void 0:y.docs,source:{originalSource:`{
+  render: args => <DarkStorySurface>
+      <Card {...args} />
+    </DarkStorySurface>,
+  args: {
+    ...CardWithImageAndTitle.args
+  }
+}`,...(C=(x=l.parameters)==null?void 0:x.docs)==null?void 0:C.source}}};var D,b,E;c.parameters={...c.parameters,docs:{...(D=c.parameters)==null?void 0:D.docs,source:{originalSource:`{
+  render: args => <DarkStorySurface>
+      <Card {...args} />
+    </DarkStorySurface>,
+  args: {
+    ...CardWithDisabled.args
+  }
+}`,...(E=(b=c.parameters)==null?void 0:b.docs)==null?void 0:E.source}}};const q=["CardWithImageAndTitle","CardWithDisabled","CardWithImageAndTitleDark","CardWithDisabledDark"];export{s as CardWithDisabled,c as CardWithDisabledDark,i as CardWithImageAndTitle,l as CardWithImageAndTitleDark,q as __namedExportsOrder,N as default};

@@ -1,0 +1,1 @@
+import{r as e}from"./iframe-DSshnrLJ.js";const o=t=>e.createElement("svg",{width:16,height:16,viewBox:"0 0 16 16",fill:"none",xmlns:"http://www.w3.org/2000/svg",...t},e.createElement("circle",{cx:8,cy:8,r:7,stroke:"currentColor",strokeWidth:1.5}),e.createElement("path",{d:"M8 7v4M8 5v.01",stroke:"currentColor",strokeWidth:1.5,strokeLinecap:"round"}));export{o as S};

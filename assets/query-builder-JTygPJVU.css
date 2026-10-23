@@ -1,0 +1,1 @@
+:root{--brand: #181143}@font-face{font-family:OpenSansRegular;src:url(../assets/font/OpenSans-latin-normal.woff2) format("woff2")}.bds-query-builder-pills-container{display:flex;flex-wrap:wrap;padding:2px 0;row-gap:15px}[data-theme=dark] .bds-query-builder-pills-container{color:var(--theme-text-primary)}
